@@ -28,10 +28,11 @@ struct ContentView: View {
                             }
                         }
                     }, onTapMessage: { msg in
-                        chatManager.targetMessage = msg
+                        
                     })
                 }
         }
+        .navigationViewStyle(.stack)
     }
     
     private var leading: some View {

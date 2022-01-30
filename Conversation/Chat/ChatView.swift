@@ -11,60 +11,49 @@ struct ChatView: View {
     
     @StateObject var manager: ChatManager
     @StateObject var inputManager = ChatInputViewManager()
+    private let layoutManager = ChatLayoutManager()
     
     var body: some View {
-        VStack {
+        ZStack(alignment: .bottom) {
             ScrollViewReader { scrollView in
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 0) {
                         ForEach(manager.messages) { msg in
-                            ChatCell(msg: msg, onTapTextBubble: { [weak manager, weak msg] show in
-                                guard let manager = manager, let msg = msg else { return }
-                                manager.msgHandler?.onTapMessage(msg)
-                            })
-                            
+                            ChatCell(msg: msg)
                         }
                     }
-                    .padding(.horizontal, 10)
+                    Divider()
+                    
+                    Color.clear
+                        .frame(height: max(inputManager.inputViewFrame.height, ChatInputView.idealHeight)).id("aung")
+                    
                 }
-                .onChange(of: manager.targetMessage) {
-                    scrollTo($0, scrollView)
+                .padding(.horizontal, 8)
+                .onChange(of: manager.canScroll) { new in
+                    if new {
+                        manager.canScroll = false
+                        layoutManager.scrollToBottom(scrollView: scrollView, animated: true)
+                    }
                 }
-                .onChange(of: inputManager.textViewHeight) { _ in
-                    scrollToPreseved(scrollView)
+                .onChange(of: inputManager.inputViewFrame) { newValue in
+                    if !manager.canScroll {
+                        layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
+                    }
                 }
                 .task {
-                    scrollToBottom(scrollView)
+                    layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
                 }
             }
             ChatInputView(manager: manager, inputManager: inputManager)
         }
+        .retrieveBounds(viewId: 1, $inputManager.inputViewFrame)
     }
-    
-    
 }
 
 // Scrollin
 extension ChatView {
-    private func scrollTo(_ msg: Msg?, _ scrollView: ScrollViewProxy) {
-        if let msg = msg {
-            DispatchQueue.main.async {
-                withAnimation {
-                    scrollView.scrollTo(msg.id)
-                }
-            }
-        }
-    }
-    private func scrollToBottom(_ scrollView: ScrollViewProxy) {
-        if let last = manager.messages.last {
-            scrollView.scrollTo(last.id)
-            manager.targetMessage = last
-        }
-    }
     
-    private func scrollToPreseved(_ scrollView: ScrollViewProxy) {
-        if let msg = manager.targetMessage {
-            scrollTo(msg, scrollView)
-        }
-    }
 }
+
+
+

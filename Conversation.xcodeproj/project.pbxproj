@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		471425A227A710B800478BED /* ChatLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425A127A710B800478BED /* ChatLayoutManager.swift */; };
+		471425A427A72E0A00478BED /* TextBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425A327A72E0A00478BED /* TextBubble.swift */; };
+		471425A727A7305C00478BED /* ImageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425A627A7305C00478BED /* ImageBubble.swift */; };
 		471DA2BA27A6563E00432A1D /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2B727A6563D00432A1D /* Protocol.swift */; };
 		471DA2BB27A6563E00432A1D /* GrowingInternalTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2B827A6563D00432A1D /* GrowingInternalTextView.swift */; };
 		471DA2BC27A6563E00432A1D /* GrowingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2B927A6563E00432A1D /* GrowingTextView.swift */; };
@@ -37,6 +40,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		471425A127A710B800478BED /* ChatLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLayoutManager.swift; sourceTree = "<group>"; };
+		471425A327A72E0A00478BED /* TextBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextBubble.swift; sourceTree = "<group>"; };
+		471425A627A7305C00478BED /* ImageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBubble.swift; sourceTree = "<group>"; };
 		471DA2B727A6563D00432A1D /* Protocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
 		471DA2B827A6563D00432A1D /* GrowingInternalTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrowingInternalTextView.swift; sourceTree = "<group>"; };
 		471DA2B927A6563E00432A1D /* GrowingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrowingTextView.swift; sourceTree = "<group>"; };
@@ -78,6 +84,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		471425A027A702C000478BED /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModifiers;
+			sourceTree = "<group>";
+		};
+		471425A527A72E5D00478BED /* Bubbles */ = {
+			isa = PBXGroup;
+			children = (
+				471425A327A72E0A00478BED /* TextBubble.swift */,
+				471425A627A7305C00478BED /* ImageBubble.swift */,
+			);
+			path = Bubbles;
+			sourceTree = "<group>";
+		};
 		471DA2B527A6561800432A1D /* InputBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				47CDB89B27A5F1A1002F2BDF /* ChatCell.swift */,
+				471425A527A72E5D00478BED /* Bubbles */,
 				47CDB8AC27A60238002F2BDF /* MsgDateView.swift */,
 				47CDB8AE27A605E9002F2BDF /* MsgContextMenu.swift */,
 			);
@@ -184,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				47CDB89427A5F0C1002F2BDF /* ChatManager.swift */,
+				471425A127A710B800478BED /* ChatLayoutManager.swift */,
 				47CDB8AA27A5FE7B002F2BDF /* MsgStateChangeHandler.swift */,
 			);
 			path = Manager;
@@ -192,6 +216,7 @@
 		47CDB89827A5F139002F2BDF /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				471425A027A702C000478BED /* ViewModifiers */,
 				47CDB89927A5F157002F2BDF /* LoremSwiftum.swift */,
 				47CDB8A327A5F6A4002F2BDF /* Extensions.swift */,
 			);
@@ -291,10 +316,13 @@
 				47CDB87C27A5EE92002F2BDF /* ContentView.swift in Sources */,
 				47CDB8A227A5F4BA002F2BDF /* RecieptType.swift in Sources */,
 				471DA2BA27A6563E00432A1D /* Protocol.swift in Sources */,
+				471425A227A710B800478BED /* ChatLayoutManager.swift in Sources */,
 				47CDB8AD27A60238002F2BDF /* MsgDateView.swift in Sources */,
 				47CDB89027A5F071002F2BDF /* ChatView.swift in Sources */,
 				47CDB89A27A5F157002F2BDF /* LoremSwiftum.swift in Sources */,
+				471425A427A72E0A00478BED /* TextBubble.swift in Sources */,
 				47CDB8A727A5F787002F2BDF /* MsgActions.swift in Sources */,
+				471425A727A7305C00478BED /* ImageBubble.swift in Sources */,
 				471DA2C527A67AE900432A1D /* TextViewState.swift in Sources */,
 				47CDB8AB27A5FE7B002F2BDF /* MsgStateChangeHandler.swift in Sources */,
 				471DA2BE27A656CE00432A1D /* InputTextView.swift in Sources */,

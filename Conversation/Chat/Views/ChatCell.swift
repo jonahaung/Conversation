@@ -11,8 +11,6 @@ struct ChatCell: View {
     
     @StateObject var msg: Msg
     
-    let onTapTextBubble: (Bool) -> Void
-    
     @State private var showDetails = false
     
     var body: some View {
@@ -26,11 +24,11 @@ struct ChatCell: View {
             
             VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                 if showDetails {
-                    detailsView
+                    topHiddenView
                 }
-                textBubble
+                getBubble()
                 if showDetails {
-                    detailsView
+                    bottomHiddenView
                 }
             }
             
@@ -43,33 +41,37 @@ struct ChatCell: View {
         }
         .frame(maxWidth: .infinity)
         .transition(.move(edge: .bottom))
-        .onDisappear{
-            showDetails = false
-        }
         .id(msg.id)
     }
     
-    private var textBubble: some View {
-        Text(msg.text)
-            .font(.body)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .foregroundColor(msg.rType.textColor)
-        .background(msg.rType.backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: 17))
+    private func getBubble() -> some View {
+        return Group {
+            switch msg.msgType {
+            case .Text:
+                TextBubble(msg: msg)
+            case .Image:
+                ImageBubble(msg: msg)
+            default:
+                EmptyView()
+            }
+        }
         .onTapGesture {
             withAnimation(.interactiveSpring()) {
                 showDetails.toggle()
-                onTapTextBubble(showDetails)
             }
         }
         .contextMenu{ MsgContextMenu() }
     }
     
-    private var detailsView: some View {
+    private var topHiddenView: some View {
         MsgDateView(date: msg.date)
             .font(.system(size: UIFont.smallSystemFontSize, weight: .medium, design: .rounded))
             .foregroundStyle(.secondary)
+            .padding(.top)
+            .padding(.horizontal)
         
+    }
+    private var bottomHiddenView: some View {
+        EmptyView()
     }
 }
