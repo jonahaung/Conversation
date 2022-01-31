@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ChatInputView: View {
     
-    static let idealHeight = 52.00
-    private let sendButtonSize = 44.00
+    private let sendButtonSize = 30.00
     
     @StateObject var datasource: MsgDatasource
     @StateObject var inputManager: ChatInputViewManager
@@ -19,23 +18,24 @@ struct ChatInputView: View {
     let msgSender: MsgSender
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack() {
             
-            HStack(alignment: .bottom) {
+            HStack(alignment: .lastTextBaseline) {
                 menuButton
                 InputTextView(inputManager: inputManager)
                     .frame(height: inputManager.textViewHeight)
                 
                 sendButton
             }
-            .background()
+            .padding(.horizontal)
             
             if inputManager.showMenu {
                 menu
             }
         }
-        .padding(.bottom, ChatInputView.idealHeight - sendButtonSize)
-        .background()
+        .padding(.top, 7)
+        .padding(.bottom)
+        .background(.ultraThickMaterial)
         .saveBounds(viewId: 1)
     }
     
@@ -62,7 +62,6 @@ struct ChatInputView: View {
                     .foregroundColor(.init(uiColor: .systemBackground))
             }
         }
-        .padding(.trailing, 8)
         .disabled(inputManager.text.isEmpty)
     }
     
@@ -74,9 +73,8 @@ struct ChatInputView: View {
         } label: {
             Image(systemName: "plus")
                 .resizable()
-                .frame(width: sendButtonSize/2, height: sendButtonSize/2)
+                .frame(width: sendButtonSize * 0.8, height: sendButtonSize * 0.8)
         }
-        .padding(.horizontal)
     }
     
     private var menu: some View {

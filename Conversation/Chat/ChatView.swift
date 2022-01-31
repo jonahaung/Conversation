@@ -27,7 +27,7 @@ struct ChatView: View {
                 Divider()
                 
                 Color.clear
-                    .frame(height: max(inputManager.inputViewFrame.height, ChatInputView.idealHeight)).id("aung")
+                    .frame(height: inputManager.inputViewFrame.height).id("aung")
                 
             }
             .padding(.horizontal, 8)
