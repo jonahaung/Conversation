@@ -9,51 +9,58 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @StateObject var manager: ChatManager
+    @StateObject var datasource: MsgDatasource
     @StateObject var inputManager = ChatInputViewManager()
-    private let layoutManager = ChatLayoutManager()
+    @StateObject private var layoutManager = ChatLayoutManager()
+    private let msgCreater = MsgCreator()
+    private let msgSender = MsgSender()
+    
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ScrollViewReader { scrollView in
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(manager.messages) { msg in
-                            ChatCell(msg: msg)
-                        }
-                    }
-                    Divider()
-                    
-                    Color.clear
-                        .frame(height: max(inputManager.inputViewFrame.height, ChatInputView.idealHeight)).id("aung")
-                    
-                }
-                .padding(.horizontal, 8)
-                .onChange(of: manager.canScroll) { new in
-                    if new {
-                        manager.canScroll = false
-                        layoutManager.scrollToBottom(scrollView: scrollView, animated: true)
+        ScrollViewReader { scrollView in
+            ScrollView(showsIndicators: false) {
+                LazyVStack(spacing: 0) {
+                    ForEach(datasource.msgs) { msg in
+                        ChatCell(msg: msg)
                     }
                 }
-                .onChange(of: inputManager.inputViewFrame) { newValue in
-                    if !manager.canScroll {
-                        layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
-                    }
+                Divider()
+                
+                Color.clear
+                    .frame(height: max(inputManager.inputViewFrame.height, ChatInputView.idealHeight)).id("aung")
+                
+            }
+            .padding(.horizontal, 8)
+            .overlay(alignment: .bottom) {
+                ChatInputView(datasource: datasource, inputManager: inputManager, layoutManager: layoutManager, msgCreater: msgCreater, msgSender: msgSender)
+            }
+            .retrieveBounds(viewId: 1, $inputManager.inputViewFrame)
+            .navigationBarItems(leading: leading)
+            .onChange(of: layoutManager.canScroll) { new in
+                if new {
+                    layoutManager.canScroll = false
+                    layoutManager.scrollToBottom(scrollView: scrollView, animated: true)
                 }
-                .task {
+            }
+            .onChange(of: inputManager.inputViewFrame) { newValue in
+                if !layoutManager.canScroll {
                     layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
                 }
             }
-            ChatInputView(manager: manager, inputManager: inputManager)
+            .task {
+                layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
+            }
         }
-        .retrieveBounds(viewId: 1, $inputManager.inputViewFrame)
+    }
+    
+    private var leading: some View {
+        Button("Get") {
+            let msg = msgCreater.create(msgType: .Text(data: .init(text: Lorem.sentence, rType: .Receive)))
+            msg.rType = .Receive
+            msg.progress = .Read
+            msgSender.send(msg: msg)
+            datasource.msgs.append(msg)
+            layoutManager.canScroll = true
+        }
     }
 }
-
-// Scrollin
-extension ChatView {
-    
-}
-
-
-

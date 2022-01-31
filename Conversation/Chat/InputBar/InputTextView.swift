@@ -14,7 +14,7 @@ struct InputTextView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-
+    
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
         textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize, weight: .medium)
@@ -23,16 +23,16 @@ struct InputTextView: UIViewRepresentable {
         textView.delegate = context.coordinator
         return textView
     }
-
+    
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
         uiView.text = inputManager.text
     }
-
-
+    
+    
     class Coordinator: NSObject, GrowingTextViewDelegate {
         
         private let parent: InputTextView
-
+        
         init(_ parent: InputTextView) {
             self.parent = parent
         }
@@ -52,6 +52,6 @@ struct InputTextView: UIViewRepresentable {
             }
             return growingTextView.hasText
         }
-    
+        
     }
 }

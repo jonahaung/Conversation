@@ -9,15 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let chatManager = ChatManager()
+    @StateObject var datasource = MsgDatasource()
     
     var body: some View {
         NavigationView {
-            ChatView(manager: chatManager)
+            ChatView(datasource: datasource)
                 .navigationTitle("Chat")
-                .navigationBarItems(leading: leading)
                 .task {
-                    chatManager.msgHandler = MsgStateChangeHandler(onSendMessage: { msg in
+                    datasource.msgHandler = MsgStateChangeHandler(onSendMessage: { msg in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             msg.applyAction(action: .MsgProgress(value: .Sent))
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -35,9 +34,5 @@ struct ContentView: View {
         .navigationViewStyle(.stack)
     }
     
-    private var leading: some View {
-        Button("Get") {
-            chatManager.receive()
-        }
-    }
+    
 }

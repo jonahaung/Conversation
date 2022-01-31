@@ -18,7 +18,7 @@ struct ChatCell: View {
             switch msg.rType {
             case .Send:
                 Spacer(minLength: 20)
-            case .Received:
+            case .Receive:
                 msg.progress.view()
             }
             
@@ -35,7 +35,7 @@ struct ChatCell: View {
             switch msg.rType {
             case .Send:
                 msg.progress.view()
-            case .Received:
+            case .Receive:
                 Spacer(minLength: 20)
             }
         }
@@ -48,9 +48,13 @@ struct ChatCell: View {
         return Group {
             switch msg.msgType {
             case .Text:
-                TextBubble(msg: msg)
+                if let data = msg.textData {
+                    TextBubble(data: data)
+                }
             case .Image:
-                ImageBubble(msg: msg)
+                if let data = msg.imageData {
+                    ImageBubble(data: data)
+                }
             default:
                 EmptyView()
             }

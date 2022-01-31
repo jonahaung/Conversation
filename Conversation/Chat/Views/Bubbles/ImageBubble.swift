@@ -9,18 +9,18 @@ import SwiftUI
 
 struct ImageBubble: View {
     
-    let msg: Msg
+    let data: Msg.MsgType.ImagePData
     
     var body: some View {
         
         AsyncImage(
-            url: URL(string: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg"),
+            url: URL(string: data.urlString),
             content: { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)
                     .padding(2)
-                    .background(msg.rType.backgroundColor)
+                    .background(data.bubbleColor)
             },
             placeholder: {
                 ProgressView()

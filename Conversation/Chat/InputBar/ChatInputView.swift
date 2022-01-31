@@ -12,8 +12,11 @@ struct ChatInputView: View {
     static let idealHeight = 52.00
     private let sendButtonSize = 44.00
     
-    var manager: ChatManager
+    @StateObject var datasource: MsgDatasource
     @StateObject var inputManager: ChatInputViewManager
+    @StateObject var layoutManager: ChatLayoutManager
+    let msgCreater: MsgCreator
+    let msgSender: MsgSender
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,7 +44,11 @@ struct ChatInputView: View {
             let text = inputManager.text
             inputManager.text = String()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                manager.send(text: text)
+                let msg = msgCreater.create(msgType: .Text(data: .init(text: text, rType: .Send)))
+                msgSender.send(msg: msg)
+                datasource.msgs.append(msg)
+                layoutManager.canScroll = true
+                datasource.msgHandler?.onSendMessage(msg)
             }
         } label: {
             ZStack {
@@ -56,6 +63,7 @@ struct ChatInputView: View {
             }
         }
         .padding(.trailing, 8)
+        .disabled(inputManager.text.isEmpty)
     }
     
     private var menuButton: some View {
@@ -79,7 +87,11 @@ struct ChatInputView: View {
                 Image(systemName: "camera")
             }
             Button {
-                manager.send(image: nil)
+                let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg", rType: .Send)))
+                msgSender.send(msg: msg)
+                datasource.msgs.append(msg)
+                layoutManager.canScroll = true
+                datasource.msgHandler?.onSendMessage(msg)
             } label: {
                 Image(systemName: "photo.on.rectangle")
             }
@@ -114,8 +126,9 @@ struct ChatInputView: View {
                 Image(systemName: "magnifyingglass")
             }
         }
+        .accentColor(.primary)
         .imageScale(.large)
         .padding()
-        .transition(.move(edge: .leading))
+        .transition(.scale)
     }
 }
