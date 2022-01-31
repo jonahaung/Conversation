@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var datasource = MsgDatasource()
+    @StateObject var datasource = ChatDatasource()
     
     var body: some View {
         NavigationView {
-            ChatView(datasource: datasource)
+            ChatView()
+                .environmentObject(datasource)
                 .navigationTitle("Chat")
                 .task {
-                    datasource.msgHandler = MsgStateChangeHandler(onSendMessage: { msg in
+                    datasource.msgHandler = ChatActions(onSendMessage: { msg in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             msg.applyAction(action: .MsgProgress(value: .Sent))
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {

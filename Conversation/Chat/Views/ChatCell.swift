@@ -55,6 +55,10 @@ struct ChatCell: View {
                 if let data = msg.imageData {
                     ImageBubble(data: data)
                 }
+            case .Location:
+                if let data = msg.locationData {
+                    LocationBubble(data: data)
+                }
             default:
                 EmptyView()
             }

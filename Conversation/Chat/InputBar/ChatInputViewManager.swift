@@ -9,10 +9,14 @@ import SwiftUI
 
 class ChatInputViewManager: ObservableObject {
     
-    @Published var text: String = ""
-    @Published var textViewHeight = CGFloat(0)
-    @Published var inputViewFrame = CGRect.zero
+    var text: String = ""
     
-    @Published var showMenu = false
+    var currentInputItem = InputToolbar.ItemType.None {
+        willSet {
+            withAnimation(.interactiveSpring()) {
+                objectWillChange.send()
+            }
+        }
+    }
     
 }

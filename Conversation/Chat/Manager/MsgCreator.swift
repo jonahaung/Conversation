@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MsgCreator {
+final class MsgCreator: ObservableObject {
     
     func create(msgType: Msg.MsgType) -> Msg {
         return .init(id: UUID().uuidString, msgType: msgType, type: .Send, progress: .Sending)

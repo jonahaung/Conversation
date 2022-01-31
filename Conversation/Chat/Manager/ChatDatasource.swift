@@ -7,8 +7,8 @@
 
 import Foundation
 
-class MsgDatasource: ObservableObject {
-    var msgHandler: MsgStateChangeHandler?
+class ChatDatasource: ObservableObject {
     
+    var msgHandler: ChatActions?
     @Published var msgs: [Msg] = MockDatabase.msgs(for: 500)
 }

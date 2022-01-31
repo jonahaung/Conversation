@@ -50,7 +50,7 @@ open class GrowingTextView: UIView {
     /// A Boolean value that determines whether growing animations are enabled.
     ///
     /// The default value of this property is true.
-    open var isGrowingAnimationEnabled = true
+    open var isGrowingAnimationEnabled = false
     /// The time duration of text view's growing animation.
     ///
     /// The default value of this property is 0.1.
@@ -58,7 +58,7 @@ open class GrowingTextView: UIView {
     /// The inset of the text view.
     ///
     /// The default value of this property is (top: 8, left: 5, bottom: 8, right: 5).
-    open var contentInset = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5) {
+    open var contentInset = UIEdgeInsets(top: 8, left: 14, bottom: 8, right: 5) {
         didSet {
             updateTextViewFrame()
             updateMaxHeight()

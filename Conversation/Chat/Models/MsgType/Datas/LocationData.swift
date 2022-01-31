@@ -6,12 +6,11 @@
 //
 
 import Foundation
+import CoreLocation
 
 extension Msg.MsgType {
     struct LocationData {
-        struct Location {
-            let lat: Double
-            let long: Double
-        }
+        
+        let location: CLLocationCoordinate2D
     }
 }

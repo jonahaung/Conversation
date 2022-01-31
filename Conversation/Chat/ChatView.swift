@@ -9,48 +9,43 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @StateObject var datasource: MsgDatasource
-    @StateObject var inputManager = ChatInputViewManager()
-    @StateObject private var layoutManager = ChatLayoutManager()
-    private let msgCreater = MsgCreator()
-    private let msgSender = MsgSender()
-    
+    @EnvironmentObject private var chatDatasource: ChatDatasource
+    @StateObject private var chatLayout = ChatLayout()
+    @StateObject private var msgCreater = MsgCreator()
+    @StateObject private var msgSender = MsgSender()
+    @StateObject private var inputManager = ChatInputViewManager()
     
     var body: some View {
-        ScrollViewReader { scrollView in
-            ScrollView(showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(datasource.msgs) { msg in
-                        ChatCell(msg: msg)
-                    }
-                }
-                Divider()
-                
-                Color.clear
-                    .frame(height: inputManager.inputViewFrame.height).id("aung")
-                
-            }
-            .padding(.horizontal, 8)
-            .overlay(alignment: .bottom) {
-                ChatInputView(datasource: datasource, inputManager: inputManager, layoutManager: layoutManager, msgCreater: msgCreater, msgSender: msgSender)
-            }
-            .retrieveBounds(viewId: 1, $inputManager.inputViewFrame)
-            .navigationBarItems(leading: leading)
-            .onChange(of: layoutManager.canScroll) { new in
-                if new {
-                    layoutManager.canScroll = false
-                    layoutManager.scrollToBottom(scrollView: scrollView, animated: true)
+        ChatScrollView{ scrollView in
+            LazyVStack(spacing: 0) {
+                ForEach(chatDatasource.msgs) { msg in
+                    ChatCell(msg: msg)
                 }
             }
-            .onChange(of: inputManager.inputViewFrame) { newValue in
-                if !layoutManager.canScroll {
-                    layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
+            .onChange(of: chatLayout.canScroll) { canScroll in
+                if canScroll {
+                    chatLayout.canScroll = false
+                    chatLayout.scrollToBottom(scrollView: scrollView, animated: true)
                 }
             }
             .task {
-                layoutManager.scrollToBottom(scrollView: scrollView, animated: false)
+                chatLayout.scrollToBottom(scrollView: scrollView, animated: false)
             }
+            
+            Color.clear.frame(height: chatLayout.inputViewFrame.height)
+                .id("aung")
         }
+        .padding(.horizontal, 8)
+        .overlay(alignment: .bottom) {
+            ChatInputView()
+                .environmentObject(chatDatasource)
+                .environmentObject(chatLayout)
+                .environmentObject(msgCreater)
+                .environmentObject(msgSender)
+                .environmentObject(inputManager)
+                .retrieveBounds(viewId: 1, $chatLayout.inputViewFrame)
+        }
+        .navigationBarItems(leading: leading)
     }
     
     private var leading: some View {
@@ -59,8 +54,8 @@ struct ChatView: View {
             msg.rType = .Receive
             msg.progress = .Read
             msgSender.send(msg: msg)
-            datasource.msgs.append(msg)
-            layoutManager.canScroll = true
+            chatDatasource.msgs.append(msg)
+            chatLayout.canScroll = true
         }
     }
 }

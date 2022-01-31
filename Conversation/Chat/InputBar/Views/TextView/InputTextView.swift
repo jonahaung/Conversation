@@ -9,7 +9,9 @@ import SwiftUI
 
 struct InputTextView: UIViewRepresentable {
     
-    @StateObject var inputManager: ChatInputViewManager
+    @Binding var text: String
+    
+    @StateObject var layoutManager: ChatLayout
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -18,14 +20,13 @@ struct InputTextView: UIViewRepresentable {
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
         textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize, weight: .medium)
-        textView.contentInset = .init(top: 6, left: 7, bottom: 6, right: 7)
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.separator])
         textView.delegate = context.coordinator
         return textView
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-        uiView.text = inputManager.text
+        uiView.text = self.text
     }
     
     
@@ -37,13 +38,16 @@ struct InputTextView: UIViewRepresentable {
             self.parent = parent
         }
         
-        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
-            parent.inputManager.text = growingTextView.text ?? ""
+        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
+            parent.text = growingTextView.text ?? ""
         }
+
         func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat) {
+            
         }
+        
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
-            parent.inputManager.textViewHeight = height
+            parent.layoutManager.textViewHeight = height
         }
         
         func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
@@ -51,6 +55,21 @@ struct InputTextView: UIViewRepresentable {
                 growingTextView.endEditing(true)
             }
             return growingTextView.hasText
+        }
+        
+        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
+            print("should begin edit")
+            return true
+        }
+        func growingTextViewShouldEndEditing(_ growingTextView: GrowingTextView) -> Bool {
+            print("should end edit")
+            return true
+        }
+        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
+            print("begin editing")
+        }
+        func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
+            print("end editing")
         }
         
     }

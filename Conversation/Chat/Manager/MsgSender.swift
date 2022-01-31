@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MsgSender {
+final class MsgSender: ObservableObject {
     
     func send(msg: Msg) {
         print("wheeee")

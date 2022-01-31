@@ -7,13 +7,22 @@
 
 import SwiftUI
 
-class ChatLayoutManager: ObservableObject {
+class ChatLayout: ObservableObject {
 
+    @Published var textViewHeight = CGFloat(0)
     @Published var canScroll = false
+    
+    var inputViewFrame = CGRect.zero {
+        willSet {
+            if newValue.height != inputViewFrame.height {
+                objectWillChange.send()
+            }
+        }
+    }
     
     func scrollToBottom(scrollView: ScrollViewProxy, animated: Bool) {
         if animated {
-            withAnimation {
+            withAnimation(.interactiveSpring()) {
                 scrollView.scrollTo("aung")
             }
         }else {

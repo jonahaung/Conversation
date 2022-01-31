@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct MsgStateChangeHandler {
+struct ChatActions {
     var onSendMessage: ((Msg) -> Void)
     var onTapMessage: ((Msg) -> Void)
+    
 }
