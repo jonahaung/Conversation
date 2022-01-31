@@ -9,6 +9,5 @@ import Foundation
 
 class ChatDatasource: ObservableObject {
     
-    var msgHandler: ChatActions?
-    @Published var msgs: [Msg] = MockDatabase.msgs(for: 500)
+    @Published var msgs: [Msg] = MockDatabase.msgs(for: 100)
 }

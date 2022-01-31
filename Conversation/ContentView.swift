@@ -9,28 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var datasource = ChatDatasource()
+    
     
     var body: some View {
         NavigationView {
-            ChatView()
-                .environmentObject(datasource)
-                .navigationTitle("Chat")
-                .task {
-                    datasource.msgHandler = ChatActions(onSendMessage: { msg in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            msg.applyAction(action: .MsgProgress(value: .Sent))
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                msg.applyAction(action: .MsgProgress(value: .Received))
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    msg.applyAction(action: .MsgProgress(value: .Read))
-                                }
-                            }
-                        }
-                    }, onTapMessage: { msg in
-                        
-                    })
-                }
+            NavigationLink("Chat View", destination: ChatView().navigationTitle("Chat"))
+                .navigationTitle("Messenger")
         }
         .navigationViewStyle(.stack)
     }

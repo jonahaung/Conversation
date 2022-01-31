@@ -16,19 +16,22 @@ class Msg: ObservableObject, Identifiable {
     var date: Date = Date()
     var progress: MsgProgress
     
-    
     var textData: MsgType.TextData?
     var imageData: MsgType.ImagePData?
     var videoData: MsgType.ViedeoData?
     var locationData: MsgType.LocationData?
+    var emojiData: MsgType.EmojiData?
     var attachmentData: MsgType.AttachmentData?
+    var voiceData: MsgType.VoiceData?
     
-    init(id: String, msgType: MsgType, type: RecieptType, progress: MsgProgress) {
-        self.id = id
-        self.rType = type
+    init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
+        
+        self.id = UUID().uuidString
+        self.rType = rType
         self.date = Date()
         self.progress = progress
         self.msgType = msgType
+        
         switch msgType {
         case .Text(let data):
             textData = data
@@ -38,8 +41,12 @@ class Msg: ObservableObject, Identifiable {
             videoData = data
         case .Location(let data):
             locationData = data
+        case .Emoji(let data):
+            emojiData = data
         case .Attachment(let data):
             attachmentData = data
+        case .Voice(let data):
+            voiceData = data
         }
     }
 }

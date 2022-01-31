@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 class ChatLayout: ObservableObject {
 
     @Published var textViewHeight = CGFloat(0)

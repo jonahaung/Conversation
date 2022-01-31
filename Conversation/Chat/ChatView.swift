@@ -9,29 +9,34 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @EnvironmentObject private var chatDatasource: ChatDatasource
+    @StateObject private var chatDatasource = ChatDatasource()
     @StateObject private var chatLayout = ChatLayout()
     @StateObject private var msgCreater = MsgCreator()
     @StateObject private var msgSender = MsgSender()
     @StateObject private var inputManager = ChatInputViewManager()
+    @StateObject private var actionHandler = ChatActionHandler()
     
     var body: some View {
         ChatScrollView{ scrollView in
             LazyVStack(spacing: 0) {
                 ForEach(chatDatasource.msgs) { msg in
-                    ChatCell(msg: msg)
+                    ChatCell()
+                        .environmentObject(msg)
                 }
             }
+            .navigationBarItems(leading: leading)
             .onChange(of: chatLayout.canScroll) { canScroll in
                 if canScroll {
                     chatLayout.canScroll = false
                     chatLayout.scrollToBottom(scrollView: scrollView, animated: true)
                 }
             }
-            .task {
+            .onAppear{
                 chatLayout.scrollToBottom(scrollView: scrollView, animated: false)
+                DispatchQueue.main.async {
+                    chatLayout.scrollToBottom(scrollView: scrollView, animated: false)
+                }
             }
-            
             Color.clear.frame(height: chatLayout.inputViewFrame.height)
                 .id("aung")
         }
@@ -43,9 +48,11 @@ struct ChatView: View {
                 .environmentObject(msgCreater)
                 .environmentObject(msgSender)
                 .environmentObject(inputManager)
+                .environmentObject(actionHandler)
                 .retrieveBounds(viewId: 1, $chatLayout.inputViewFrame)
         }
-        .navigationBarItems(leading: leading)
+        
+        
     }
     
     private var leading: some View {
