@@ -26,10 +26,10 @@ struct LocationPicker: View {
                 .aspectRatio(1, contentMode: .fit)
             
             Button("Send Current Location") {
-                let msg = msgCreater.create(msgType: .Location(data: .init(rType: .Send, location: locationManager.currentLocation)))
+                let msg = msgCreater.create(msgType: .Location(data: .init(rType: .Send, location: .init(latitude: locationManager.currentLocation.latitude, longitude: locationManager.currentLocation.longitude))))
                 msgSender.send(msg: msg)
                 datasource.msgs.append(msg)
-                chatLayout.canScroll = true
+                chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
                 inputManager.currentInputItem = .None
                 actionHandler.onSendMessage(msg: msg)
             }

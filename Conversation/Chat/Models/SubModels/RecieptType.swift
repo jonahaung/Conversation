@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Msg {
-    enum RecieptType: Int, Codable, Equatable {
+    enum RecieptType: Int, Codable {
         case Send
         case Receive
     }

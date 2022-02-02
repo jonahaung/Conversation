@@ -73,7 +73,7 @@ extension InputToolbar {
             let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg", rType: .Send)))
             msgSender.send(msg: msg)
             datasource.msgs.append(msg)
-            chatLayout.canScroll = true
+            chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
         case .SoundRecorder:
             break
         case .Location:

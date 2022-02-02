@@ -11,7 +11,15 @@ import CoreLocation
 extension Msg.MsgType {
     
     struct LocationData: ChatDataRepresenting {
+        
         var rType: Msg.RecieptType
-        let location: CLLocationCoordinate2D
+        let location: Location
+        
+        struct Location: Codable {
+            let latitude: Double
+            let longitude: Double
+            
+            var location2D: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: .init(latitude), longitude: .init(longitude))}
+        }
     }
 }

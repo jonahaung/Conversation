@@ -5,7 +5,6 @@
 //  Created by Aung Ko Min on 30/1/22.
 //
 
-import Foundation
 import SwiftUI
 
 extension Msg {

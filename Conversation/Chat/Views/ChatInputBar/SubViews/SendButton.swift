@@ -34,8 +34,7 @@ struct SendButton: View {
                 msgSender.send(msg: msg)
                 datasource.msgs.append(msg)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    
-                    chatLayout.canScroll = true
+                    chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
                     actionHandler.onSendMessage(msg: msg)
                 }
             }

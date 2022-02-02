@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-
-class Msg: ObservableObject, Identifiable {
+class Msg: ObservableObject, Codable, Identifiable {
     
     var id: String
     var rType: RecieptType

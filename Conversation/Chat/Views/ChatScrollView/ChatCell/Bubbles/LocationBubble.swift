@@ -18,8 +18,8 @@ struct LocationBubble: View {
     let data: Msg.MsgType.LocationData
     
     var body: some View {
-        Map(coordinateRegion: .constant(.init(center: data.location, span: .init(latitudeDelta: 0.05, longitudeDelta: 0.05))), interactionModes: .all,
-            annotationItems: [MyAnnotationItem(coordinate: data.location)]) { item in
+        Map(coordinateRegion: .constant(.init(center: data.location.location2D, span: .init(latitudeDelta: 0.05, longitudeDelta: 0.05))), interactionModes: .all,
+            annotationItems: [MyAnnotationItem(coordinate: data.location.location2D)]) { item in
             MapAnnotation(coordinate: item.coordinate) {
                 Image(systemName: "car.fill")
                     .imageScale(.large)

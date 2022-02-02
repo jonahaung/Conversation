@@ -9,15 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     
-    
-    
     var body: some View {
         NavigationView {
-            NavigationLink("Chat View", destination: ChatView().navigationTitle("Chat"))
-                .navigationTitle("Messenger")
+            ChatView().navigationTitle("Chat")
         }
         .navigationViewStyle(.stack)
     }
-    
-    
 }

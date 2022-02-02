@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ChatDataRepresenting {
+protocol ChatDataRepresenting: Codable {
     var rType: Msg.RecieptType { get }
     
 }

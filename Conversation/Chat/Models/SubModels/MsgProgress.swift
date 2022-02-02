@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Msg {
     
-    enum MsgProgress: Int {
+    enum MsgProgress: Int, Codable {
         
         case Sending, Sent, SendingFailed, Received, Read
         

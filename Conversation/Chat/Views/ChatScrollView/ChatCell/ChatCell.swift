@@ -27,12 +27,10 @@ struct ChatCell: View {
                     bottomHiddenView
                 }
             }
-            
             msg.rType == .Send ? msg.progress.view().any : Spacer(minLength: 20).any
         }
-        .frame(maxWidth: .infinity)
         .transition(.move(edge: .bottom))
-//        .id(msg.id)
+        .id(msg.id)
     }
     
     private func getBubble() -> some View {
@@ -41,6 +39,7 @@ struct ChatCell: View {
             case .Text:
                 if let data = msg.textData {
                     TextBubble(data: data)
+                        
                 }
             case .Image:
                 if let data = msg.imageData {

@@ -10,6 +10,6 @@ import Foundation
 final class MsgSender: ObservableObject {
     
     func send(msg: Msg) {
-        print("wheeee")
+        Log("ToDo: msg send")
     }
 }

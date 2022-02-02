@@ -9,7 +9,7 @@ import Foundation
 
 extension Msg {
     
-    enum MsgType {
+    enum MsgType: Codable {
         
         case Text(data: TextData)
         case Image(data: ImagePData)

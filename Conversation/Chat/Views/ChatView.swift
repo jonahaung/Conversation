@@ -17,30 +17,32 @@ struct ChatView: View {
     @StateObject private var actionHandler = ChatActionHandler()
     
     var body: some View {
-        ChatScrollView{ scrollView in
+        ChatScrollView { [unowned chatLayout] in
+            guard !chatLayout.isLoading else { return }
+            chatLayout.isLoading = true
+            chatLayout.focusedItem = chatDatasource.loadMore()
+            chatLayout.isLoading = false
+        } content: { scrollView in
             LazyVStack(spacing: 0) {
                 ForEach(chatDatasource.msgs) { msg in
                     ChatCell()
                         .environmentObject(msg)
                 }
+                Color.clear.frame(height: chatLayout.inputViewFrame.height)
+                    .id("")
             }
-            .navigationBarItems(leading: leading)
-            .onChange(of: chatLayout.canScroll) { canScroll in
-                if canScroll {
-                    chatLayout.canScroll = false
-                    chatLayout.scrollToBottom(scrollView: scrollView, animated: true)
+            .task {
+                chatLayout.scrollToBottom(scrollView, animated: false)
+            }
+            .onChange(of: chatLayout.focusedItem) { newValue in
+                if let newValue = newValue {
+                    chatLayout.scrollTo(newValue, scrollView)
                 }
             }
-            .onAppear{
-                chatLayout.scrollToBottom(scrollView: scrollView, animated: false)
-                DispatchQueue.main.async {
-                    chatLayout.scrollToBottom(scrollView: scrollView, animated: false)
-                }
-            }
-            Color.clear.frame(height: chatLayout.inputViewFrame.height)
-                .id("aung")
         }
         .padding(.horizontal, 8)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(leading: leading, trailing: trailing)
         .overlay(alignment: .bottom) {
             ChatInputView()
                 .environmentObject(chatDatasource)
@@ -51,8 +53,6 @@ struct ChatView: View {
                 .environmentObject(actionHandler)
                 .retrieveBounds(viewId: 1, $chatLayout.inputViewFrame)
         }
-        
-        
     }
     
     private var leading: some View {
@@ -62,7 +62,12 @@ struct ChatView: View {
             msg.progress = .Read
             msgSender.send(msg: msg)
             chatDatasource.msgs.append(msg)
-            chatLayout.canScroll = true
+            chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
+        }
+    }
+    private var trailing: some View {
+        Button("Load More") {
+            chatLayout.focusedItem = chatDatasource.loadMore()
         }
     }
 }

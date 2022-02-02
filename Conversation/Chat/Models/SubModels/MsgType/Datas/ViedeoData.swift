@@ -13,6 +13,5 @@ extension Msg.MsgType {
         
         var rType: Msg.RecieptType
         
-        
     }
 }
