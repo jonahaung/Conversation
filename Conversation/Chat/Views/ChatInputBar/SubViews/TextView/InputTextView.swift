@@ -40,10 +40,6 @@ struct InputTextView: UIViewRepresentable {
         func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
             parent.inputManager.text = growingTextView.text ?? ""
         }
-
-        func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat) {
-            
-        }
         
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.textViewHeight = height

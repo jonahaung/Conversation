@@ -7,41 +7,57 @@
 
 import SwiftUI
 
-
 struct ChatScrollView<Content: View>: View {
     
+    typealias ChatScrollViewProxy = (scrollView: ScrollViewProxy, geometry: GeometryProxy)
     
-    private let content: (_ scrollView: ScrollViewProxy) -> Content
-    private let handleLoadMore: ()-> Void
+    private let content: (_ proxy: ChatScrollViewProxy) -> Content
+    @Environment(\.refresh) public var refreshAction: RefreshAction?
+    @StateObject private var moreLoader = MoreLoader()
     
-    @State private var oldPre: MoreLoaderKeys.PreData = .init(bounds: .zero)
-    
-    init(handleLoadMore: @escaping (()-> Void), @ViewBuilder content: @escaping (_ scrollView: ScrollViewProxy) -> Content) {
-        self.handleLoadMore = handleLoadMore
+    init(@ViewBuilder content: @escaping (_ proxy: ChatScrollViewProxy) -> Content) {
         self.content = content
     }
     
     var body: some View {
-        ScrollViewReader { scrollView in
+        ZStack(alignment: .top) {
             GeometryReader { geometry in
-                ScrollView(showsIndicators: false) {
-                    Color.clear
-                    .anchorPreference(key: MoreLoaderKeys.PreKey.self, value: .bounds) {
-                        let frame = geometry[$0]
-                        return MoreLoaderKeys.PreData(bounds: frame)
+                ScrollViewReader { scrollView in
+                    ScrollView(showsIndicators: false) {
+                        content(ChatScrollViewProxy(scrollView, geometry))
+                            .padding(.horizontal, 8)
+                            .anchorPreference(key: MoreLoaderKeys.PreKey.self, value: .top) {
+                                return MoreLoaderKeys.PreData(top: geometry[$0].y)
+                            }
                     }
-                    content(scrollView)
+                    .onPreferenceChange(MoreLoaderKeys.PreKey.self) {
+                        moreLoader.scrollDetector.send($0)
+                    }
                 }
-                .coordinateSpace(name: "chatScrollView")
+            }
+            progressView
+        }
+        .coordinateSpace(name: "chatScrollView")
+        .onReceive(moreLoader.scrollPublisher) {
+            if $0.top > moreLoader.threshold && !moreLoader.isLoading, let refreshAction = refreshAction {
+                Task {
+                    moreLoader.isLoading = true
+                    await ToneManager.shared.vibrate(vibration: .rigid)
+                    await refreshAction()
+                    moreLoader.isLoading = false
+                }
             }
         }
-        .onPreferenceChange(MoreLoaderKeys.PreKey.self) { pre in
-            let minY = pre.bounds.minY
-            if oldPre.bounds != .zero && minY > oldPre.bounds.minY && minY > -10 {
-                oldPre = .init(bounds: .zero)
-                handleLoadMore()
+    }
+    
+    private var progressView: some View {
+        VStack {
+            if moreLoader.isLoading {
+                CircleActivityView(lineWidth: 3, pathColor: Color(uiColor: .systemBackground), lineColor: .orange)
+                    .frame(width: 25, height: 25)
+                    .padding()
             }
-            oldPre = pre
         }
     }
 }
+

@@ -12,6 +12,9 @@ class ChatActionHandler: ObservableObject {
     func onSendMessage(msg: Msg) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             msg.applyAction(action: .MsgProgress(value: .Sent))
+            Task {
+                await ToneManager.shared.playSound(tone: .sendMessage)
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 msg.applyAction(action: .MsgProgress(value: .Received))
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {

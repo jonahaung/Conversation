@@ -15,14 +15,13 @@ struct ChatInputView: View {
     @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
-    
     var body: some View {
         
         VStack() {
             HStack(alignment: .bottom) {
                 LeftMenuButton()
                 InputTextView()
-                    .frame(maxHeight: chatLayout.textViewHeight)
+                    .frame(height: chatLayout.textViewHeight)
                     .background(Color(uiColor: .systemBackground).cornerRadius(10))
                 SendButton()
             }
@@ -30,7 +29,7 @@ struct ChatInputView: View {
         }
         .padding(7)
         .background(.ultraThickMaterial)
-        .saveBounds(viewId: 1, coordinateSpace: .named("chatScrollView"))
+        .saveBounds(viewId: "1", coordinateSpace: .named("chatScrollView"))
     }
     
     private func pickerView() -> some View {
@@ -46,8 +45,6 @@ struct ChatInputView: View {
                 VStack {
                     Text(String(describing: inputManager.currentInputItem))
                 }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(1, contentMode: .fill)
             }
         }
     }

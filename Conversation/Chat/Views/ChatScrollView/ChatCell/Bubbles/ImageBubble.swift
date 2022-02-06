@@ -18,7 +18,6 @@ struct ImageBubble: View {
             content: { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 300)
                     .padding(2)
                     .background(data.rType.bubbleColor)
             },

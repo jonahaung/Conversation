@@ -10,11 +10,11 @@ import SwiftUI
 struct MoreLoaderKeys {
     
     struct PreData: Equatable {
-        let bounds: CGRect
+        let top: CGFloat
     }
     
     struct PreKey: PreferenceKey {
-        static var defaultValue: PreData = .init(bounds: .zero)
+        static var defaultValue: PreData = .init(top: .zero)
         static func reduce(value: inout PreData, nextValue: () -> PreData) {}
     }
 }

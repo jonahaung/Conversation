@@ -20,9 +20,11 @@ struct SendButton: View {
         Button {
             if inputManager.keyboardStatus == .Shown {
                 guard !inputManager.text.isEmpty else { return }
+                Task {
+                    await ToneManager.shared.vibrate(vibration: .soft)
+                }
                 let text = inputManager.text
                 inputManager.text = String()
-                
                 let msg = msgCreater.create(msgType: .Text(data: .init(text: text, rType: .Send)))
                 sendMessage(msg: msg)
             }else {
@@ -31,12 +33,10 @@ struct SendButton: View {
             }
             
             func sendMessage(msg: Msg) {
-                msgSender.send(msg: msg)
                 datasource.msgs.append(msg)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
-                    actionHandler.onSendMessage(msg: msg)
-                }
+                msgSender.send(msg: msg)
+                chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
+                actionHandler.onSendMessage(msg: msg)
             }
         } label: {
             ZStack {

@@ -11,5 +11,6 @@ final class MsgSender: ObservableObject {
     
     func send(msg: Msg) {
         Log("ToDo: msg send")
+        
     }
 }

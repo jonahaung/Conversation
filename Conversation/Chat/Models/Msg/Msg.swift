@@ -22,7 +22,7 @@ class Msg: ObservableObject, Codable, Identifiable {
     var emojiData: MsgType.EmojiData?
     var attachmentData: MsgType.AttachmentData?
     var voiceData: MsgType.VoiceData?
-    
+    var bubbleSize: CGSize?
     init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         
         self.id = UUID().uuidString

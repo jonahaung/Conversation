@@ -13,9 +13,11 @@ extension ChatLayout {
         scrollTo(FocusedItem.bottomItem(animated: animated), scrollView)
     }
     
-    func scrollTo(_ focusedItem: FocusedItem, _ scrollView: ScrollViewProxy) {
+    func scrollTo(_ focusedItem: FocusedItem?, _ scrollView: ScrollViewProxy) {
+        guard let focusedItem = focusedItem else {
+            return
+        }
         self.focusedItem = nil
-        
         if focusedItem.animated {
             DispatchQueue.main.async {
                 withAnimation(.interactiveSpring()) {

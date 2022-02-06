@@ -42,6 +42,7 @@ struct InputToolbar: View {
     @EnvironmentObject private var msgCreater: MsgCreator
     @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject private var actionHandler: ChatActionHandler
     
     var body: some View {
         HStack {
@@ -71,9 +72,11 @@ extension InputToolbar {
             break
         case .PhotoLibrary:
             let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg", rType: .Send)))
+            msg.bubbleSize = .init(width: 250, height: 250)
             msgSender.send(msg: msg)
             datasource.msgs.append(msg)
             chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
+            actionHandler.onSendMessage(msg: msg)
         case .SoundRecorder:
             break
         case .Location:

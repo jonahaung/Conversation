@@ -9,50 +9,48 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @StateObject private var chatDatasource = ChatDatasource()
-    @StateObject private var chatLayout = ChatLayout()
-    @StateObject private var msgCreater = MsgCreator()
-    @StateObject private var msgSender = MsgSender()
-    @StateObject private var inputManager = ChatInputViewManager()
-    @StateObject private var actionHandler = ChatActionHandler()
+    @EnvironmentObject private var datasource: ChatDatasource
+    @EnvironmentObject private var chatLayout: ChatLayout
+    @EnvironmentObject private var msgCreater: MsgCreator
+    @EnvironmentObject private var msgSender: MsgSender
+    @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject private var actionHandler: ChatActionHandler
     
     var body: some View {
-        ChatScrollView { [unowned chatLayout] in
-            guard !chatLayout.isLoading else { return }
-            chatLayout.isLoading = true
-            chatLayout.focusedItem = chatDatasource.loadMore()
-            chatLayout.isLoading = false
-        } content: { scrollView in
-            LazyVStack(spacing: 0) {
-                ForEach(chatDatasource.msgs) { msg in
-                    ChatCell()
-                        .environmentObject(msg)
+        ZStack(alignment: .bottom) {
+            ChatScrollView { proxy in
+                LazyVStack(spacing: 0) {
+                    ForEach(datasource.msgs) {
+                        ChatCell()
+                            .environmentObject($0)
+                    }
+                    Color.clear
+                        .frame(height: chatLayout.inputViewFrame.height)
+                        .id("")
                 }
-                Color.clear.frame(height: chatLayout.inputViewFrame.height)
-                    .id("")
-            }
-            .task {
-                chatLayout.scrollToBottom(scrollView, animated: false)
-            }
-            .onChange(of: chatLayout.focusedItem) { newValue in
-                if let newValue = newValue {
-                    chatLayout.scrollTo(newValue, scrollView)
+                
+                .task {
+                    chatLayout.scrollToBottom(proxy.scrollView, animated: false)
+                }
+                .onChange(of: chatLayout.focusedItem) {
+                    chatLayout.scrollTo($0, proxy.scrollView)
                 }
             }
+            .refreshable {
+                guard let firstId = datasource.msgs.first?.id else { return }
+                let focused = FocusedItem(id: firstId, anchor: .top, animated: false)
+                datasource.msgs = await datasource.getMoreMsg()
+                DispatchQueue.main.async {
+                    chatLayout.focusedItem = focused
+                }
+            }
+            
+            ChatInputView()
         }
-        .padding(.horizontal, 8)
+        .coordinateSpace(name: "chatScrollView")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(leading: leading, trailing: trailing)
-        .overlay(alignment: .bottom) {
-            ChatInputView()
-                .environmentObject(chatDatasource)
-                .environmentObject(chatLayout)
-                .environmentObject(msgCreater)
-                .environmentObject(msgSender)
-                .environmentObject(inputManager)
-                .environmentObject(actionHandler)
-                .retrieveBounds(viewId: 1, $chatLayout.inputViewFrame)
-        }
+        .retrieveBounds(viewId: "1", $chatLayout.inputViewFrame)
     }
     
     private var leading: some View {
@@ -61,13 +59,17 @@ struct ChatView: View {
             msg.rType = .Receive
             msg.progress = .Read
             msgSender.send(msg: msg)
-            chatDatasource.msgs.append(msg)
+            datasource.msgs.append(msg)
             chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
         }
     }
     private var trailing: some View {
         Button("Load More") {
-            chatLayout.focusedItem = chatDatasource.loadMore()
+            
         }
     }
+}
+
+extension ChatView {
+    
 }

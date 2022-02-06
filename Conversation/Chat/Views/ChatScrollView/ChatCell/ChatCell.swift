@@ -17,17 +17,27 @@ struct ChatCell: View {
         HStack(alignment: .bottom, spacing: 1) {
             
             msg.rType == .Send ? Spacer(minLength: 20).any : msg.progress.view().any
-            
+    
             VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                 if showDetails {
                     topHiddenView
                 }
                 getBubble()
+                    .saveSize(viewId: msg.id)
+                    .frame(width: msg.bubbleSize?.width, height: msg.bubbleSize?.height)
                 if showDetails {
                     bottomHiddenView
                 }
             }
             msg.rType == .Send ? msg.progress.view().any : Spacer(minLength: 20).any
+        }
+        .onPreferenceChange(SaveSizePrefKey.self) { preferences in
+            guard msg.bubbleSize == nil else { return }
+            DispatchQueue.main.async {
+                if let p = preferences.first(where: { $0.viewId == msg.id }) {
+                    msg.bubbleSize = p.size
+                }
+            }
         }
         .transition(.move(edge: .bottom))
         .id(msg.id)
@@ -58,6 +68,9 @@ struct ChatCell: View {
             }
         }
         .onTapGesture {
+            Task {
+                await ToneManager.shared.vibrate(vibration: .soft)
+            }
             withAnimation(.interactiveSpring()) {
                 showDetails.toggle()
             }
