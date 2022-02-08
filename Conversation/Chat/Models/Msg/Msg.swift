@@ -9,20 +9,20 @@ import SwiftUI
 
 class Msg: ObservableObject, Codable, Identifiable {
     
-    var id: String
+    let id: String
     var rType: RecieptType
-    var msgType: MsgType
-    var date: Date = Date()
+    let msgType: MsgType
+    let date: Date
     var progress: MsgProgress
     
     var textData: MsgType.TextData?
-    var imageData: MsgType.ImagePData?
+    var imageData: MsgType.ImageData?
     var videoData: MsgType.ViedeoData?
     var locationData: MsgType.LocationData?
     var emojiData: MsgType.EmojiData?
     var attachmentData: MsgType.AttachmentData?
     var voiceData: MsgType.VoiceData?
-    var bubbleSize: CGSize?
+    
     init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         
         self.id = UUID().uuidString

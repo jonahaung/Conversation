@@ -28,10 +28,11 @@ extension Msg {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.mint)
                 case .Read:
-                    EmptyView()
+                    Color.clear
                 }
             }
             .imageScale(.small)
+            .frame(width: 20)
             .any
         }
     }

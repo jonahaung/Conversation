@@ -13,11 +13,6 @@ public struct CircleActivityView: View {
     public var pathColor: Color
     public var lineColor: Color
     
-    public init(lineWidth: CGFloat = 30, pathColor: Color, lineColor: Color) {
-        self.lineWidth = lineWidth
-        self.lineColor = lineColor
-        self.pathColor = pathColor
-    }
     
     @State private var isLoading: Bool = false
     

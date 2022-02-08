@@ -10,12 +10,13 @@ import SwiftUI
 struct EmojiBubble: View {
     
     let data: Msg.MsgType.EmojiData
+    @EnvironmentObject private var msg: Msg
     
     var body: some View {
         Image(systemName: data.emojiID)
             .resizable()
             .frame(width: data.randomSize, height: data.randomSize)
-            .foregroundColor(data.rType.bubbleColor)
+            .foregroundColor(msg.rType.bubbleColor)
             .padding()
     }
 }

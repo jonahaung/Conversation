@@ -12,6 +12,5 @@ extension Msg.MsgType {
     struct TextData: ChatDataRepresenting {
         
         let text: String
-        let rType: Msg.RecieptType
     }
 }

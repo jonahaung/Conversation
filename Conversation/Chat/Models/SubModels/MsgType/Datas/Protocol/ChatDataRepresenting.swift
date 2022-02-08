@@ -8,6 +8,6 @@
 import Foundation
 
 protocol ChatDataRepresenting: Codable {
-    var rType: Msg.RecieptType { get }
+    
     
 }

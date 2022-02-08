@@ -9,10 +9,7 @@ import SwiftUI
 
 struct ChatInputView: View {
     
-    @EnvironmentObject private var datasource: ChatDatasource
     @EnvironmentObject private var chatLayout: ChatLayout
-    @EnvironmentObject private var msgCreater: MsgCreator
-    @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
     var body: some View {

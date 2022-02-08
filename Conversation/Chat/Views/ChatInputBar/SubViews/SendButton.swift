@@ -25,10 +25,10 @@ struct SendButton: View {
                 }
                 let text = inputManager.text
                 inputManager.text = String()
-                let msg = msgCreater.create(msgType: .Text(data: .init(text: text, rType: .Send)))
+                let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))
                 sendMessage(msg: msg)
             }else {
-                let msg = msgCreater.create(msgType: .Emoji(data: .init(rType: .Send, emojiID: "hand.thumbsup.fill")))
+                let msg = msgCreater.create(msgType: .Emoji(data: .init(emojiID: "hand.thumbsup.fill")))
                 sendMessage(msg: msg)
             }
             

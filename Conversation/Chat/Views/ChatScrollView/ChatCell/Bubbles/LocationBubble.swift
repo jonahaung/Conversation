@@ -26,8 +26,6 @@ struct LocationBubble: View {
                     .foregroundColor(.pink)
             }
         }
-            .aspectRatio(1.5, contentMode: .fit)
-            .cornerRadius(15)
-            .padding(.vertical, 8)
+        .aspectRatio(1.5, contentMode: .fit)
     }
 }

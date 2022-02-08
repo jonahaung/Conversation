@@ -12,7 +12,7 @@ extension Msg.MsgType {
     
     struct LocationData: ChatDataRepresenting {
         
-        var rType: Msg.RecieptType
+
         let location: Location
         
         struct Location: Codable {

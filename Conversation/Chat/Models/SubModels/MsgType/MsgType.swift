@@ -12,7 +12,7 @@ extension Msg {
     enum MsgType: Codable {
         
         case Text(data: TextData)
-        case Image(data: ImagePData)
+        case Image(data: ImageData)
         case Video(data: ViedeoData)
         case Location(data: LocationData)
         case Emoji(data: EmojiData)

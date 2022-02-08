@@ -10,7 +10,6 @@ import SwiftUI
 extension Msg.MsgType {
     
     struct EmojiData: ChatDataRepresenting {
-        var rType: Msg.RecieptType
         let emojiID: String
         var randomSize = CGFloat.random(in: 30..<150)
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ImageBubble: View {
     
-    let data: Msg.MsgType.ImagePData
+    let data: Msg.MsgType.ImageData
     
     var body: some View {
         
@@ -18,8 +18,6 @@ struct ImageBubble: View {
             content: { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
-                    .padding(2)
-                    .background(data.rType.bubbleColor)
             },
             placeholder: {
                 ProgressView()

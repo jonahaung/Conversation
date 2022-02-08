@@ -20,44 +20,51 @@ struct ChatScrollView<Content: View>: View {
     }
     
     var body: some View {
-        ZStack(alignment: .top) {
-            GeometryReader { geometry in
-                ScrollViewReader { scrollView in
-                    ScrollView(showsIndicators: false) {
-                        content(ChatScrollViewProxy(scrollView, geometry))
-                            .padding(.horizontal, 8)
-                            .anchorPreference(key: MoreLoaderKeys.PreKey.self, value: .top) {
-                                return MoreLoaderKeys.PreData(top: geometry[$0].y)
+        GeometryReader { geometry in
+            ScrollViewReader { scrollView in
+                ScrollView(showsIndicators: false) {
+                    progressView
+                    content(ChatScrollViewProxy(scrollView, geometry))
+                        .redacted(reason: moreLoader.isLoading ? .placeholder : [])
+                        .anchorPreference(key: MoreLoaderKeys.PreKey.self, value: .top) {
+                            return MoreLoaderKeys.PreData(top: $0)
+                        }
+                        .onPreferenceChange(MoreLoaderKeys.PreKey.self) {
+                            guard moreLoader.isLoading == false else { return }
+                            moreLoader.scrollDetector.send($0)
+                        }
+                        .onReceive(moreLoader.scrollPublisher) {
+                            guard let anchor = $0.top else { return }
+                            
+                            let offset = geometry[anchor].y
+                            if offset > moreLoader.threshold {
+                                Task {
+                                    guard moreLoader.isLoading == false else { return }
+                                    moreLoader.isLoading = true
+                                    await refreshAction?()
+                                    moreLoader.isLoading = false
+                                }
                             }
-                    }
-                    .onPreferenceChange(MoreLoaderKeys.PreKey.self) {
-                        moreLoader.scrollDetector.send($0)
-                    }
+                        }
                 }
+                
             }
-            progressView
         }
         .coordinateSpace(name: "chatScrollView")
-        .onReceive(moreLoader.scrollPublisher) {
-            if $0.top > moreLoader.threshold && !moreLoader.isLoading, let refreshAction = refreshAction {
-                Task {
-                    moreLoader.isLoading = true
-                    await ToneManager.shared.vibrate(vibration: .rigid)
-                    await refreshAction()
-                    moreLoader.isLoading = false
-                }
-            }
-        }
     }
     
     private var progressView: some View {
         VStack {
             if moreLoader.isLoading {
-                CircleActivityView(lineWidth: 3, pathColor: Color(uiColor: .systemBackground), lineColor: .orange)
-                    .frame(width: 25, height: 25)
-                    .padding()
+                ProgressView()
+            } else {
+                Text("more messages ..")
+                    .italic()
+                    .foregroundStyle(.tertiary)
             }
         }
+        .frame(height: 30)
+        .padding(.top)
     }
 }
 

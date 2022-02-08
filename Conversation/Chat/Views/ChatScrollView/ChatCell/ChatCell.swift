@@ -8,48 +8,44 @@
 import SwiftUI
 
 struct ChatCell: View {
-
-    @EnvironmentObject private var msg: Msg
-    @EnvironmentObject private var actionHandler: ChatActionHandler
+    
     @State private var showDetails = false
+    @State private var locationX = CGFloat.zero
+    
+    @EnvironmentObject private var msg: Msg
+    @EnvironmentObject private var style: MsgStyle
     
     var body: some View {
-        HStack(alignment: .bottom, spacing: 1) {
+        
+        HStack(alignment: .bottom, spacing: 0) {
             
-            msg.rType == .Send ? Spacer(minLength: 20).any : msg.progress.view().any
-    
+            leftView()
+            
             VStack(alignment: msg.rType.hAlignment, spacing: 2) {
-                if showDetails {
-                    topHiddenView
-                }
-                getBubble()
-                    .saveSize(viewId: msg.id)
-                    .frame(width: msg.bubbleSize?.width, height: msg.bubbleSize?.height)
-                if showDetails {
-                    bottomHiddenView
-                }
+                
+                topView()
+                
+                bubbleView()
             }
-            msg.rType == .Send ? msg.progress.view().any : Spacer(minLength: 20).any
-        }
-        .onPreferenceChange(SaveSizePrefKey.self) { preferences in
-            guard msg.bubbleSize == nil else { return }
-            DispatchQueue.main.async {
-                if let p = preferences.first(where: { $0.viewId == msg.id }) {
-                    msg.bubbleSize = p.size
-                }
-            }
+            
+            rightView()
         }
         .transition(.move(edge: .bottom))
         .id(msg.id)
     }
+}
+
+
+// Sub Views
+extension ChatCell {
     
-    private func getBubble() -> some View {
+    private func bubbleView() -> some View {
         return Group {
             switch msg.msgType {
             case .Text:
                 if let data = msg.textData {
                     TextBubble(data: data)
-                        
+                    
                 }
             case .Image:
                 if let data = msg.imageData {
@@ -67,6 +63,9 @@ struct ChatCell: View {
                 EmptyView()
             }
         }
+        .clipShape(BubbleShape(corners: style.bubbleCorner))
+        .offset(x: locationX)
+        .gesture(bubbleDragGesture)
         .onTapGesture {
             Task {
                 await ToneManager.shared.vibrate(vibration: .soft)
@@ -78,15 +77,86 @@ struct ChatCell: View {
         .contextMenu{ MsgContextMenu().environmentObject(msg) }
     }
     
-    private var topHiddenView: some View {
-        MsgDateView(date: msg.date)
-            .font(.system(size: UIFont.smallSystemFontSize, weight: .medium, design: .rounded))
-            .foregroundStyle(.secondary)
-            .padding(.top)
-            .padding(.horizontal)
-        
+    private func leftView() -> some View {
+        Group {
+            if msg.rType == .Send {
+                Spacer(minLength: 35)
+            } else {
+                if msg.progress == .Read && style.showAvatar {
+                    Image(systemName: "person.circle.fill")
+                        .foregroundStyle(.tertiary)
+                } else {
+                    msg.progress.view()
+                }
+            }
+        }
     }
-    private var bottomHiddenView: some View {
-        EmptyView()
+    private func rightView() -> some View {
+        Group {
+            if msg.rType == .Send {
+                if msg.progress == .Read && style.showAvatar {
+                    Image(systemName: "person.circle.fill")
+                        .foregroundStyle(.tertiary)
+                } else {
+                    msg.progress.view()
+                }
+            } else {
+                Spacer(minLength: 35)
+            }
+        }
+    }
+    
+    private func topView() -> some View {
+        Group {
+            if showDetails || style.showTime {
+                MsgDateView(date: msg.date)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+                    .padding(.top)
+                    .padding(.horizontal)
+            }
+        }
+    }
+    
+    private func bottomView() -> some View {
+        Group {
+            
+        }
     }
 }
+
+// Gustures
+extension ChatCell {
+    private var bubbleDragGesture: some Gesture {
+        DragGesture(minimumDistance: 50, coordinateSpace: .local)
+            .onChanged { value in
+                var transX = value.translation.width
+
+                if msg.rType == .Send {
+                    if transX > 0 {
+                        transX = 0
+                    }
+                } else {
+                    if transX < 0 {
+                        transX = 0
+                    }
+                }
+                
+                
+                withAnimation(.interactiveSpring()) {
+                    self.locationX = transX
+                }
+                
+            }
+            .onEnded { value in
+                guard locationX != 0 else { return }
+                Task {
+                    await ToneManager.shared.vibrate(vibration: .rigid)
+                }
+                withAnimation(.interactiveSpring()) {
+                    self.locationX = 0
+                }
+            }
+    }
+}
+

@@ -21,9 +21,7 @@ struct MsgContextMenu: View {
         }
         
         Button(action: {
-            if let index = datasource.msgs.firstIndex(of: msg) {
-                datasource.msgs.remove(at: index)
-            }
+            
         }) {
             Label("Delete", systemImage: "trash.fill")
         }

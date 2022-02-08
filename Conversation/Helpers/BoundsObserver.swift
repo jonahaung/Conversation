@@ -24,10 +24,17 @@ extension View {
             }
         }
     }
-    public func saveSize(viewId: String, color: Color = .clear, cornorRadius: CGFloat = 0, coordinateSpace: CoordinateSpace = .global) -> some View {
-        background(GeometryReader { proxy in
-            color.cornerRadius(cornorRadius).preference(key: SaveSizePrefKey.self, value: [SaveSizePrefData(viewId: viewId, size: proxy.size)])
-        })
+    public func saveSize(viewId: String?, coordinateSpace: CoordinateSpace = .global) -> some View {
+        Group {
+            if let viewId = viewId {
+                background(GeometryReader { proxy in
+                    Color.clear.preference(key: SaveSizePrefKey.self, value: [SaveSizePrefData(viewId: viewId, size: proxy.size)])
+                })
+            }else {
+                background()
+            }
+        }
+        
     }
     
     public func retrieveSize(viewId: String, _ rect: Binding<CGSize>) -> some View {

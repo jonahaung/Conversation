@@ -10,15 +10,15 @@ import Combine
 
 class MoreLoader: ObservableObject {
 
-    let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(top: .zero))
+    let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(top: nil))
     let scrollPublisher: AnyPublisher<MoreLoaderKeys.PreData, Never>
     
-    let threshold = 50.0
+    let threshold = 10.0
     @Published var isLoading = false
     
     init() {
         scrollPublisher = scrollDetector
-            .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .dropFirst()
             .eraseToAnyPublisher()
     }

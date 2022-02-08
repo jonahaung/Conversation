@@ -71,8 +71,7 @@ extension InputToolbar {
         case .Camera:
             break
         case .PhotoLibrary:
-            let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg", rType: .Send)))
-            msg.bubbleSize = .init(width: 250, height: 250)
+            let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")))
             msgSender.send(msg: msg)
             datasource.msgs.append(msg)
             chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)

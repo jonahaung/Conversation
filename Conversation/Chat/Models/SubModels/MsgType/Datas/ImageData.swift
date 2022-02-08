@@ -9,10 +9,9 @@ import SwiftUI
 
 extension Msg.MsgType {
     
-    struct ImagePData: ChatDataRepresenting {
+    struct ImageData: ChatDataRepresenting {
         
         let urlString: String
-        let rType: Msg.RecieptType
         
     }
 }
