@@ -12,11 +12,7 @@ class ChatLayout: ObservableObject {
 
     @Published var textViewHeight = CGFloat.zero
     @Published var focusedItem: FocusedItem?
-
-    var inputViewFrame = CGRect.zero {
-        willSet {
-            guard newValue.height != inputViewFrame.height else { return }
-            objectWillChange.send()
-        }
-    }
+    @Published var  inputViewFrame = CGRect.zero
+    
+    var positions = ScrollPositions()
 }

@@ -9,6 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     
+    init() {
+//        UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().shadowImage = UIImage()
+    }
     var body: some View {
         NavigationView {
             ChatView().navigationTitle("Chat")

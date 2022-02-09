@@ -8,13 +8,27 @@
 import SwiftUI
 import Combine
 
-class MoreLoader: ObservableObject {
+final class MoreLoader: ObservableObject {
 
-    let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(top: nil))
+    enum LoadingState {
+        case None, Loaded
+    }
+    let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(bounds: .zero, parentSize: .zero))
     let scrollPublisher: AnyPublisher<MoreLoaderKeys.PreData, Never>
     
-    let threshold = 10.0
-    @Published var isLoading = false
+    let resetTrashold = -400.00
+  
+    var state = LoadingState.Loaded {
+        didSet {
+            if state == .None {
+               objectWillChange.send()
+            } else {
+                withAnimation {
+                    objectWillChange.send()
+                }
+            }
+        }
+    }
     
     init() {
         scrollPublisher = scrollDetector

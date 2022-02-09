@@ -30,6 +30,10 @@ struct ChatCell: View {
             
             rightView()
         }
+        .onAppear{
+            showDetails = false
+            locationX = 0
+        }
         .transition(.move(edge: .bottom))
         .id(msg.id)
     }
@@ -45,7 +49,8 @@ extension ChatCell {
             case .Text:
                 if let data = msg.textData {
                     TextBubble(data: data)
-                    
+                        .foregroundColor(msg.rType.textColor)
+                        .background(msg.rType.bubbleColor)
                 }
             case .Image:
                 if let data = msg.imageData {
@@ -65,7 +70,7 @@ extension ChatCell {
         }
         .clipShape(BubbleShape(corners: style.bubbleCorner))
         .offset(x: locationX)
-        .gesture(bubbleDragGesture)
+//        .gesture(bubbleDragGesture)
         .onTapGesture {
             Task {
                 await ToneManager.shared.vibrate(vibration: .soft)
@@ -110,7 +115,7 @@ extension ChatCell {
         Group {
             if showDetails || style.showTime {
                 MsgDateView(date: msg.date)
-                    .font(.caption)
+                    .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
                     .foregroundStyle(.tertiary)
                     .padding(.top)
                     .padding(.horizontal)
@@ -128,7 +133,7 @@ extension ChatCell {
 // Gustures
 extension ChatCell {
     private var bubbleDragGesture: some Gesture {
-        DragGesture(minimumDistance: 50, coordinateSpace: .local)
+        DragGesture(minimumDistance: 10, coordinateSpace: .local)
             .onChanged { value in
                 var transX = value.translation.width
 
@@ -141,8 +146,6 @@ extension ChatCell {
                         transX = 0
                     }
                 }
-                
-                
                 withAnimation(.interactiveSpring()) {
                     self.locationX = transX
                 }

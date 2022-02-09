@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FocusedItem: Equatable {
+    
     let id: String
     let anchor: UnitPoint
     let animated: Bool

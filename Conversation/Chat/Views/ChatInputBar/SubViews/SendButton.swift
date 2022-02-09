@@ -33,10 +33,7 @@ struct SendButton: View {
             }
             
             func sendMessage(msg: Msg) {
-                datasource.msgs.append(msg)
-                msgSender.send(msg: msg)
-                chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
-                actionHandler.onSendMessage(msg: msg)
+                MockSocket.shared.add(msg: msg)
             }
         } label: {
             ZStack {

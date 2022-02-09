@@ -14,13 +14,12 @@ extension ChatLayout {
     }
     
     func scrollTo(_ focusedItem: FocusedItem?, _ scrollView: ScrollViewProxy) {
-        guard let focusedItem = focusedItem else {
-            return
-        }
+        guard let focusedItem = focusedItem else { return }
         self.focusedItem = nil
         if focusedItem.animated {
+            guard positions.scrolledAtButton() else { return }
             DispatchQueue.main.async {
-                withAnimation(.interactiveSpring()) {
+                withAnimation {
                     scrollView.scrollTo(focusedItem.id, anchor: focusedItem.anchor)
                 }
             }
@@ -28,5 +27,18 @@ extension ChatLayout {
             scrollView.scrollTo(focusedItem.id, anchor: focusedItem.anchor)
         }
         
+    }
+}
+
+extension ChatLayout {
+    
+    class ScrollPositions {
+        var cached: (contentFrame: CGRect, parentSize: CGSize) = (.zero, .zero)
+        func scrolledAtButton() -> Bool {
+            guard cached.parentSize != .zero else {
+                return true
+            }
+            return (cached.contentFrame.maxY - cached.parentSize.height) < cached.parentSize.height*2
+        }
     }
 }

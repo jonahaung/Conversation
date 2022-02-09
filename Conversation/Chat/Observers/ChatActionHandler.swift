@@ -10,6 +10,9 @@ import Foundation
 class ChatActionHandler: ObservableObject {
     
     func onSendMessage(msg: Msg) {
+        if msg.progress == .Read {
+            return
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             msg.applyAction(action: .MsgProgress(value: .Sent))
             Task {

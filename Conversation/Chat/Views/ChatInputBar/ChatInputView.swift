@@ -13,7 +13,6 @@ struct ChatInputView: View {
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
     var body: some View {
-        
         VStack() {
             HStack(alignment: .bottom) {
                 LeftMenuButton()
@@ -25,8 +24,8 @@ struct ChatInputView: View {
             pickerView()
         }
         .padding(7)
-        .background(.ultraThickMaterial)
-        .saveBounds(viewId: "1", coordinateSpace: .named("chatScrollView"))
+        .background(.thickMaterial)
+//        .saveBounds(viewId: "1", coordinateSpace: .named("chatScrollView"))
     }
     
     private func pickerView() -> some View {
