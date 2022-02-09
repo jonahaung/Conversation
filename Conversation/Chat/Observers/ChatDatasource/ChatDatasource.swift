@@ -10,7 +10,7 @@ import SwiftUI
 
 class ChatDatasource: ObservableObject {
     
-    var msgs = MockDatabase.msgs(for: 50)
+    @Published var msgs = MockDatabase.msgs(for: 50)
     
     func getMoreMsg() async -> [Msg] {
         do {
@@ -20,7 +20,6 @@ class ChatDatasource: ObservableObject {
             print(error.localizedDescription)
             return []
         }
-        
     }
     
     func delete(msg: Msg) {

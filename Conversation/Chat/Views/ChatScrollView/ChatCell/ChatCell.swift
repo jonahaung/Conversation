@@ -113,7 +113,7 @@ extension ChatCell {
     
     private func topView() -> some View {
         Group {
-            if showDetails || style.showTime {
+            if showDetails {
                 MsgDateView(date: msg.date)
                     .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
                     .foregroundStyle(.tertiary)

@@ -9,19 +9,32 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @EnvironmentObject private var datasource: ChatDatasource
-    @EnvironmentObject private var chatLayout: ChatLayout
-    @EnvironmentObject private var msgCreater: MsgCreator
-    @EnvironmentObject private var inputManager: ChatInputViewManager
+    @StateObject private var datasource = ChatDatasource()
+    @StateObject private var chatLayout = ChatLayout()
+    @StateObject private var msgCreater = MsgCreator()
+    @StateObject private var inputManager = ChatInputViewManager()
     
     var body: some View {
         VStack(spacing: 0) {
             ChatScrollView { proxy in
                 LazyVStack(spacing: 0) {
-                    ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { i, msg in
+                    ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
+                        
+                        if canShowTimeSeparater(for: msg, at: index) {
+                            MsgDateView(date: msg.date)
+                                .font(.system(size: UIFont.systemFontSize, weight: .medium))
+                                .padding(.vertical, 10)
+                                .foregroundStyle(.tertiary)
+                        }
                         ChatCell()
                             .environmentObject(msg)
-                            .environmentObject(msgStyle(for: msg, at: i))
+                            .environmentObject(msgStyle(for: msg, at: index))
+                    }
+                    
+                    if chatLayout.isTyping {
+                        ProgressView()
+                            .padding()
+                            .id("typing")
                     }
                     Divider()
                         .padding(.top, 5)
@@ -42,30 +55,37 @@ struct ChatView: View {
             ChatInputView()
         }
         .navigationBarTitleDisplayMode(.inline)
-    
-    }
-    
-    private var leading: some View {
-        Button("Button") {
-            
+        .onDisappear{
+            IncomingSocket.shared.disconnect()
+            OutgoingSocket.shared.disconnect()
         }
-    }
-    private var trailing: some View {
-        Button("Button") {
-            
-        }
+        .environmentObject(datasource)
+        .environmentObject(chatLayout)
+        .environmentObject(msgCreater)
+        .environmentObject(inputManager)
+        
     }
     
     private func connectSockets() {
+        
         IncomingSocket.shared.connect(with: ["aung", "Jonah"])
-            .onTypingStatus {
+            .onTypingStatus { isTyping in
+                guard chatLayout.positions.scrolledAtButton() else { return }
+                chatLayout.isTyping = true
+                chatLayout.scrollToTyping(animated: true)
                 Task {
                     await ToneManager.shared.playSound(tone: .Typing)
                 }
             }.onNewMsg { msg in
+                chatLayout.isTyping = false
                 datasource.msgs.append(msg)
+                guard chatLayout.positions.scrolledAtButton() else { return }
                 chatLayout.scrollToBottom(animated: true)
+                Task {
+                    await ToneManager.shared.playSound(tone: .receivedMessage)
+                }
             }
+        
         OutgoingSocket.shared.connect(with: ["aung", "Jonah"])
             .onAddMsg{ msg in
                 datasource.msgs.append(msg)
@@ -102,8 +122,8 @@ extension ChatView {
     }
     
     private func msgStyle(for msg: Msg, at i: Int) -> MsgStyle {
+        
         var corners: UIRectCorner = []
-        var showSpacer = false
         var showAvatar = false
         
         if isFromCurrentSender(msg: msg) {
@@ -111,7 +131,6 @@ extension ChatView {
             corners.formUnion(.bottomLeft)
             if !isPreviousMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.topRight)
-                showSpacer = i > 0 && AppUserDefault.shared.showTimeLabels
             }
             if !isNextMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.bottomRight)
@@ -122,7 +141,6 @@ extension ChatView {
             corners.formUnion(.bottomRight)
             if !isPreviousMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.topLeft)
-                showSpacer = i > 0 && AppUserDefault.shared.showTimeLabels
             }
             if !isNextMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.bottomLeft)
@@ -130,6 +148,16 @@ extension ChatView {
             }
         }
         
-        return MsgStyle(bubbleCorner: corners, showSpacer: showSpacer, showAvatar: showAvatar)
+        return MsgStyle(bubbleCorner: corners, showAvatar: showAvatar)
+    }
+    
+    private func canShowTimeSeparater(for msg: Msg, at i: Int) -> Bool {
+        guard i > 0 else { return true }
+        let previousMsg = datasource.msgs[i - 1]
+        
+        if msg.rType != previousMsg.rType {
+            return true
+        }
+        return false
     }
 }

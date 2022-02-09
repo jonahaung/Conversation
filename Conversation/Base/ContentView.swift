@@ -18,10 +18,7 @@ struct ContentView: View {
             Form {
                 NavigationLink("Go to chat") {
                     ChatView().navigationTitle("Chat")
-                        .environmentObject(ChatDatasource())
-                        .environmentObject(ChatLayout())
-                        .environmentObject(MsgCreator())
-                        .environmentObject(ChatInputViewManager())
+                        
                 }
 
                 NavigationLink("Settings") {

@@ -10,12 +10,10 @@ import SwiftUI
 class MsgStyle: ObservableObject {
     
     var bubbleCorner: UIRectCorner
-    var showTime: Bool
     var showAvatar: Bool
     
-    init(bubbleCorner: UIRectCorner, showSpacer: Bool, showAvatar: Bool) {
+    init(bubbleCorner: UIRectCorner, showAvatar: Bool) {
         self.bubbleCorner = bubbleCorner
-        self.showTime = showSpacer
         self.showAvatar = showAvatar
     }
 }

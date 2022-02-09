@@ -13,6 +13,10 @@ extension ChatLayout {
         guard focusedItem == nil else { return }
         focusedItem = .bottomItem(animated: animated)
     }
+    
+    func scrollToTyping(animated: Bool) {
+        focusedItem = .init(id: "typing", anchor: .bottom, animated: animated)
+    }
     func scrollToBottom(_ scrollView: ScrollViewProxy, animated: Bool) {
         scrollTo(FocusedItem.bottomItem(animated: animated), scrollView)
     }
@@ -30,7 +34,6 @@ extension ChatLayout {
         }else {
             scrollView.scrollTo(focusedItem.id, anchor: focusedItem.anchor)
         }
-        
     }
 }
 
