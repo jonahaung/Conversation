@@ -15,18 +15,10 @@ final class MoreLoader: ObservableObject {
     }
     let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(bounds: .zero, parentSize: .zero))
     let scrollPublisher: AnyPublisher<MoreLoaderKeys.PreData, Never>
-    
-    let resetTrashold = -400.00
   
-    var state = LoadingState.Loaded {
+    var state = LoadingState.None {
         didSet {
-            if state == .None {
-               objectWillChange.send()
-            } else {
-                withAnimation {
-                    objectWillChange.send()
-                }
-            }
+            objectWillChange.send()
         }
     }
     

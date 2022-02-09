@@ -9,6 +9,10 @@ import SwiftUI
 
 extension ChatLayout {
     
+    func scrollToBottom(animated: Bool) {
+        guard focusedItem == nil else { return }
+        focusedItem = .bottomItem(animated: animated)
+    }
     func scrollToBottom(_ scrollView: ScrollViewProxy, animated: Bool) {
         scrollTo(FocusedItem.bottomItem(animated: animated), scrollView)
     }

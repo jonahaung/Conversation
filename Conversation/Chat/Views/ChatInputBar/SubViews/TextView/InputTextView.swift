@@ -18,7 +18,7 @@ struct InputTextView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
-        textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize, weight: .medium)
+        textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize)
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.separator])
         textView.delegate = context.coordinator
         return textView
@@ -44,20 +44,25 @@ struct InputTextView: UIViewRepresentable {
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.textViewHeight = height
         }
-        
+        func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat) {
+            parent.chatLayout.scrollToBottom(animated: true)
+        }
         func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
             if !growingTextView.hasText {
                 growingTextView.endEditing(true)
             }
             return growingTextView.hasText
         }
-        
-        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
+        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
             parent.inputManager.keyboardStatus = .Shown
+        }
+        func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
+            parent.inputManager.keyboardStatus = .Hidden
+        }
+        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
             return true
         }
         func growingTextViewShouldEndEditing(_ growingTextView: GrowingTextView) -> Bool {
-            parent.inputManager.keyboardStatus = .Hidden
             return true
         }
     }

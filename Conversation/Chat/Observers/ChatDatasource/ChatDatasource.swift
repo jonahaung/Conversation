@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ChatDatasource: ObservableObject {
     
@@ -13,12 +14,21 @@ class ChatDatasource: ObservableObject {
     
     func getMoreMsg() async -> [Msg] {
         do {
-            try await Task.sleep(nanoseconds: 1_000_000_000)
+            try await Task.sleep(nanoseconds: 2_000_000_000)
             return MockDatabase.msgs(for: 50) + msgs
         }catch {
             print(error.localizedDescription)
             return []
         }
         
+    }
+    
+    func delete(msg: Msg) {
+        if let index = msgs.firstIndex(of: msg) {
+            msgs.remove(at: index)
+            withAnimation {
+                objectWillChange.send()
+            }
+        }
     }
 }

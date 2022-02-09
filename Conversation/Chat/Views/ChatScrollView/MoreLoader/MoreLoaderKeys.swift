@@ -18,7 +18,13 @@ struct MoreLoaderKeys {
     }
     
     struct PreKey: PreferenceKey {
-        static var defaultValue: PreData? = nil
-        static func reduce(value: inout PreData?, nextValue: () -> PreData?) {}
+        
+        typealias Value = PreData?
+        
+        static var defaultValue: Value = nil
+        
+        static func reduce(value: inout Value, nextValue: () -> Value) {
+            value = nextValue()
+        }
     }
 }

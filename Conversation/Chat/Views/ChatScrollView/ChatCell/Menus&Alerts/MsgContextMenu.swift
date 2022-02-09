@@ -21,7 +21,9 @@ struct MsgContextMenu: View {
         }
         
         Button(action: {
-            
+            DispatchQueue.main.async {
+                datasource.delete(msg: msg)
+            }
         }) {
             Label("Delete", systemImage: "trash.fill")
         }

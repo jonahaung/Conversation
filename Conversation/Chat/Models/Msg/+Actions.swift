@@ -13,12 +13,6 @@ extension Msg {
         switch action {
         case .MsgProgress(let value):
             self.progress = value
-            animate()
-        }
-    }
-
-    private func animate() {
-        withAnimation(.interactiveSpring()) {
             objectWillChange.send()
         }
     }

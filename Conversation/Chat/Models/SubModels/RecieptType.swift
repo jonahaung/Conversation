@@ -28,7 +28,7 @@ extension Msg.RecieptType {
     var textColor: Color? {
         switch self {
         case .Send:
-            return .white
+            return .init(uiColor: .systemBackground)
         case .Receive:
             return nil
         }

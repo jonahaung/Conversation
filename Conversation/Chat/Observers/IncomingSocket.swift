@@ -25,9 +25,9 @@
 import UIKit
 
 
-final class MockSocket {
+final class IncomingSocket {
     
-    static var shared = MockSocket()
+    static var shared = IncomingSocket()
     
     private var timer: Timer?
 
@@ -79,14 +79,11 @@ final class MockSocket {
                 await ToneManager.shared.playSound(tone: .receivedMessage)
             }
         } else {
+            guard AppUserDefault.shared.autoGenerateMockMessages else { return }
             let msg = Msg(msgType: .Text(data: .init(text: Lorem.sentence)), rType: .Receive, progress: .Read)
             msgs.append(msg)
             onTypingStatusCode?()
         }
     }
-    @discardableResult
-    func add(msg: Msg) -> Self {
-        onMsgCode?(msg)
-        return self
-    }
+    
 }

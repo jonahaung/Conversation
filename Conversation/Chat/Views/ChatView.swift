@@ -12,9 +12,7 @@ struct ChatView: View {
     @EnvironmentObject private var datasource: ChatDatasource
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var msgCreater: MsgCreator
-    @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
-    @EnvironmentObject private var actionHandler: ChatActionHandler
     
     var body: some View {
         VStack(spacing: 0) {
@@ -25,21 +23,14 @@ struct ChatView: View {
                             .environmentObject(msg)
                             .environmentObject(msgStyle(for: msg, at: i))
                     }
-                    Color.clear
+                    Divider()
+                        .padding(.top, 5)
                         .id("")
                 }
                 .padding(.horizontal, 2)
                 .task {
                     chatLayout.scrollToBottom(proxy.scrollView, animated: false)
-                    MockSocket.shared.connect(with: ["aung", "Jonah"])
-                        .onTypingStatus {
-                            print("typing")
-                        }.onNewMsg { msg in
-                            msgSender.send(msg: msg)
-                            datasource.msgs.append(msg)
-                            chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
-                            actionHandler.onSendMessage(msg: msg)
-                        }
+                    connectSockets()
                 }
                 .onChange(of: chatLayout.focusedItem) {
                     chatLayout.scrollTo($0, proxy.scrollView)
@@ -51,8 +42,7 @@ struct ChatView: View {
             ChatInputView()
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(leading: leading, trailing: trailing)
-//        .retrieveBounds(viewId: "1", $chatLayout.inputViewFrame)
+    
     }
     
     private var leading: some View {
@@ -64,6 +54,32 @@ struct ChatView: View {
         Button("Button") {
             
         }
+    }
+    
+    private func connectSockets() {
+        IncomingSocket.shared.connect(with: ["aung", "Jonah"])
+            .onTypingStatus {
+                Task {
+                    await ToneManager.shared.playSound(tone: .Typing)
+                }
+            }.onNewMsg { msg in
+                datasource.msgs.append(msg)
+                chatLayout.scrollToBottom(animated: true)
+            }
+        OutgoingSocket.shared.connect(with: ["aung", "Jonah"])
+            .onAddMsg{ msg in
+                datasource.msgs.append(msg)
+                chatLayout.scrollToBottom(animated: true)
+                Task {
+                    await ToneManager.shared.playSound(tone: .Tock)
+                }
+                OutgoingSocket.shared.send(msg: msg)
+            }
+            .onSentMsg { msg in
+                Task {
+                    await ToneManager.shared.playSound(tone: .sendMessage)
+                }
+            }
     }
 }
 
@@ -86,7 +102,6 @@ extension ChatView {
     }
     
     private func msgStyle(for msg: Msg, at i: Int) -> MsgStyle {
-        
         var corners: UIRectCorner = []
         var showSpacer = false
         var showAvatar = false
@@ -96,18 +111,18 @@ extension ChatView {
             corners.formUnion(.bottomLeft)
             if !isPreviousMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.topRight)
-                showSpacer = i > 0
+                showSpacer = i > 0 && AppUserDefault.shared.showTimeLabels
             }
             if !isNextMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.bottomRight)
-                //                showAvatar = true
+                //showAvatar = true
             }
         } else {
             corners.formUnion(.topRight)
             corners.formUnion(.bottomRight)
             if !isPreviousMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.topLeft)
-                showSpacer = i > 0
+                showSpacer = i > 0 && AppUserDefault.shared.showTimeLabels
             }
             if !isNextMessageSameSender(at: i, for: msg) {
                 corners.formUnion(.bottomLeft)

@@ -13,9 +13,7 @@ struct LocationPicker: View {
     @EnvironmentObject private var datasource: ChatDatasource
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var msgCreater: MsgCreator
-    @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
-    @EnvironmentObject private var actionHandler: ChatActionHandler
     
     @StateObject private var locationManager = Location.shared
     @State private var address = ""
@@ -31,11 +29,8 @@ struct LocationPicker: View {
 
             Button("Send Current Location") {
                 let msg = msgCreater.create(msgType: .Location(data: .init(location: .init(latitude: locationManager.location.coordinate.latitude, longitude: locationManager.location.coordinate.longitude))))
-                msgSender.send(msg: msg)
-                datasource.msgs.append(msg)
-                chatLayout.focusedItem = FocusedItem.bottomItem(animated: true)
                 inputManager.currentInputItem = .None
-                actionHandler.onSendMessage(msg: msg)
+                OutgoingSocket.shared.add(msg: msg)
             }
         }
         .aspectRatio(1, contentMode: .fit)

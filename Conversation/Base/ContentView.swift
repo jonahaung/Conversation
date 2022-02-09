@@ -10,19 +10,27 @@ import SwiftUI
 struct ContentView: View {
     
     init() {
-//        UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().shadowImage = UIImage()
     }
+    
     var body: some View {
         NavigationView {
-            ChatView().navigationTitle("Chat")
-                .environmentObject(ChatDatasource())
-                .environmentObject(ChatLayout())
-                .environmentObject(MsgCreator())
-                .environmentObject(MsgSender())
-                .environmentObject(ChatInputViewManager())
-                .environmentObject(ChatActionHandler())
+            Form {
+                NavigationLink("Go to chat") {
+                    ChatView().navigationTitle("Chat")
+                        .environmentObject(ChatDatasource())
+                        .environmentObject(ChatLayout())
+                        .environmentObject(MsgCreator())
+                        .environmentObject(ChatInputViewManager())
+                }
+
+                NavigationLink("Settings") {
+                    SettingsView()
+                }
+            }
+            .navigationTitle("Home")
         }
+        .environmentObject(AppUserDefault.shared)
         .navigationViewStyle(.stack)
     }
 }

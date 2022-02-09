@@ -12,28 +12,26 @@ struct SendButton: View {
     @EnvironmentObject private var datasource: ChatDatasource
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var msgCreater: MsgCreator
-    @EnvironmentObject private var msgSender: MsgSender
     @EnvironmentObject private var inputManager: ChatInputViewManager
-    @EnvironmentObject private var actionHandler: ChatActionHandler
     
     var body: some View {
         Button {
             if inputManager.keyboardStatus == .Shown {
                 guard !inputManager.text.isEmpty else { return }
-                Task {
-                    await ToneManager.shared.vibrate(vibration: .soft)
-                }
+                
                 let text = inputManager.text
                 inputManager.text = String()
-                let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))
-                sendMessage(msg: msg)
+                Task {
+                    await ToneManager.shared.vibrate(vibration: .light)
+                    let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))
+                    OutgoingSocket.shared.add(msg: msg)
+                }
             }else {
-                let msg = msgCreater.create(msgType: .Emoji(data: .init(emojiID: "hand.thumbsup.fill")))
-                sendMessage(msg: msg)
-            }
-            
-            func sendMessage(msg: Msg) {
-                MockSocket.shared.add(msg: msg)
+                Task {
+                    await ToneManager.shared.vibrate(vibration: .light)
+                    let msg = msgCreater.create(msgType: .Emoji(data: .init(emojiID: "hand.thumbsup.fill")))
+                    OutgoingSocket.shared.add(msg: msg)
+                }
             }
         } label: {
             ZStack {
