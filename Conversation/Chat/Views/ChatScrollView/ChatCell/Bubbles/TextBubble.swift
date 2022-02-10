@@ -16,8 +16,5 @@ struct TextBubble: View {
             .font(.body)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        
-        
     }
-    
 }

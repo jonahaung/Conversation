@@ -18,16 +18,11 @@ struct ChatCell: View {
     var body: some View {
         
         HStack(alignment: .bottom, spacing: 0) {
-            
             leftView()
-            
             VStack(alignment: msg.rType.hAlignment, spacing: 2) {
-                
                 topView()
-                
                 bubbleView()
             }
-            
             rightView()
         }
         .onAppear{

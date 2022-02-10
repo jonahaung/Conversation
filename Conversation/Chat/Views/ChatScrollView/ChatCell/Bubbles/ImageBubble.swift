@@ -12,7 +12,6 @@ struct ImageBubble: View {
     let data: Msg.MsgType.ImageData
     
     var body: some View {
-        
         AsyncImage(
             url: URL(string: data.urlString),
             content: { image in
@@ -23,6 +22,5 @@ struct ImageBubble: View {
                 ProgressView()
             }
         )
-        
     }
 }

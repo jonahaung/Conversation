@@ -11,6 +11,7 @@ struct ContentView: View {
     
     init() {
         UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().isTranslucent = false
     }
     
     var body: some View {

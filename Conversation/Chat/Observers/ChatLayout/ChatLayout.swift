@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
-
+import Combine
 
 class ChatLayout: ObservableObject {
 
     @Published var textViewHeight = CGFloat.zero
-    @Published var focusedItem: FocusedItem?
-    @Published var  inputViewFrame = CGRect.zero
     @Published var isTyping = false
-    var positions = ScrollPositions()
+    var positions = LayoutDefinitions.ScrollPositions()
+    
+    init() {
+        scrollPublisher = scrollSender
+            .removeDuplicates()
+            .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
+//            .receive(on: DispatchQueue.main, options: nil)95
+        
+            .dropFirst()
+            .eraseToAnyPublisher()
+    }
+    
+    internal let scrollSender = CurrentValueSubject<LayoutDefinitions.ScrollableObject?, Never>(nil)
+    let scrollPublisher: AnyPublisher<LayoutDefinitions.ScrollableObject?, Never>
 }

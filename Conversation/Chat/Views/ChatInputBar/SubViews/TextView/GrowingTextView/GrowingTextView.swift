@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 open class GrowingTextView: UIView {
     // MARK: - Public properties

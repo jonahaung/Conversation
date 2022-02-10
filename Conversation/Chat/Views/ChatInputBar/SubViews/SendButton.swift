@@ -21,6 +21,7 @@ struct SendButton: View {
                 
                 let text = inputManager.text
                 inputManager.text = String()
+                inputManager.objectWillChange.send()
                 Task {
                     await ToneManager.shared.vibrate(vibration: .light)
                     let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))

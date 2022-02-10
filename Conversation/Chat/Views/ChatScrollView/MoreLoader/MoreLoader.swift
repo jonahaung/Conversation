@@ -10,20 +10,19 @@ import Combine
 
 final class MoreLoader: ObservableObject {
 
-    enum LoadingState {
+    enum State {
         case None, Loaded
     }
-    let scrollDetector: CurrentValueSubject = CurrentValueSubject<MoreLoaderKeys.PreData, Never>(.init(bounds: .zero, parentSize: .zero))
-    let scrollPublisher: AnyPublisher<MoreLoaderKeys.PreData, Never>
-  
-    var state = LoadingState.None {
-        didSet {
-            objectWillChange.send()
-        }
-    }
+    
+    @Published var state = State.None
+    
+    
+    let scrollDetector: CurrentValueSubject = CurrentValueSubject<ChatScrollViewPreferences.Object, Never>(.init(loaclFrame: .zero, globalSize: .zero))
+    let scrollPublisher: AnyPublisher<ChatScrollViewPreferences.Object, Never>
     
     init() {
         scrollPublisher = scrollDetector
+            .removeDuplicates()
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .dropFirst()
             .eraseToAnyPublisher()

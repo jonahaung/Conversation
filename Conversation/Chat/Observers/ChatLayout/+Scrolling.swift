@@ -9,43 +9,25 @@ import SwiftUI
 
 extension ChatLayout {
     
-    func scrollToBottom(animated: Bool) {
-        guard focusedItem == nil else { return }
-        focusedItem = .bottomItem(animated: animated)
+    func sendScroll(id: String, to anchor: UnitPoint = .bottom, animated: Bool) {
+        let obj = LayoutDefinitions.ScrollableObject(id: id, anchor: anchor, animated: animated)
+        scrollSender.send(obj)
     }
     
-    func scrollToTyping(animated: Bool) {
-        focusedItem = .init(id: "typing", anchor: .bottom, animated: animated)
-    }
-    func scrollToBottom(_ scrollView: ScrollViewProxy, animated: Bool) {
-        scrollTo(FocusedItem.bottomItem(animated: animated), scrollView)
-    }
-    
-    func scrollTo(_ focusedItem: FocusedItem?, _ scrollView: ScrollViewProxy) {
-        guard let focusedItem = focusedItem else { return }
-        self.focusedItem = nil
-        if focusedItem.animated {
+    func scroll(to obj: LayoutDefinitions.ScrollableObject?, from proxy: ScrollViewProxy) {
+        guard let obj = obj else {
+            return
+        }
+        if obj.animated {
             guard positions.scrolledAtButton() else { return }
             DispatchQueue.main.async {
                 withAnimation {
-                    scrollView.scrollTo(focusedItem.id, anchor: focusedItem.anchor)
+                    proxy.scrollTo(obj.id, anchor: obj.anchor)
                 }
             }
         }else {
-            scrollView.scrollTo(focusedItem.id, anchor: focusedItem.anchor)
+            proxy.scrollTo(obj.id, anchor: obj.anchor)
         }
     }
-}
-
-extension ChatLayout {
     
-    class ScrollPositions {
-        var cached: (contentFrame: CGRect, parentSize: CGSize) = (.zero, .zero)
-        func scrolledAtButton() -> Bool {
-            guard cached.parentSize != .zero else {
-                return true
-            }
-            return (cached.contentFrame.maxY - cached.parentSize.height) < cached.parentSize.height*2
-        }
-    }
 }

@@ -9,51 +9,43 @@ import SwiftUI
 
 struct ChatScrollView<Content: View>: View {
     
-    typealias ChatScrollViewProxy = (scrollView: ScrollViewProxy, geometry: GeometryProxy)
-    @Environment(\.refresh) public var refreshAction: RefreshAction?
+    private let content: (_ proxy: (scrollView: ScrollViewProxy, geometry: GeometryProxy)) -> Content
     
-    @EnvironmentObject private var chatLayout: ChatLayout
-    @EnvironmentObject private var datasource: ChatDatasource
-    
-    private let content: (_ proxy: ChatScrollViewProxy) -> Content
-    
-    @StateObject private var moreLoader = MoreLoader()
-    private var timeSpacer = TimeSpacer()
-    
-    init(@ViewBuilder content: @escaping (_ proxy: ChatScrollViewProxy) -> Content) {
+    init(@ViewBuilder content: @escaping (_ proxy: (scrollView: ScrollViewProxy, geometry: GeometryProxy)) -> Content) {
         self.content = content
     }
     
+    @Environment(\.refresh) private var refreshAction: RefreshAction?
+    @EnvironmentObject private var chatLayout: ChatLayout
+    @EnvironmentObject private var datasource: ChatDatasource
+    
+    @StateObject private var moreLoader = MoreLoader()
+    private let timeSpacer = TimeSpacer()
+    
     var body: some View {
-        
         GeometryReader { geometry in
             ScrollViewReader { scrollView in
                 ScrollView(showsIndicators: false) {
-                    content(ChatScrollViewProxy(scrollView, geometry))
+                    content((scrollView, geometry))
                         .overlay(progressView, alignment: .top)
-                        .anchorPreference(key: MoreLoaderKeys.PreKey.self, value: .bounds) {
+                        .anchorPreference(key: ChatScrollViewPreferences.Key.self, value: .bounds) {
                             guard timeSpacer.canreturn else { return nil}
-                            return MoreLoaderKeys.PreData(bounds: geometry[$0], parentSize: geometry.size)
+                            return .init(loaclFrame: geometry[$0], globalSize: geometry.size)
                         }
-                        .onPreferenceChange(MoreLoaderKeys.PreKey.self) { pre in
-                            guard let data = pre else { return }
-                            if moreLoader.state == .None {
-                                moreLoader.scrollDetector.send(data)
-                            } else if data.top < 0 {
-                                moreLoader.state = .None
-                            }
-                            chatLayout.positions.cached = (data.bounds, data.parentSize)
+                        .onPreferenceChange(ChatScrollViewPreferences.Key.self) { obj in
+                            guard let obj = obj else { return }
+                            moreLoader.scrollDetector.send(obj)
+                            chatLayout.positions.cached = (obj.loaclFrame, obj.globalSize)
                         }
                         .onReceive(moreLoader.scrollPublisher) { data in
-                            
-                            if moreLoader.state == .None && (0.0...5.0).contains(data.top) {
+                            if moreLoader.state == .None && (0.0...5.0).contains(data.offsetY) {
                                 Task {
                                     moreLoader.state = .Loaded
                                     let firstId = datasource.msgs.first?.id ?? ""
                                     await ToneManager.shared.playSound(tone: .Tock)
                                     await refreshAction?()
-                                    chatLayout.focusedItem = .init(id: firstId, anchor: .top, animated: false)
                                     await ToneManager.shared.vibrate(vibration: .rigid)
+                                    scrollView.scrollTo(firstId, anchor: .top)
                                     moreLoader.state = .None
                                 }
                             }

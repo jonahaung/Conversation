@@ -7,22 +7,18 @@
 
 import SwiftUI
 
-struct MoreLoaderKeys {
+struct ChatScrollViewPreferences {
     
-    struct PreData: Equatable {
+    struct Object: Equatable {
+        let loaclFrame: CGRect
+        let globalSize: CGSize
         
-        let bounds: CGRect
-        let parentSize: CGSize
-        
-        var top: CGFloat { bounds.minY }
+        var offsetY: CGFloat { loaclFrame.minY }
     }
     
-    struct PreKey: PreferenceKey {
-        
-        typealias Value = PreData?
-        
+    struct Key: PreferenceKey {
+        typealias Value = Object?
         static var defaultValue: Value = nil
-        
         static func reduce(value: inout Value, nextValue: () -> Value) {
             value = nextValue()
         }

@@ -18,14 +18,14 @@ struct ChatInputView: View {
                 LeftMenuButton()
                 InputTextView()
                     .frame(height: chatLayout.textViewHeight)
-                    .background(Color(uiColor: .systemBackground).cornerRadius(10))
+                    .background(Color(uiColor: .systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 SendButton()
             }
             pickerView()
         }
         .padding(7)
         .background(.thickMaterial)
-//        .saveBounds(viewId: "1", coordinateSpace: .named("chatScrollView"))
     }
     
     private func pickerView() -> some View {

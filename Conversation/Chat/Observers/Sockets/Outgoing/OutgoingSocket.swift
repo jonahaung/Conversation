@@ -35,8 +35,11 @@ final class OutgoingSocket: ChatRoomSocket {
         onAddMsg = block
         return self
     }
-    func add(msg: Msg) {
+    
+    @discardableResult
+    func add(msg: Msg) -> Self {
         onAddMsg?(msg)
+        return self
     }
     
     // 2
@@ -45,8 +48,8 @@ final class OutgoingSocket: ChatRoomSocket {
         onSentMsgBlock = block
         return self
     }
-    
-    func send(msg: Msg) {
+    @discardableResult
+    func send(msg: Msg) -> Self {
         let operation = MsgSenderOperation(msg)
         operation.completionBlock = { [weak self] in
             if operation.isCancelled {
@@ -58,5 +61,6 @@ final class OutgoingSocket: ChatRoomSocket {
             }
         }
         queue.addOperation(operation)
+        return self
     }
 }

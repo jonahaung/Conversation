@@ -37,16 +37,14 @@ struct InputTextView: UIViewRepresentable {
             self.parent = parent
         }
         
-        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
+        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
             parent.inputManager.text = growingTextView.text ?? ""
         }
         
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.textViewHeight = height
         }
-        func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat) {
-            parent.chatLayout.scrollToBottom(animated: true)
-        }
+        
         func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
             if !growingTextView.hasText {
                 growingTextView.endEditing(true)
@@ -58,12 +56,6 @@ struct InputTextView: UIViewRepresentable {
         }
         func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
             parent.inputManager.keyboardStatus = .Hidden
-        }
-        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
-            return true
-        }
-        func growingTextViewShouldEndEditing(_ growingTextView: GrowingTextView) -> Bool {
-            return true
         }
     }
 }

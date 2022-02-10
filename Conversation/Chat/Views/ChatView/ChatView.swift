@@ -9,10 +9,10 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @StateObject private var datasource = ChatDatasource()
-    @StateObject private var chatLayout = ChatLayout()
-    @StateObject private var msgCreater = MsgCreator()
-    @StateObject private var inputManager = ChatInputViewManager()
+    @StateObject var datasource = ChatDatasource()
+    @StateObject var chatLayout = ChatLayout()
+    @StateObject var msgCreater = MsgCreator()
+    @StateObject var inputManager = ChatInputViewManager()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -34,72 +34,40 @@ struct ChatView: View {
                     if chatLayout.isTyping {
                         ProgressView()
                             .padding()
-                            .id("typing")
+                            .id(LayoutDefinitions.ScrollableType.TypingIndicator.rawValue)
                     }
                     Divider()
                         .padding(.top, 5)
-                        .id("")
+                        .id(LayoutDefinitions.ScrollableType.Bottom.rawValue)
                 }
                 .padding(.horizontal, 2)
+                .onAppear{
+                    connectSockets(scrollProxy: proxy.scrollView)
+                }
+                .onDisappear{
+                    disConnectSockets()
+                }
                 .task {
-                    chatLayout.scrollToBottom(proxy.scrollView, animated: false)
-                    connectSockets()
+                    proxy.scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom.rawValue, anchor: .bottom)
                 }
-                .onChange(of: chatLayout.focusedItem) {
-                    chatLayout.scrollTo($0, proxy.scrollView)
+                .onReceive(chatLayout.scrollPublisher) { obj in
+                    chatLayout.scroll(to: obj, from: proxy.scrollView)
                 }
+//                .onChange(of: chatLayout.focusedItem) {
+//                    chatLayout.scrollTo($0, proxy.scrollView)
+//                }
             }
             .refreshable {
                 datasource.msgs = await datasource.getMoreMsg()
             }
+            
             ChatInputView()
         }
         .navigationBarTitleDisplayMode(.inline)
-        .onDisappear{
-            IncomingSocket.shared.disconnect()
-            OutgoingSocket.shared.disconnect()
-        }
         .environmentObject(datasource)
         .environmentObject(chatLayout)
         .environmentObject(msgCreater)
         .environmentObject(inputManager)
-        
-    }
-    
-    private func connectSockets() {
-        
-        IncomingSocket.shared.connect(with: ["aung", "Jonah"])
-            .onTypingStatus { isTyping in
-                guard chatLayout.positions.scrolledAtButton() else { return }
-                chatLayout.isTyping = true
-                chatLayout.scrollToTyping(animated: true)
-                Task {
-                    await ToneManager.shared.playSound(tone: .Typing)
-                }
-            }.onNewMsg { msg in
-                chatLayout.isTyping = false
-                datasource.msgs.append(msg)
-                guard chatLayout.positions.scrolledAtButton() else { return }
-                chatLayout.scrollToBottom(animated: true)
-                Task {
-                    await ToneManager.shared.playSound(tone: .receivedMessage)
-                }
-            }
-        
-        OutgoingSocket.shared.connect(with: ["aung", "Jonah"])
-            .onAddMsg{ msg in
-                datasource.msgs.append(msg)
-                chatLayout.scrollToBottom(animated: true)
-                Task {
-                    await ToneManager.shared.playSound(tone: .Tock)
-                }
-                OutgoingSocket.shared.send(msg: msg)
-            }
-            .onSentMsg { msg in
-                Task {
-                    await ToneManager.shared.playSound(tone: .sendMessage)
-                }
-            }
     }
 }
 
