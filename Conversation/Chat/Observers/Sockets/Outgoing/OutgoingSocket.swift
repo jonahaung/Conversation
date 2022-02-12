@@ -9,7 +9,7 @@ import Foundation
 
 final class OutgoingSocket: ChatRoomSocket {
     
-    static let shared = OutgoingSocket()
+//    static let shared = OutgoingSocket()
     
     private lazy var queue: OperationQueue = {
         $0.name = "OutgoingSocket"
@@ -37,7 +37,7 @@ final class OutgoingSocket: ChatRoomSocket {
     }
     
     @discardableResult
-    func add(msg: Msg) -> Self {
+    func add(msg: Msg) async -> Self {
         onAddMsg?(msg)
         return self
     }

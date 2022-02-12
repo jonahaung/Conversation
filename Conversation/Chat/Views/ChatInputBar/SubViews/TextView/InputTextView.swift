@@ -28,7 +28,6 @@ struct InputTextView: UIViewRepresentable {
         uiView.text = inputManager.text
     }
     
-    
     class Coordinator: NSObject, GrowingTextViewDelegate {
         
         private let parent: InputTextView
@@ -37,7 +36,7 @@ struct InputTextView: UIViewRepresentable {
             self.parent = parent
         }
         
-        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
+        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
             parent.inputManager.text = growingTextView.text ?? ""
         }
         
@@ -47,15 +46,15 @@ struct InputTextView: UIViewRepresentable {
         
         func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
             if !growingTextView.hasText {
-                growingTextView.endEditing(true)
+                _ = growingTextView.resignFirstResponder()
             }
             return growingTextView.hasText
         }
-        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
-            parent.inputManager.keyboardStatus = .Shown
-        }
-        func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
-            parent.inputManager.keyboardStatus = .Hidden
-        }
+//        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
+//            parent.inputManager.keyboardStatus = .Shown
+//        }
+//        func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
+//            parent.inputManager.keyboardStatus = .Hidden
+//        }
     }
 }

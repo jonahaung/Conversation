@@ -9,8 +9,6 @@ import UIKit
 
 final class IncomingSocket: ChatRoomSocket {
     
-    static var shared = IncomingSocket()
-    
     private lazy var queue: OperationQueue = {
         $0.name = "IncomingSocket"
         $0.maxConcurrentOperationCount = 1

@@ -16,15 +16,6 @@ extension Msg {
 }
 extension Msg.RecieptType {
     
-    var bubbleColor: Color {
-        switch self {
-        case .Send:
-            return .accentColor
-        case .Receive:
-            return Color(uiColor: .systemGray5)
-        }
-    }
-    
     var textColor: Color? {
         switch self {
         case .Send:

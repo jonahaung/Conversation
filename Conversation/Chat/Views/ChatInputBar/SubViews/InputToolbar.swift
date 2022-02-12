@@ -41,6 +41,7 @@ struct InputToolbar: View {
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var msgCreater: MsgCreator
     @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject private var outgoingSocket: OutgoingSocket
     
     var body: some View {
         HStack {
@@ -70,7 +71,9 @@ extension InputToolbar {
             break
         case .PhotoLibrary:
             let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")))
-            OutgoingSocket.shared.add(msg: msg)
+            Task {
+                await outgoingSocket.add(msg: msg)
+            }
         case .SoundRecorder:
             break
         case .Location:

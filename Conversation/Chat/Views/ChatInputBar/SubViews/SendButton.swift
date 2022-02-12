@@ -13,41 +13,43 @@ struct SendButton: View {
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var msgCreater: MsgCreator
     @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject private var outgoingSocket: OutgoingSocket
     
     var body: some View {
         Button {
-            if inputManager.keyboardStatus == .Shown {
+            if !inputManager.text.isEmpty{
                 guard !inputManager.text.isEmpty else { return }
                 
                 let text = inputManager.text
                 inputManager.text = String()
-                inputManager.objectWillChange.send()
                 Task {
-                    await ToneManager.shared.vibrate(vibration: .light)
                     let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))
-                    OutgoingSocket.shared.add(msg: msg)
+                    await ToneManager.shared.vibrate(vibration: .light)
+                    await outgoingSocket.add(msg: msg)
                 }
             }else {
                 Task {
-                    await ToneManager.shared.vibrate(vibration: .light)
                     let msg = msgCreater.create(msgType: .Emoji(data: .init(emojiID: "hand.thumbsup.fill")))
-                    OutgoingSocket.shared.add(msg: msg)
+                    await ToneManager.shared.vibrate(vibration: .light)
+                    await outgoingSocket.add(msg: msg)
                 }
             }
         } label: {
-            ZStack {
-                if inputManager.keyboardStatus == .Hidden {
+            Group {
+                if inputManager.text.isEmpty {
                     Image(systemName: "hand.thumbsup.fill")
                         .resizable()
                         .scaledToFit()
                 } else {
-                    Image(systemName: "circle.fill")
-                        .resizable()
-                        .foregroundColor(.accentColor)
-                    Image(systemName: "shift.fill")
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundColor(.init(uiColor: .systemBackground))
+                    ZStack{
+                        Image(systemName: "circle.fill")
+                            .resizable()
+                            .foregroundColor(.accentColor)
+                        Image(systemName: "shift.fill")
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .foregroundColor(.init(uiColor: .systemBackground))
+                    }
                 }
             }
             .frame(width: 32, height: 32)

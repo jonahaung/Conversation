@@ -8,17 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    init() {
-        UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().isTranslucent = false
-    }
-    
+
     var body: some View {
         NavigationView {
             Form {
                 NavigationLink("Go to chat") {
-                    ChatView().navigationTitle("Chat")
+                    ChatView().navigationBarHidden(true)
                         
                 }
 
@@ -29,6 +24,8 @@ struct ContentView: View {
             .navigationTitle("Home")
         }
         .environmentObject(AppUserDefault.shared)
+        .environmentObject(OutgoingSocket())
+        .environmentObject(IncomingSocket())
         .navigationViewStyle(.stack)
     }
 }

@@ -48,16 +48,7 @@ open class GrowingTextView: UIView {
             assert(newValue >= 0, "MinHeight of growingTextView must be no less than 0.")
         }
     }
-    /// A Boolean value that determines whether growing animations are enabled.
-    ///
-    /// The default value of this property is true.
-    open var isGrowingAnimationEnabled = false
-    /// The time duration of text view's growing animation.
-    ///
-    /// The default value of this property is 0.1.
-    open var animationDuration: TimeInterval = 0.1
-    /// The inset of the text view.
-    ///
+    
     /// The default value of this property is (top: 8, left: 5, bottom: 8, right: 5).
     open var contentInset = UIEdgeInsets(top: 8, left: 14, bottom: 8, right: 5) {
         didSet {
@@ -144,17 +135,7 @@ open class GrowingTextView: UIView {
             return textView.textAlignment
         }
     }
-    /// A Boolean value indicating whether the receiver is editable.
-    ///
-    /// The default value of this property is true.
-    open var isEditable: Bool {
-        set {
-            textView.isEditable = newValue
-        }
-        get {
-            return textView.isEditable
-        }
-    }
+    
     /// The current selection range of the receiver.
     open var selectedRange: NSRange? {
         set {
@@ -307,24 +288,14 @@ extension GrowingTextView {
                 textView.isScrollEnabled = isScrollEnabled
             }
 
-            if isGrowingAnimationEnabled {
-                UIView.animate(withDuration: animationDuration, delay: 0, options: [.allowUserInteraction, .beginFromCurrentState], animations: {
-                    self.updateGrowingTextView(newHeight: newHeight, difference: difference)
-                    }, completion: { (_) in
-                        if let delegate = self.delegate, delegate.responds(to: DelegateSelectors.didChangeHeight) {
-                            delegate.growingTextView!(self, didChangeHeight: newHeight, difference: difference)
-                        }
-                })
-            } else {
-                updateGrowingTextView(newHeight: newHeight, difference: difference)
+            updateGrowingTextView(newHeight: newHeight, difference: difference)
 
-                if let delegate = delegate, delegate.responds(to: DelegateSelectors.didChangeHeight) {
-                    delegate.growingTextView!(self, didChangeHeight: newHeight, difference: difference)
-                }
+            if let delegate = delegate, delegate.responds(to: DelegateSelectors.didChangeHeight) {
+                delegate.growingTextView!(self, didChangeHeight: newHeight, difference: difference)
             }
         }
 
-        updateScrollPosition(animated: false)
+        updateScrollPosition()
         textView.shouldDisplayPlaceholder = textView.text!.isEmpty && isPlaceholderEnabled
     }
 }
@@ -397,7 +368,7 @@ extension GrowingTextView {
         minHeight = heightForNumberOfLines(minNumberOfLines)
     }
 
-    fileprivate func updateScrollPosition(animated: Bool) {
+    fileprivate func updateScrollPosition() {
         guard let selectedTextRange = textView.selectedTextRange else {
             return
         }
@@ -410,14 +381,7 @@ extension GrowingTextView {
             return
         }
 
-        if animated {
-            UIView.beginAnimations(nil, context: nil)
-            UIView.setAnimationBeginsFromCurrentState(true)
-            textView.setContentOffset(CGPoint(x: 0, y: caretY), animated: false)
-            UIView.commitAnimations()
-        } else {
-            textView.setContentOffset(CGPoint(x: 0, y: caretY), animated: false)
-        }
+        textView.setContentOffset(CGPoint(x: 0, y: caretY), animated: false)
     }
 }
 
@@ -478,7 +442,7 @@ extension GrowingTextView: UITextViewDelegate {
     public func textViewDidChangeSelection(_ textView: UITextView) {
         let willUpdateHeight = updatedHeight().difference != 0
         if !willUpdateHeight {
-            updateScrollPosition(animated: true)
+            updateScrollPosition()
         }
         if let delegate = delegate, delegate.responds(to: DelegateSelectors.didChangeSelection) {
             delegate.growingTextViewDidChangeSelection!(self)

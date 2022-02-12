@@ -41,6 +41,14 @@
 		471DA2C027A6596A00432A1D /* ChatInputViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2BF27A6596A00432A1D /* ChatInputViewManager.swift */; };
 		471DA2C327A66A2E00432A1D /* BoundsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2C227A66A2E00432A1D /* BoundsObserver.swift */; };
 		471DA2C527A67AE900432A1D /* TextViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2C427A67AE900432A1D /* TextViewState.swift */; };
+		471F6DA027B8038600690664 /* RoomProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6D9F27B8038600690664 /* RoomProperties.swift */; };
+		471F6DA227B8076000690664 /* +MsgStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA127B8076000690664 /* +MsgStyle.swift */; };
+		471F6DA527B8080000690664 /* RoomPropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA427B8080000690664 /* RoomPropertiesView.swift */; };
+		471F6DA827B817EB00690664 /* +Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA727B817EB00690664 /* +Date.swift */; };
+		471F6DAB27B821E100690664 /* ChatNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DAA27B821E100690664 /* ChatNavBar.swift */; };
+		471F6DB127B834E200690664 /* TypingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DB027B834E200690664 /* TypingView.swift */; };
+		471F6DB327B8438D00690664 /* +Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DB227B8438D00690664 /* +Bubble.swift */; };
+		471F6DB727B847FF00690664 /* TimeSeparaterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DB627B847FF00690664 /* TimeSeparaterCell.swift */; };
 		473D41E727B41A4C00D41E6B /* MsgSenderOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */; };
 		473D41E927B41B2400D41E6B /* ChatRoomSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41E827B41B2400D41E6B /* ChatRoomSocket.swift */; };
 		473D41EB27B41C8800D41E6B /* MsgReceiverOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */; };
@@ -112,6 +120,14 @@
 		471DA2BF27A6596A00432A1D /* ChatInputViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputViewManager.swift; sourceTree = "<group>"; };
 		471DA2C227A66A2E00432A1D /* BoundsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsObserver.swift; sourceTree = "<group>"; };
 		471DA2C427A67AE900432A1D /* TextViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewState.swift; sourceTree = "<group>"; };
+		471F6D9F27B8038600690664 /* RoomProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomProperties.swift; sourceTree = "<group>"; };
+		471F6DA127B8076000690664 /* +MsgStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+MsgStyle.swift"; sourceTree = "<group>"; };
+		471F6DA427B8080000690664 /* RoomPropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomPropertiesView.swift; sourceTree = "<group>"; };
+		471F6DA727B817EB00690664 /* +Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Date.swift"; sourceTree = "<group>"; };
+		471F6DAA27B821E100690664 /* ChatNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavBar.swift; sourceTree = "<group>"; };
+		471F6DB027B834E200690664 /* TypingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingView.swift; sourceTree = "<group>"; };
+		471F6DB227B8438D00690664 /* +Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Bubble.swift"; sourceTree = "<group>"; };
+		471F6DB627B847FF00690664 /* TimeSeparaterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeparaterCell.swift; sourceTree = "<group>"; };
 		473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgSenderOperation.swift; sourceTree = "<group>"; };
 		473D41E827B41B2400D41E6B /* ChatRoomSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomSocket.swift; sourceTree = "<group>"; };
 		473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgReceiverOperation.swift; sourceTree = "<group>"; };
@@ -256,7 +272,6 @@
 			children = (
 				471425BA27A78D0C00478BED /* ChatScrollView.swift */,
 				47B3318927AA73CA005CE89A /* MoreLoader */,
-				471425DF27A82FC700478BED /* ChatCell */,
 			);
 			path = ChatScrollView;
 			sourceTree = "<group>";
@@ -265,7 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				47CDB89B27A5F1A1002F2BDF /* ChatCell.swift */,
-				47BC332A27B2F0D400664CCD /* MsgStyle.swift */,
+				471F6DB227B8438D00690664 /* +Bubble.swift */,
 				471425A527A72E5D00478BED /* Bubbles */,
 				471425E027A82FE500478BED /* SubViews */,
 				471425E127A8300300478BED /* Menus&Alerts */,
@@ -322,6 +337,56 @@
 			path = GrowingTextView;
 			sourceTree = "<group>";
 		};
+		471F6DA327B807E500690664 /* Properties */ = {
+			isa = PBXGroup;
+			children = (
+				471F6DA427B8080000690664 /* RoomPropertiesView.swift */,
+			);
+			path = Properties;
+			sourceTree = "<group>";
+		};
+		471F6DA627B817DC00690664 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				47CDB8A327A5F6A4002F2BDF /* Extensions.swift */,
+				471F6DA727B817EB00690664 /* +Date.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		471F6DA927B821CB00690664 /* NavBar */ = {
+			isa = PBXGroup;
+			children = (
+				471F6DAA27B821E100690664 /* ChatNavBar.swift */,
+			);
+			path = NavBar;
+			sourceTree = "<group>";
+		};
+		471F6DAF27B834D300690664 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				471F6DB027B834E200690664 /* TypingView.swift */,
+			);
+			path = Others;
+			sourceTree = "<group>";
+		};
+		471F6DB427B847E200690664 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				471F6DB527B847EB00690664 /* TimeSeparater */,
+				471425DF27A82FC700478BED /* ChatCell */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		471F6DB527B847EB00690664 /* TimeSeparater */ = {
+			isa = PBXGroup;
+			children = (
+				471F6DB627B847FF00690664 /* TimeSeparaterCell.swift */,
+			);
+			path = TimeSeparater;
+			sourceTree = "<group>";
+		};
 		473D41E327B419DC00D41E6B /* Sockets */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,6 +419,7 @@
 			isa = PBXGroup;
 			children = (
 				47CDB88F27A5F071002F2BDF /* ChatView.swift */,
+				471F6DA127B8076000690664 /* +MsgStyle.swift */,
 				473D41ED27B4505600D41E6B /* Sockets.swift */,
 			);
 			path = ChatView;
@@ -380,6 +446,10 @@
 			isa = PBXGroup;
 			children = (
 				473D41EC27B4504300D41E6B /* ChatView */,
+				471F6DAF27B834D300690664 /* Others */,
+				471F6DA927B821CB00690664 /* NavBar */,
+				471F6DB427B847E200690664 /* Cells */,
+				471F6DA327B807E500690664 /* Properties */,
 				471425DE27A82FB900478BED /* ChatScrollView */,
 				471DA2B527A6561800432A1D /* ChatInputBar */,
 			);
@@ -474,6 +544,7 @@
 		47CDB89127A5F08A002F2BDF /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				47BC332A27B2F0D400664CCD /* MsgStyle.swift */,
 				47CDB8A527A5F778002F2BDF /* Msg */,
 				471425E227A8305A00478BED /* SubModels */,
 			);
@@ -487,6 +558,7 @@
 				47B3318827AA7329005CE89A /* ChatDatasource */,
 				47B3318527AA726E005CE89A /* ChatLayout */,
 				471425AA27A7608600478BED /* MsgCreator.swift */,
+				471F6D9F27B8038600690664 /* RoomProperties.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -498,7 +570,7 @@
 				471425A027A702C000478BED /* ViewModifiers */,
 				47CDB89927A5F157002F2BDF /* LoremSwiftum.swift */,
 				471DA2C227A66A2E00432A1D /* BoundsObserver.swift */,
-				47CDB8A327A5F6A4002F2BDF /* Extensions.swift */,
+				471F6DA627B817DC00690664 /* Extensions */,
 				47623F8127AFDEAC00F7EE1C /* ToneManager.swift */,
 				47B3318027AA70D4005CE89A /* Log.swift */,
 			);
@@ -600,17 +672,23 @@
 				47BC332F27B3B03800664CCD /* TimeSpacer.swift in Sources */,
 				47CDB8B127A607AC002F2BDF /* MsgType.swift in Sources */,
 				471425D927A82E2C00478BED /* VideoBubble.swift in Sources */,
+				471F6DA527B8080000690664 /* RoomPropertiesView.swift in Sources */,
 				47CDB8A927A5F7A7002F2BDF /* +Actions.swift in Sources */,
 				47BC333427B3BB4800664CCD /* AppUserDefault.swift in Sources */,
 				471425D727A82DE300478BED /* VoiceData.swift in Sources */,
+				471F6DA227B8076000690664 /* +MsgStyle.swift in Sources */,
 				471DA2C027A6596A00432A1D /* ChatInputViewManager.swift in Sources */,
 				47CDB87C27A5EE92002F2BDF /* ContentView.swift in Sources */,
 				471425D427A82C0E00478BED /* ChatDataRepresenting.swift in Sources */,
 				471425BB27A78D0C00478BED /* ChatScrollView.swift in Sources */,
 				471425DB27A82E7D00478BED /* AttachmentBubble.swift in Sources */,
+				471F6DB727B847FF00690664 /* TimeSeparaterCell.swift in Sources */,
+				471F6DB127B834E200690664 /* TypingView.swift in Sources */,
 				47BC332927B2EA4300664CCD /* BubbleShape.swift in Sources */,
+				471F6DA827B817EB00690664 /* +Date.swift in Sources */,
 				471425F827A8322300478BED /* MockDatabase.swift in Sources */,
 				471DA2BA27A6563E00432A1D /* Protocol.swift in Sources */,
+				471F6DB327B8438D00690664 /* +Bubble.swift in Sources */,
 				471425A227A710B800478BED /* ChatLayout.swift in Sources */,
 				47BC333227B3BA1100664CCD /* SettingsView.swift in Sources */,
 				47CDB8AD27A60238002F2BDF /* MsgDateView.swift in Sources */,
@@ -621,12 +699,14 @@
 				47BC333827B3FE8200664CCD /* OutgoingSocket.swift in Sources */,
 				47BC332D27B390C200664CCD /* IncomingSocket.swift in Sources */,
 				47CDB89027A5F071002F2BDF /* ChatView.swift in Sources */,
+				471F6DA027B8038600690664 /* RoomProperties.swift in Sources */,
 				471425F927A8325800478BED /* RecieptType.swift in Sources */,
 				47CDB89A27A5F157002F2BDF /* LoremSwiftum.swift in Sources */,
 				47B3318127AA70D4005CE89A /* Log.swift in Sources */,
 				471425CB27A7DE1500478BED /* LocationManager.swift in Sources */,
 				471425A427A72E0A00478BED /* TextBubble.swift in Sources */,
 				47CDB8A727A5F787002F2BDF /* MsgActions.swift in Sources */,
+				471F6DAB27B821E100690664 /* ChatNavBar.swift in Sources */,
 				471425B927A76C4E00478BED /* ChatDatasource.swift in Sources */,
 				471425A727A7305C00478BED /* ImageBubble.swift in Sources */,
 				473D41E727B41A4C00D41E6B /* MsgSenderOperation.swift in Sources */,
@@ -787,6 +867,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -819,6 +900,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

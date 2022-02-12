@@ -25,7 +25,7 @@ struct ChatInputView: View {
             pickerView()
         }
         .padding(7)
-        .background(.thickMaterial)
+        .background(.ultraThinMaterial)
     }
     
     private func pickerView() -> some View {

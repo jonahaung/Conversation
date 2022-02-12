@@ -26,6 +26,7 @@ struct ChatScrollView<Content: View>: View {
         GeometryReader { geometry in
             ScrollViewReader { scrollView in
                 ScrollView(showsIndicators: false) {
+                    
                     content((scrollView, geometry))
                         .overlay(progressView, alignment: .top)
                         .anchorPreference(key: ChatScrollViewPreferences.Key.self, value: .bounds) {
@@ -49,8 +50,10 @@ struct ChatScrollView<Content: View>: View {
                                     moreLoader.state = .None
                                 }
                             }
-                            
                         }
+                    
+                    Spacer(minLength: 1)
+                        .id(LayoutDefinitions.ScrollableType.Bottom.rawValue)
                 }
                 
             }

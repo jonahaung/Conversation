@@ -12,14 +12,15 @@ class ChatLayout: ObservableObject {
 
     @Published var textViewHeight = CGFloat.zero
     @Published var isTyping = false
+    @Published var selectedId: String?
+    
     var positions = LayoutDefinitions.ScrollPositions()
     
     init() {
         scrollPublisher = scrollSender
             .removeDuplicates()
             .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
-//            .receive(on: DispatchQueue.main, options: nil)95
-        
+            .receive(on: DispatchQueue.main, options: nil)
             .dropFirst()
             .eraseToAnyPublisher()
     }

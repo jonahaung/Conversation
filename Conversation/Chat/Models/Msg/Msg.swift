@@ -15,6 +15,8 @@ class Msg: ObservableObject, Codable, Identifiable {
     let date: Date
     var progress: MsgProgress
     
+    let senderID: String
+    
     var textData: MsgType.TextData?
     var imageData: MsgType.ImageData?
     var videoData: MsgType.ViedeoData?
@@ -30,6 +32,8 @@ class Msg: ObservableObject, Codable, Identifiable {
         self.date = Date()
         self.progress = progress
         self.msgType = msgType
+        
+        self.senderID = "1"
         
         switch msgType {
         case .Text(let data):

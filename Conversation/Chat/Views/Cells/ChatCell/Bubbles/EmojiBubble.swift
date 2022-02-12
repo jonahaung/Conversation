@@ -11,12 +11,13 @@ struct EmojiBubble: View {
     
     let data: Msg.MsgType.EmojiData
     @EnvironmentObject private var msg: Msg
+    @EnvironmentObject private var roomProperties: RoomProperties
     
     var body: some View {
         Image(systemName: data.emojiID)
             .resizable()
             .frame(width: data.randomSize, height: data.randomSize)
-            .foregroundColor(msg.rType.bubbleColor)
+            .foregroundColor(roomProperties.bubbleColor(for: msg))
             .padding()
     }
 }

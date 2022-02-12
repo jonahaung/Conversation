@@ -10,15 +10,15 @@ import SwiftUI
 extension ChatView {
     
     func disConnectSockets() {
-        IncomingSocket.shared.disconnect()
-        OutgoingSocket.shared.disconnect()
+        incomingSocket.disconnect()
+        outgoingSocket.disconnect()
     }
     
     func connectSockets(scrollProxy: ScrollViewProxy) {
         
-        IncomingSocket.shared.connect(with: ["aung", "Jonah"])
+        incomingSocket.connect(with: ["aung", "Jonah"])
             .onTypingStatus { isTyping in
-                chatLayout.isTyping.toggle()
+                chatLayout.isTyping = isTyping
                 chatLayout.sendScroll(id: LayoutDefinitions.ScrollableType.TypingIndicator.rawValue, animated: true)
                 if chatLayout.isTyping {
                     Task {
@@ -26,18 +26,22 @@ extension ChatView {
                     }
                 }
             }.onNewMsg { msg in
+                Task {
+                    await ToneManager.shared.playSound(tone: .Tock)
+                }
+                chatLayout.isTyping = false
                 datasource.msgs.append(msg)
                 chatLayout.sendScroll(id: msg.id, animated: true)
-                Task {
-                    await ToneManager.shared.playSound(tone: .receivedMessage)
-                }
             }
         
-        OutgoingSocket.shared.connect(with: ["aung", "Jonah"])
+        outgoingSocket.connect(with: ["aung", "Jonah"])
             .onAddMsg{ msg in
+                Task {
+                    await ToneManager.shared.playSound(tone: .Tock)
+                }
                 datasource.msgs.append(msg)
                 chatLayout.sendScroll(id: msg.id, animated: true)
-                OutgoingSocket.shared.send(msg: msg)
+                outgoingSocket.send(msg: msg)
             }
             .onSentMsg { msg in
                 Task {

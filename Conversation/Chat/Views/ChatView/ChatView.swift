@@ -13,18 +13,20 @@ struct ChatView: View {
     @StateObject var chatLayout = ChatLayout()
     @StateObject var msgCreater = MsgCreator()
     @StateObject var inputManager = ChatInputViewManager()
+    @StateObject var roomProperties = RoomProperties()
+    @EnvironmentObject internal var outgoingSocket: OutgoingSocket
+    @EnvironmentObject internal var incomingSocket: IncomingSocket
     
     var body: some View {
         VStack(spacing: 0) {
+            ChatNavBar()
             ChatScrollView { proxy in
-                LazyVStack(spacing: 0) {
+                LazyVStack(spacing: roomProperties.cellSpacing) {
+                    
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         
                         if canShowTimeSeparater(for: msg, at: index) {
-                            MsgDateView(date: msg.date)
-                                .font(.system(size: UIFont.systemFontSize, weight: .medium))
-                                .padding(.vertical, 10)
-                                .foregroundStyle(.tertiary)
+                            TimeSeparaterCell(date: msg.date)
                         }
                         ChatCell()
                             .environmentObject(msg)
@@ -32,15 +34,10 @@ struct ChatView: View {
                     }
                     
                     if chatLayout.isTyping {
-                        ProgressView()
-                            .padding()
+                        TypingView()
                             .id(LayoutDefinitions.ScrollableType.TypingIndicator.rawValue)
                     }
-                    Divider()
-                        .padding(.top, 5)
-                        .id(LayoutDefinitions.ScrollableType.Bottom.rawValue)
                 }
-                .padding(.horizontal, 2)
                 .onAppear{
                     connectSockets(scrollProxy: proxy.scrollView)
                 }
@@ -50,82 +47,22 @@ struct ChatView: View {
                 .task {
                     proxy.scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom.rawValue, anchor: .bottom)
                 }
-                .onReceive(chatLayout.scrollPublisher) { obj in
-                    chatLayout.scroll(to: obj, from: proxy.scrollView)
+                .onReceive(chatLayout.scrollPublisher) {
+                    chatLayout.scroll(to: $0, from: proxy.scrollView)
                 }
-//                .onChange(of: chatLayout.focusedItem) {
-//                    chatLayout.scrollTo($0, proxy.scrollView)
-//                }
             }
+            .padding(.horizontal, 2)
             .refreshable {
                 datasource.msgs = await datasource.getMoreMsg()
             }
             
             ChatInputView()
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .background(roomProperties.bgImage.image)
         .environmentObject(datasource)
         .environmentObject(chatLayout)
         .environmentObject(msgCreater)
         .environmentObject(inputManager)
-    }
-}
-
-extension ChatView {
-    
-    private func isFromCurrentSender(msg: Msg) -> Bool {
-        return msg.rType == .Send
-    }
-    
-    private func isPreviousMessageSameSender(at i: Int, for msg: Msg) -> Bool {
-        guard i > 0 else { return false }
-        let previousMsg = datasource.msgs[i - 1]
-        return msg.rType == previousMsg.rType
-    }
-    
-    private func isNextMessageSameSender(at i: Int, for msg: Msg) -> Bool {
-        guard i < datasource.msgs.count-1 else { return false }
-        let nexMsg = datasource.msgs[i + 1]
-        return msg.rType == nexMsg.rType
-    }
-    
-    private func msgStyle(for msg: Msg, at i: Int) -> MsgStyle {
-        
-        var corners: UIRectCorner = []
-        var showAvatar = false
-        
-        if isFromCurrentSender(msg: msg) {
-            corners.formUnion(.topLeft)
-            corners.formUnion(.bottomLeft)
-            if !isPreviousMessageSameSender(at: i, for: msg) {
-                corners.formUnion(.topRight)
-            }
-            if !isNextMessageSameSender(at: i, for: msg) {
-                corners.formUnion(.bottomRight)
-                //showAvatar = true
-            }
-        } else {
-            corners.formUnion(.topRight)
-            corners.formUnion(.bottomRight)
-            if !isPreviousMessageSameSender(at: i, for: msg) {
-                corners.formUnion(.topLeft)
-            }
-            if !isNextMessageSameSender(at: i, for: msg) {
-                corners.formUnion(.bottomLeft)
-                showAvatar = true
-            }
-        }
-        
-        return MsgStyle(bubbleCorner: corners, showAvatar: showAvatar)
-    }
-    
-    private func canShowTimeSeparater(for msg: Msg, at i: Int) -> Bool {
-        guard i > 0 else { return true }
-        let previousMsg = datasource.msgs[i - 1]
-        
-        if msg.rType != previousMsg.rType {
-            return true
-        }
-        return false
+        .environmentObject(roomProperties)
     }
 }

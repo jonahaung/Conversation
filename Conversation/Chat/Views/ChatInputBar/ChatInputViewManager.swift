@@ -13,7 +13,7 @@ enum KeyBoardStatus {
 
 class ChatInputViewManager: ObservableObject {
     
-    var text: String = ""
+    @Published var text: String = ""
     var currentInputItem = InputToolbar.ItemType.None {
         didSet {
             guard oldValue != currentInputItem else { return }
@@ -22,5 +22,5 @@ class ChatInputViewManager: ObservableObject {
             }
         }
     }
-    @Published var keyboardStatus = KeyBoardStatus.Hidden
+//    @Published var keyboardStatus = KeyBoardStatus.Hidden
 }

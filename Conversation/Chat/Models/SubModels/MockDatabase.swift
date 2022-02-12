@@ -17,7 +17,7 @@ struct MockDatabase {
     static func msgs(for i: Int) -> [Msg] {
         var msgs = [Msg]()
         (1...i).forEach { _ in
-            msgs.insert(MockDatabase.msg, at: 0)
+            msgs.append(MockDatabase.msg)
         }
         return msgs
     }

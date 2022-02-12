@@ -23,11 +23,11 @@ class ChatDatasource: ObservableObject {
     }
     
     func delete(msg: Msg) {
-        if let index = msgs.firstIndex(of: msg) {
-            msgs.remove(at: index)
-            withAnimation {
-                objectWillChange.send()
-            }
-        }
+//        if let index = msgs.firstIndex(of: msg) {
+//            msgs.remove(at: index)
+//            withAnimation {
+//                objectWillChange.send()
+//            }
+//        }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ChatRoomSocket {
+class ChatRoomSocket: ObservableObject {
     
     private var connectedUsers: [String] = []
     
