@@ -13,8 +13,9 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Toggle("Show time labels", isOn: $appUserDefault.showTimeLabels)
             Toggle("Auto Generate Msgs", isOn: $appUserDefault.autoGenerateMockMessages)
+            Stepper("Cell Spacing \(Int(appUserDefault.chatCellSpacing))", value: $appUserDefault.chatCellSpacing, in: 0...10)
+            Toggle("Cell Draggable", isOn: $appUserDefault.canDragCell)
         }
         .navigationTitle("Settings")
     }

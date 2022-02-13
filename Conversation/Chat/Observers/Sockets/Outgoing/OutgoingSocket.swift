@@ -55,7 +55,7 @@ final class OutgoingSocket: ChatRoomSocket {
                 return
             }
             DispatchQueue.main.async {
-                operation.msg.applyAction(action: .MsgProgress(value: .Sent))
+                operation.msg.applyAction(action: .MsgProgress(value: .Read))
                 self?.onSentMsgBlock?(operation.msg)
             }
         }

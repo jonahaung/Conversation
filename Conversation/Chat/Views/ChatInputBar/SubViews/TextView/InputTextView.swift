@@ -18,14 +18,16 @@ struct InputTextView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = inputManager.textView
-        textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize, weight: .medium)
+        textView.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.opaqueSeparator])
+        textView.enablesReturnKeyAutomatically = false
+        textView.maxNumberOfLines = 7
         textView.delegate = context.coordinator
         return textView
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-//        uiView.text = inputManager.text
+
     }
     
     class Coordinator: NSObject, GrowingTextViewDelegate {

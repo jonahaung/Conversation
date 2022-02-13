@@ -7,13 +7,15 @@
 
 import Foundation
 import CoreLocation
+import UIKit
 
 extension Msg.MsgType {
     
     struct LocationData: ChatDataRepresenting {
-        
-
+    
         let location: Location
+        var image: UIImage?
+        var imageSize = CGSize(width: 300, height: 200)
         
         struct Location: Codable {
             let latitude: Double

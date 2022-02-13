@@ -10,41 +10,19 @@ import MapKit
 
 struct LocationBubble: View {
     
-    let data: Msg.MsgType.LocationData
-    
-    @State private var image: UIImage?
+    @EnvironmentObject internal var msg: Msg
     
     var body: some View {
         Group {
-            if let image = image {
-                ZStack {
-                    Image(uiImage: image)
-                    Image(systemName: "circle.fill")
-                        .foregroundColor(.red)
-                }
+            if let image = msg.locationData?.image {
+                Image(uiImage: image)
+                    .cornerRadius(ChatKit.bubbleRadius)
             }else {
                 ProgressView()
+                    .task {
+                        LocationLoader.loadMedia(msg)
+                    }
             }
-        }
-        .frame(height: 200)
-        .task {
-            snapshot()
-        }
-    }
-    
-    private func snapshot() {
-        guard image == nil else { return }
-        let snapshotOptions = MKMapSnapshotter.Options()
-        snapshotOptions.region = MKCoordinateRegion(center: data.location.location2D, span: .init(latitudeDelta: 0.005, longitudeDelta: 0.005))
-        snapshotOptions.showsBuildings = true
-        snapshotOptions.size = CGSize(width: 300, height: 200)
-        let snapShotter = MKMapSnapshotter(options: snapshotOptions)
-        
-        snapShotter.start { (snapshot, error) in
-            guard let snapshot = snapshot, error == nil else {
-                return
-            }
-            self.image = snapshot.image
         }
     }
 }

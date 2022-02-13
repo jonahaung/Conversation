@@ -15,9 +15,9 @@ struct LeftMenuButton: View {
         Button {
             inputManager.currentInputItem = inputManager.currentInputItem != .None ? .None : .ToolBar
         } label: {
-            Image(systemName: inputManager.currentInputItem == .None ? "plus" : "xmark.circle.fill")
+            Image(systemName: inputManager.currentInputItem == .None ? "plus" : "xmark")
                 .resizable()
-                .frame(width: 29, height: 29)
+                .frame(width: 25, height: 25)
                 .padding(4)
         }
     }

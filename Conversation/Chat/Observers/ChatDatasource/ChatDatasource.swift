@@ -36,6 +36,7 @@ class ChatDatasource: ObservableObject {
     }
     
     func delete(msg: Msg) {
+        PersistenceController.shared.delete(id: msg.id)
         if let index = msgs.firstIndex(of: msg) {
             msgs.remove(at: index)
             withAnimation {

@@ -39,11 +39,13 @@ extension ChatCell {
     private func leftView() -> some View {
         Group {
             if msg.rType == .Send {
-                Spacer(minLength: 35)
+                Spacer(minLength: ChatKit.cellAlignmentSpacing)
             } else {
                 if msg.progress == .Read && style.showAvatar {
                     Image(systemName: "person.circle.fill")
+                        .resizable()
                         .foregroundStyle(.tertiary)
+                        .frame(size: .init(size: ChatKit.cellMsgStatusSize))
                 } else {
                     msg.progress.view()
                 }
@@ -70,7 +72,7 @@ extension ChatCell {
                         }
                 }
             } else {
-                Spacer(minLength: 35)
+                Spacer(minLength: ChatKit.cellAlignmentSpacing)
             }
         }
     }

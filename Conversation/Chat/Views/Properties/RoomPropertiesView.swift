@@ -21,9 +21,6 @@ struct RoomPropertiesView: View {
                 Text(roomProperties.bgImage.name)
             }
 
-            Toggle("Cell Draggable", isOn: $roomProperties.canDragCell)
-            
-            Stepper("Cell Spacing \(Int(roomProperties.cellSpacing))", value: $roomProperties.cellSpacing)
         }
         .navigationTitle("Room Properties")
     }

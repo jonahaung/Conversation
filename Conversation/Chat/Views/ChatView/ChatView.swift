@@ -20,8 +20,9 @@ struct ChatView: View {
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
+            
             ChatScrollView { proxy in
-                LazyVStack(spacing: roomProperties.cellSpacing) {
+                LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         
@@ -30,7 +31,6 @@ struct ChatView: View {
                         if style.showTimeSeparater {
                             TimeSeparaterCell(date: msg.date)
                         }
-                        
                         ChatCell()
                             .environmentObject(msg)
                             .environmentObject(style)

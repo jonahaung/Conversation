@@ -11,14 +11,16 @@ final class AppUserDefault: ObservableObject {
     
     static let shared = AppUserDefault()
     
-    private static let _showTimeLabel = "showTimeLabel"
     private static let _autoGenerateMockMsgs = "autoGenerateMockMsgs"
-   
-    
-    @AppStorage(AppUserDefault._showTimeLabel)
-    var showTimeLabels = true
-    
     @AppStorage(AppUserDefault._autoGenerateMockMsgs)
     var autoGenerateMockMessages = true
+    
+    private static let _cellSpacing = "_cellSpacing"
+    @AppStorage(AppUserDefault._cellSpacing)
+    var chatCellSpacing = 2.0
+    
+    private static let _cellDraggable = "_cellDraggable"
+    @AppStorage(AppUserDefault._cellSpacing)
+    var canDragCell = false
     
 }

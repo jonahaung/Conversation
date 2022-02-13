@@ -11,7 +11,7 @@ extension ChatCell {
     
     internal func bubbleView() -> some View {
         Group {
-            if roomProperties.canDragCell {
+            if AppUserDefault.shared.canDragCell {
                 plainBubbleView()
                     .offset(x: dragOffsetX)
                     .gesture(bubbleTapGesture)
@@ -30,19 +30,16 @@ extension ChatCell {
             case .Text:
                 if let data = msg.textData {
                     TextBubble(data: data)
-                        .foregroundColor(msg.rType.textColor)
+                        .foregroundColor(roomProperties.textColor(for: msg))
                         .background(roomProperties.bubbleColor(for: msg))
                         .clipShape(BubbleShape(corners: style.bubbleCorner))
                 }
             case .Image:
-                if let data = msg.imageData {
-                    ImageBubble(data: data)
-                        .clipShape(BubbleShape(corners: style.bubbleCorner))
-                }
+                ImageBubble()
             case .Location:
                 if let data = msg.locationData {
-                    LocationBubble(data: data)
-                        .clipShape(BubbleShape(corners: style.bubbleCorner))
+                    LocationBubble()
+                        .frame(size: data.imageSize)
                 }
             case .Emoji:
                 if let data = msg.emojiData {

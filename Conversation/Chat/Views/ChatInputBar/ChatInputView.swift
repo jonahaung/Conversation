@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UI
 
 struct ChatInputView: View {
     
@@ -13,19 +14,20 @@ struct ChatInputView: View {
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
     var body: some View {
-        VStack{
+        VStack(spacing: 0) {
+            Divider()
             HStack(alignment: .bottom) {
                 LeftMenuButton()
                 InputTextView()
                     .frame(height: chatLayout.textViewHeight)
-                    .background(Color(uiColor: .systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .background(Color(uiColor: .secondarySystemGroupedBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: ChatKit.bubbleRadius))
                 SendButton()
             }
+            .padding(7)
             pickerView()
         }
-        .padding(7)
-        .background(.ultraThinMaterial)
+        .background(.thinMaterial)
     }
     
     private func pickerView() -> some View {
@@ -35,6 +37,9 @@ struct ChatInputView: View {
                 InputToolbar()
             case .Location:
                 LocationPicker()
+            case .PhotoLibrary:
+                PhotoLibrary()
+                
             case .None:
                 EmptyView()
             default:

@@ -25,3 +25,10 @@ extension View {
         return modifier(FrameSize(size: size))
     }
 }
+
+extension CGSize {
+    
+    init(size: CGFloat) {
+        self.init(width: size, height: size)
+    }
+}

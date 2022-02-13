@@ -25,7 +25,9 @@ class Msg: ObservableObject, Identifiable {
     var attachmentData: MsgType.AttachmentData?
     var voiceData: MsgType.VoiceData?
     
-    var bubbleSize: CGSize?
+    var imageRatio: Double
+    
+    var mediaImage: UIImage?
     
     init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         self.id = UUID().uuidString
@@ -34,6 +36,7 @@ class Msg: ObservableObject, Identifiable {
         self.progress = progress
         self.msgType = msgType
         self.sender = rType == .Send ? CurrentUser.shared.user : .init(id: "2", name: "Jonah", photoURL: "")
+        self.imageRatio = 1
     }
     
     convenience init(textData: Msg.MsgType.TextData, rType: RecieptType, progress: MsgProgress) {
@@ -78,6 +81,7 @@ class Msg: ObservableObject, Identifiable {
         self.date = cMsg.date!
         self.sender = sender
         self.progress = progress
+        self.imageRatio = cMsg.imageRatio
         
         let txt = cMsg.data ?? ""
         

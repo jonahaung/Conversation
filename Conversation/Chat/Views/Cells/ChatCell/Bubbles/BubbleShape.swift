@@ -12,7 +12,7 @@ struct BubbleShape: Shape {
     let corners: UIRectCorner
     
     func path(in rect: CGRect) -> Path {
-        Path(UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: 17, height: 17)).cgPath)
+        Path(UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: ChatKit.bubbleRadius, height: ChatKit.bubbleRadius)).cgPath)
     }
 }
 

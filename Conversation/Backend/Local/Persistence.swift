@@ -43,6 +43,7 @@ class PersistenceController {
         cMsg.senderID = msg.sender.id
         cMsg.senderName = msg.sender.name
         cMsg.senderURL = msg.sender.photoURL
+        cMsg.imageRatio = msg.imageRatio
         return cMsg
     }
     func cMsgsCount() -> Int {
@@ -74,6 +75,11 @@ class PersistenceController {
             print(error.localizedDescription)
             return nil
         }
+    }
+    
+    func delete(id: String) {
+        guard let cMsg = fetch(id: id) else { return }
+        context.delete(cMsg)
     }
     
     func save() {

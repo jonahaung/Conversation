@@ -4,6 +4,7 @@
         <attribute name="data" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="imageRatio" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="long" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="msgType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -14,6 +15,6 @@
         <attribute name="senderURL" attributeType="String"/>
     </entity>
     <elements>
-        <element name="CMsg" positionX="-63" positionY="-18" width="128" height="194"/>
+        <element name="CMsg" positionX="-63" positionY="-18" width="128" height="209"/>
     </elements>
 </model>

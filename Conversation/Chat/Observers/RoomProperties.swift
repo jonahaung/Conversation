@@ -11,20 +11,13 @@ final class RoomProperties: ObservableObject {
     
     var participentIDs = ["1", "2"]
     
-    @Published var bgImage = BgImage.None
-    @Published var canDragCell = false
-    @Published var cellSpacing: CGFloat = 1
+    @Published var bgImage = BgImage.Brown
 
-    let outgoingBubbleColor = Color.accentColor
-    var incomingBubbleColor: Color {
-        if bgImage == .None {
-            return .init(uiColor: .systemGray5)
-        }
-        return Color(uiColor: .tertiarySystemBackground)
-    }
-    
     func bubbleColor(for msg: Msg) -> Color {
-        return msg.rType == .Send ? outgoingBubbleColor : incomingBubbleColor
+        return msg.rType == .Send ? ChatKit.textBubbleColorOutgoing : ChatKit.textBubbleColorIncoming
+    }
+    func textColor(for msg: Msg) -> Color? {
+        return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
     }
 }
 
@@ -46,8 +39,6 @@ extension RoomProperties {
                     Image(name)
                         .resizable()
                         .scaledToFill()
-                } else {
-                    Color(uiColor: .systemBackground)
                 }
             }
         }

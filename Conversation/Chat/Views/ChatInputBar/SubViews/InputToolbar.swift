@@ -65,32 +65,6 @@ struct InputToolbar: View {
 extension InputToolbar {
     
     private func handleAction(for itemType: ItemType) {
-    
-        switch itemType {
-        case .Camera:
-            break
-        case .PhotoLibrary:
-            Task {
-                let msg = Msg(msgType: .Image, rType: .Receive, progress: .Sent)
-                msg.imageData = .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")
-                await outgoingSocket.add(msg: msg)
-            }
-        case .SoundRecorder:
-            break
-        case .Location:
-            break
-        case .Video:
-            break
-        case .Emoji:
-            break
-        case .Attachment:
-            break
-        case .ToolBar:
-            break
-        case .None:
-            break
-        }
-        
         inputManager.currentInputItem = itemType
     }
     
