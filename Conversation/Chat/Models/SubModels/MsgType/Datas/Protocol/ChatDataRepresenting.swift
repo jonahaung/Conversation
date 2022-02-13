@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ChatDataRepresenting: Codable {
+protocol ChatDataRepresenting {
     
     
 }

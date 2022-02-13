@@ -58,7 +58,9 @@ final class IncomingSocket: ChatRoomSocket {
             }
             DispatchQueue.main.async {
                 op.msg.applyAction(action: .MsgProgress(value: .Read))
-                self?.onNewMsgBlock?(op.msg)
+                let cMsg = PersistenceController.shared.create(msg: op.msg)
+                let msg = Msg(cMsg: cMsg)
+                self?.onNewMsgBlock?(msg)
             }
         }
         queue.addOperation(op)
@@ -67,7 +69,8 @@ final class IncomingSocket: ChatRoomSocket {
     @objc
     private func handleTimer() {
         onTypingStatusBlock?(Bool.random())
-        let msg = Msg(msgType: .Text(data: .init(text: Lorem.sentence)), rType: .Receive, progress: .Sent)
+        let msg = Msg(msgType: .Text, rType: .Receive, progress: .Sent)
+        msg.textData = .init(text: Lorem.sentence)
         receive(msg: msg)
     }
 }

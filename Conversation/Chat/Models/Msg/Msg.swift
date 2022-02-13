@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-class Msg: ObservableObject, Codable, Identifiable {
+class Msg: ObservableObject, Identifiable {
     
-    let id: String
+    var id: String
     var rType: RecieptType
-    let msgType: MsgType
-    let date: Date
+    var msgType: MsgType
+    var date: Date
+    
     var progress: MsgProgress
     
-    let senderID: String
-    
+    var sender: MsgSender
     var textData: MsgType.TextData?
     var imageData: MsgType.ImageData?
     var videoData: MsgType.ViedeoData?
@@ -25,38 +25,79 @@ class Msg: ObservableObject, Codable, Identifiable {
     var attachmentData: MsgType.AttachmentData?
     var voiceData: MsgType.VoiceData?
     
+    var bubbleSize: CGSize?
+    
     init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
-        
         self.id = UUID().uuidString
         self.rType = rType
         self.date = Date()
         self.progress = progress
         self.msgType = msgType
+        self.sender = rType == .Send ? CurrentUser.shared.user : .init(id: "2", name: "Jonah", photoURL: "")
+    }
+    
+    convenience init(textData: Msg.MsgType.TextData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Text, rType: rType, progress: progress)
+        self.textData = textData
+    }
+    convenience init(imageData: Msg.MsgType.ImageData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Image, rType: rType, progress: progress)
+        self.imageData = imageData
+    }
+    convenience init(videoData: Msg.MsgType.ViedeoData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Video, rType: rType, progress: progress)
+        self.videoData = videoData
+    }
+    convenience init(locationData: Msg.MsgType.LocationData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Location, rType: rType, progress: progress)
+        self.locationData = locationData
+    }
+    convenience init(emojiData: Msg.MsgType.EmojiData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Emoji, rType: rType, progress: progress)
+        self.emojiData = emojiData
+    }
+    convenience init(attachmentData: Msg.MsgType.AttachmentData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Attachment, rType: rType, progress: progress)
+        self.attachmentData = attachmentData
+    }
+    convenience init(voiceData: Msg.MsgType.VoiceData, rType: RecieptType, progress: MsgProgress) {
+        self.init(msgType: .Voice, rType: rType, progress: progress)
+        self.voiceData = voiceData
+    }
+    
+    
+    init(cMsg: CMsg) {
+        let rType = Msg.RecieptType(rawValue: Int(cMsg.rType))!
+        let msgType = Msg.MsgType(rawValue: Int(cMsg.msgType))!
+        let sender = MsgSender(id: cMsg.senderID!, name: cMsg.senderName!, photoURL: cMsg.senderURL!)
+        let progress = Msg.MsgProgress(rawValue: cMsg.progress)!
         
-        self.senderID = "1"
+        self.id = cMsg.id ?? UUID().uuidString
+        self.rType = rType
+        self.msgType = msgType
+        self.date = cMsg.date!
+        self.sender = sender
+        self.progress = progress
+        
+        let txt = cMsg.data ?? ""
         
         switch msgType {
-        case .Text(let data):
-            textData = data
-        case .Image(let data):
-            imageData = data
-        case .Video(let data):
-            videoData = data
-        case .Location(let data):
-            locationData = data
-        case .Emoji(let data):
-            emojiData = data
-        case .Attachment(let data):
-            attachmentData = data
-        case .Voice(let data):
-            voiceData = data
+        case .Text:
+            self.textData  = .init(text: txt)
+        case .Image:
+            self.imageData = .init(urlString: txt)
+        case .Video:
+            self.videoData = .init(urlString: txt)
+        case .Location:
+            self.locationData = .init(location: .init(latitude: cMsg.lat, longitude: cMsg.long))
+        case .Emoji:
+            let random = CGFloat.random(in: 30..<150)
+            self.emojiData = .init(emojiID: txt, size: .init(width: random, height: random))
+        case .Attachment:
+            self.attachmentData = .init(urlString: txt)
+        case .Voice:
+            self.voiceData = .init(urlString: txt)
         }
-    }
-}
-
-extension Msg: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
 

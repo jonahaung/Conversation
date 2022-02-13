@@ -17,7 +17,7 @@ struct InputTextView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> GrowingTextView {
-        let textView = GrowingTextView()
+        let textView = inputManager.textView
         textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize)
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.separator])
         textView.delegate = context.coordinator
@@ -25,7 +25,7 @@ struct InputTextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-        uiView.text = inputManager.text
+//        uiView.text = inputManager.text
     }
     
     class Coordinator: NSObject, GrowingTextViewDelegate {
@@ -35,11 +35,9 @@ struct InputTextView: UIViewRepresentable {
         init(_ parent: InputTextView) {
             self.parent = parent
         }
-        
-        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
-            parent.inputManager.text = growingTextView.text ?? ""
+        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
+            parent.inputManager.objectWillChange.send()
         }
-        
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.textViewHeight = height
         }
@@ -50,11 +48,5 @@ struct InputTextView: UIViewRepresentable {
             }
             return growingTextView.hasText
         }
-//        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
-//            parent.inputManager.keyboardStatus = .Shown
-//        }
-//        func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView) {
-//            parent.inputManager.keyboardStatus = .Hidden
-//        }
     }
 }

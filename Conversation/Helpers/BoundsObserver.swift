@@ -37,7 +37,7 @@ extension View {
         
     }
     
-    public func retrieveSize(viewId: String, _ rect: Binding<CGSize>) -> some View {
+    public func retrieveSize(viewId: String, _ rect: Binding<CGSize?>) -> some View {
         onPreferenceChange(SaveSizePrefKey.self) { preferences in
             DispatchQueue.main.async {
                 // The async is used to prevent a possible blocking loop,

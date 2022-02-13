@@ -46,6 +46,8 @@ extension RoomProperties {
                     Image(name)
                         .resizable()
                         .scaledToFill()
+                } else {
+                    Color(uiColor: .systemBackground)
                 }
             }
         }

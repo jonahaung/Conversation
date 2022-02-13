@@ -13,7 +13,18 @@ extension Msg {
         switch action {
         case .MsgProgress(let value):
             self.progress = value
+            updateStore()
             objectWillChange.send()
+        }
+    }
+    
+    func updateStore() {
+        guard let cMsg = PersistenceController.shared.fetch(id: id) else {
+            return
+        }
+        if cMsg.progress != self.progress.rawValue {
+            cMsg.progress = self.progress.rawValue
+
         }
     }
 }

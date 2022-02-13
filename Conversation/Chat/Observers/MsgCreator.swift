@@ -5,7 +5,7 @@
 //  Created by Aung Ko Min on 31/1/22.
 //
 
-import Foundation
+import UIKit
 
 final class MsgCreator: ObservableObject {
     
@@ -13,4 +13,11 @@ final class MsgCreator: ObservableObject {
         return .init(msgType: msgType, rType: .Send, progress: .Sending)
     }
     
+    func create(text: String) -> Msg {
+        return Msg(textData: .init(text: text), rType: .Send, progress: .Sending)
+    }
+    func create(emojiId: String) -> Msg {
+        let random = CGFloat.random(in: 30..<150)
+        return Msg(emojiData: .init(emojiID: emojiId, size: .init(width: random, height: random)), rType: .Send, progress: .Sending)
+    }
 }

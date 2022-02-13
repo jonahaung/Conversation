@@ -13,15 +13,17 @@ struct ChatCell: View {
     @EnvironmentObject internal var style: MsgStyle
     @EnvironmentObject internal var roomProperties: RoomProperties
     @EnvironmentObject internal var chatLayout: ChatLayout
+    @EnvironmentObject internal var outgoingSocket: OutgoingSocket
+    
     @State internal var dragOffsetX = CGFloat.zero
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
             leftView()
-            
             VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                 topView()
                 bubbleView()
+                bottomView()
             }
             rightView()
         }
@@ -56,6 +58,16 @@ extension ChatCell {
                         .foregroundStyle(.tertiary)
                 } else {
                     msg.progress.view()
+                        .onTapGesture {
+                            Task {
+                                await ToneManager.shared.playSound(tone: .Tock)
+                            }
+                            
+                            if msg.progress == .Sending {
+                                
+                                outgoingSocket.send(msg: msg)
+                            }
+                        }
                 }
             } else {
                 Spacer(minLength: 35)
@@ -66,10 +78,27 @@ extension ChatCell {
     private func topView() -> some View {
         Group {
             if msg.id == chatLayout.selectedId {
-                MsgDateView(date: msg.date)
+                Group {
+                    if msg.rType == .Send {
+                        Text(msg.date, formatter: MsgDateView.relativeDateFormatter)
+                    }else {
+                        Text(msg.sender.name)
+                    }
+                }
+                .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
+                .foregroundStyle(.tertiary)
+                .padding(.top)
+                .padding(.horizontal)
+            }
+        }
+    }
+    private func bottomView() -> some View {
+        Group {
+            if msg.id == chatLayout.selectedId {
+                Text(msg.progress.description)
                     .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
                     .foregroundStyle(.tertiary)
-                    .padding(.top)
+                    .padding(.bottom)
                     .padding(.horizontal)
             }
         }

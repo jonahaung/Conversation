@@ -32,7 +32,7 @@ struct LocationPicker: View {
                 
                 inputManager.currentInputItem = .None
                 Task {
-                    let msg = msgCreater.create(msgType: .Location(data: .init(location: .init(latitude: locationManager.location.coordinate.latitude, longitude: locationManager.location.coordinate.longitude))))
+                    let msg = Msg(locationData: .init(location: .init(latitude: locationManager.location.coordinate.latitude, longitude: locationManager.location.coordinate.longitude)), rType: .Send, progress: .Sending)
                     await outgoingSocket.add(msg: msg)
                 }
             }

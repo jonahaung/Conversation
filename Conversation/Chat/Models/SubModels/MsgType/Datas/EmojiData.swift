@@ -11,6 +11,6 @@ extension Msg.MsgType {
     
     struct EmojiData: ChatDataRepresenting {
         let emojiID: String
-        var randomSize = CGFloat.random(in: 30..<150)
+        let size: CGSize
     }
 }

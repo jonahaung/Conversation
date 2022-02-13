@@ -10,6 +10,6 @@ import Foundation
 extension Msg.MsgType {
     
     struct AttachmentData: ChatDataRepresenting {
-        var rType: Msg.RecieptType
+        let urlString: String
     }
 }

@@ -11,7 +11,7 @@ extension Msg.MsgType {
     
     struct ViedeoData: ChatDataRepresenting {
         
-        var rType: Msg.RecieptType
+        let urlString: String
         
     }
 }

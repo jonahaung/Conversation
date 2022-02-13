@@ -11,9 +11,11 @@ class MsgStyle: ObservableObject {
     
     var bubbleCorner: UIRectCorner
     var showAvatar: Bool
+    var showTimeSeparater: Bool
     
-    init(bubbleCorner: UIRectCorner, showAvatar: Bool) {
+    init(bubbleCorner: UIRectCorner, showAvatar: Bool, showTimeSeparater: Bool) {
         self.bubbleCorner = bubbleCorner
         self.showAvatar = showAvatar
+        self.showTimeSeparater = showTimeSeparater
     }
 }

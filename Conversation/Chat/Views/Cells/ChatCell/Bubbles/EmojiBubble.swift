@@ -16,7 +16,7 @@ struct EmojiBubble: View {
     var body: some View {
         Image(systemName: data.emojiID)
             .resizable()
-            .frame(width: data.randomSize, height: data.randomSize)
+            .frame(width: data.size.width, height: data.size.height)
             .foregroundColor(roomProperties.bubbleColor(for: msg))
             .padding()
     }

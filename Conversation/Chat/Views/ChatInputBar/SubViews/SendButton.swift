@@ -23,13 +23,13 @@ struct SendButton: View {
                 let text = inputManager.text
                 inputManager.text = String()
                 Task {
-                    let msg = msgCreater.create(msgType: .Text(data: .init(text: text)))
+                    let msg = msgCreater.create(text: text)
                     await ToneManager.shared.vibrate(vibration: .light)
                     await outgoingSocket.add(msg: msg)
                 }
             }else {
                 Task {
-                    let msg = msgCreater.create(msgType: .Emoji(data: .init(emojiID: "hand.thumbsup.fill")))
+                    let msg = msgCreater.create(emojiId: "hand.thumbsup.fill")
                     await ToneManager.shared.vibrate(vibration: .light)
                     await outgoingSocket.add(msg: msg)
                 }

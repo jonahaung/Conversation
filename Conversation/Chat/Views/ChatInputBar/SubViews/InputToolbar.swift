@@ -70,8 +70,9 @@ extension InputToolbar {
         case .Camera:
             break
         case .PhotoLibrary:
-            let msg = msgCreater.create(msgType: .Image(data: .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")))
             Task {
+                let msg = Msg(msgType: .Image, rType: .Receive, progress: .Sent)
+                msg.imageData = .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")
                 await outgoingSocket.add(msg: msg)
             }
         case .SoundRecorder:

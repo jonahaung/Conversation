@@ -10,7 +10,7 @@ import Foundation
 extension Msg.MsgType {
     
     struct VoiceData: ChatDataRepresenting {
-        var rType: Msg.RecieptType
+        let urlString: String
     }
     
 }

@@ -13,18 +13,22 @@ struct ChatInputView: View {
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
     var body: some View {
-        VStack() {
-            HStack(alignment: .bottom) {
-                LeftMenuButton()
-                InputTextView()
-                    .frame(height: chatLayout.textViewHeight)
-                    .background(Color(uiColor: .systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                SendButton()
+        VStack {
+            Color(uiColor: .systemBackground)
+                .frame(height: 1)
+            VStack{
+                HStack(alignment: .bottom) {
+                    LeftMenuButton()
+                    InputTextView()
+                        .frame(height: chatLayout.textViewHeight)
+                        .background(Color(uiColor: .systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    SendButton()
+                }
+                pickerView()
             }
-            pickerView()
+            .padding(7)
         }
-        .padding(7)
         .background(.ultraThinMaterial)
     }
     

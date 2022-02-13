@@ -25,27 +25,33 @@ struct ChatView: View {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         
-                        if canShowTimeSeparater(for: msg, at: index) {
+                        let style = msgStyle(for: msg, at: index)
+                        
+                        if style.showTimeSeparater {
                             TimeSeparaterCell(date: msg.date)
                         }
+                        
                         ChatCell()
                             .environmentObject(msg)
-                            .environmentObject(msgStyle(for: msg, at: index))
+                            .environmentObject(style)
                     }
                     
                     if chatLayout.isTyping {
                         TypingView()
-                            .id(LayoutDefinitions.ScrollableType.TypingIndicator.rawValue)
+                            .id(LayoutDefinitions.ScrollableType.TypingIndicator)
                     }
+                    
+                    Spacer(minLength: 1)
+                        .id(LayoutDefinitions.ScrollableType.Bottom)
                 }
-                .onAppear{
+                .onAppear {
                     connectSockets(scrollProxy: proxy.scrollView)
                 }
                 .onDisappear{
                     disConnectSockets()
                 }
                 .task {
-                    proxy.scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom.rawValue, anchor: .bottom)
+                    proxy.scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom)
                 }
                 .onReceive(chatLayout.scrollPublisher) {
                     chatLayout.scroll(to: $0, from: proxy.scrollView)

@@ -9,21 +9,28 @@ import SwiftUI
 
 extension ChatLayout {
     
-    func sendScroll(id: String, to anchor: UnitPoint = .bottom, animated: Bool) {
-        let obj = LayoutDefinitions.ScrollableObject(id: id, anchor: anchor, animated: animated)
+    func setTyping(typing: Bool) async {
+        guard self.isTyping != typing else { return }
+        guard positions.scrolledAtButton() else { return }
+        self.isTyping = typing
+    }
+    func hideTypingIfNeeded() async {
+        if isTyping {
+            isTyping = false
+            await sendScrollToBottom(animated: false)
+        }
+    }
+    
+    func sendScrollToBottom(animated: Bool = true) async {
+        let obj = LayoutDefinitions.ScrollableObject(id: LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom, animated: animated)
         scrollSender.send(obj)
     }
     
-    func scroll(to obj: LayoutDefinitions.ScrollableObject?, from proxy: ScrollViewProxy) {
-        guard let obj = obj else {
-            return
-        }
+    func scroll(to obj: LayoutDefinitions.ScrollableObject, from proxy: ScrollViewProxy) {
+        guard positions.scrolledAtButton() else { return }
         if obj.animated {
-            guard positions.scrolledAtButton() else { return }
-            DispatchQueue.main.async {
-                withAnimation {
-                    proxy.scrollTo(obj.id, anchor: obj.anchor)
-                }
+            withAnimation {
+                proxy.scrollTo(obj.id, anchor: obj.anchor)
             }
         }else {
             proxy.scrollTo(obj.id, anchor: obj.anchor)

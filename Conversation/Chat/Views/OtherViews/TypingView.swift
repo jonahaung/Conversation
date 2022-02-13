@@ -8,10 +8,17 @@
 import SwiftUI
 
 struct TypingView: View {
+    
+    @EnvironmentObject internal var chatLayout: ChatLayout
+    
     var body: some View {
         HStack {
             ProgressView()
             Spacer()
-        }.padding()
+        }
+        .task {
+            await ToneManager.shared.playSound(tone: .Typing)
+            await chatLayout.sendScrollToBottom()
+        }
     }
 }

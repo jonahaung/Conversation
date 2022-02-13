@@ -9,15 +9,30 @@ import SwiftUI
 
 extension Msg {
     
-    enum MsgProgress: Int, Codable {
+    enum MsgProgress: Int16, Codable {
         
         case Sending, Sent, SendingFailed, Received, Read
         
+        var description: String {
+            switch self {
+            case .Sending:
+                return "Sending"
+            case .Sent:
+                return "Sent"
+            case .SendingFailed:
+                return "Sending Failed"
+            case .Received:
+                return "Received"
+            case .Read:
+                return "Read"
+            }
+        }
         func view() -> AnyView {
             Group {
                 switch self {
                 case .Sending:
-                    ProgressView()
+                    Image(systemName: "circle")
+                        .foregroundColor(Color(uiColor: .tertiaryLabel))
                 case .Sent:
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(Color(uiColor: .tertiaryLabel))

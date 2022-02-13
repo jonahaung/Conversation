@@ -9,14 +9,14 @@ import SwiftUI
 
 struct LayoutDefinitions {
     
-    enum ScrollableType: String {
+    enum ScrollableType {
         
         case Bottom, TypingIndicator
 
     }
     
     struct ScrollableObject: Equatable {
-        let id: String
+        let id: AnyHashable
         let anchor: UnitPoint
         let animated: Bool
     }

@@ -15,33 +15,28 @@ extension ChatView {
     }
     
     func connectSockets(scrollProxy: ScrollViewProxy) {
-        
         incomingSocket.connect(with: ["aung", "Jonah"])
             .onTypingStatus { isTyping in
-                chatLayout.isTyping = isTyping
-                chatLayout.sendScroll(id: LayoutDefinitions.ScrollableType.TypingIndicator.rawValue, animated: true)
-                if chatLayout.isTyping {
-                    Task {
-                        await ToneManager.shared.playSound(tone: .Typing)
-                    }
+                Task {
+                    await chatLayout.setTyping(typing: true)
                 }
             }.onNewMsg { msg in
                 Task {
-                    await ToneManager.shared.playSound(tone: .Tock)
+                    await chatLayout.hideTypingIfNeeded()
+                    await datasource.add(msg: msg)
+                    await chatLayout.sendScrollToBottom()
                 }
-                chatLayout.isTyping = false
-                datasource.msgs.append(msg)
-                chatLayout.sendScroll(id: msg.id, animated: true)
             }
         
         outgoingSocket.connect(with: ["aung", "Jonah"])
             .onAddMsg{ msg in
                 Task {
-                    await ToneManager.shared.playSound(tone: .Tock)
+                    await chatLayout.hideTypingIfNeeded()
+                    await datasource.add(msg: msg)
+                    await chatLayout.sendScrollToBottom()
+                    outgoingSocket.send(msg: msg)
                 }
-                datasource.msgs.append(msg)
-                chatLayout.sendScroll(id: msg.id, animated: true)
-                outgoingSocket.send(msg: msg)
+                
             }
             .onSentMsg { msg in
                 Task {

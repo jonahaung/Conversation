@@ -28,6 +28,7 @@ extension ChatView {
         
         var corners: UIRectCorner = []
         var showAvatar = false
+        var showTimeSeparater = false
         
         if isFromCurrentUser(msg: msg) {
             
@@ -36,10 +37,12 @@ extension ChatView {
             
             if let pre = prevMsg(for: msg, at: i) {
                 
+                showTimeSeparater = msg.date.getDifference(from: pre.date, unit: .second) > 30
+                
                 let sameSender = msg.rType == pre.rType
                 let sameType = msg.msgType == pre.msgType
                 
-                if !sameSender || !sameType || msg.id == chatLayout.selectedId {
+                if !sameSender || !sameType || msg.id == chatLayout.selectedId || pre.id == chatLayout.selectedId || showTimeSeparater {
                     corners.formUnion(.topRight)
                 }
             } else {
@@ -50,7 +53,7 @@ extension ChatView {
                 let sameSender = msg.rType == next.rType
                 let sameType = msg.msgType == next.msgType
                 
-                if !sameSender || !sameType || next.id == chatLayout.selectedId {
+                if !sameSender || !sameType || msg.id == chatLayout.selectedId || next.id == chatLayout.selectedId  || next.date.getDifference(from: msg.date, unit: .second) > 30 {
                     corners.formUnion(.bottomRight)
                 }
             }else {
@@ -58,16 +61,16 @@ extension ChatView {
             }
             
         } else {
-            
             corners.formUnion(.topRight)
             corners.formUnion(.bottomRight)
             
             if let pre = prevMsg(for: msg, at: i) {
+                showTimeSeparater = msg.date.getDifference(from: pre.date, unit: .second) > 30
                 
                 let sameSender = msg.rType == pre.rType
                 let sameType = msg.msgType == pre.msgType
                 
-                if !sameSender || !sameType || msg.id == chatLayout.selectedId {
+                if !sameSender || !sameType || msg.id == chatLayout.selectedId || pre.id == chatLayout.selectedId || showTimeSeparater {
                     corners.formUnion(.topLeft)
                 }
             } else {
@@ -78,7 +81,7 @@ extension ChatView {
                 let sameSender = msg.rType == next.rType
                 let sameType = msg.msgType == next.msgType
                 
-                if !sameSender || !sameType || next.id == chatLayout.selectedId {
+                if !sameSender || !sameType || msg.id == chatLayout.selectedId || next.id == chatLayout.selectedId  || next.date.getDifference(from: msg.date, unit: .second) > 30 {
                     corners.formUnion(.bottomLeft)
                     showAvatar = true
                 }
@@ -87,20 +90,6 @@ extension ChatView {
             }
         }
         
-        return MsgStyle(bubbleCorner: corners, showAvatar: showAvatar)
-    }
-    
-    
-    internal func canShowTimeSeparater(for msg: Msg, at i: Int) -> Bool {
-        if i == 0 {
-            return false
-        }
-        guard let prev = prevMsg(for: msg, at: i) else {
-            return false
-        }
-        guard prev.rType != msg.rType else {
-            return false
-        }
-        return msg.date.getDifference(from: prev.date, unit: .second) > 5
+        return MsgStyle(bubbleCorner: corners, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater)
     }
 }

@@ -12,8 +12,15 @@ enum KeyBoardStatus {
 }
 
 class ChatInputViewManager: ObservableObject {
-    
-    @Published var text: String = ""
+    let textView = GrowingTextView()
+    var text: String {
+        get {
+            return textView.text ?? ""
+        }
+        set {
+            textView.text = newValue
+        }
+    }
     var currentInputItem = InputToolbar.ItemType.None {
         didSet {
             guard oldValue != currentInputItem else { return }

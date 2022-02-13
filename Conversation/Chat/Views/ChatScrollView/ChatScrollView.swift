@@ -35,25 +35,24 @@ struct ChatScrollView<Content: View>: View {
                         }
                         .onPreferenceChange(ChatScrollViewPreferences.Key.self) { obj in
                             guard let obj = obj else { return }
-                            moreLoader.scrollDetector.send(obj)
                             chatLayout.positions.cached = (obj.loaclFrame, obj.globalSize)
+                            moreLoader.scrollDetector.send(obj)
                         }
                         .onReceive(moreLoader.scrollPublisher) { data in
                             if moreLoader.state == .None && (0.0...5.0).contains(data.offsetY) {
                                 Task {
                                     moreLoader.state = .Loaded
-                                    let firstId = datasource.msgs.first?.id ?? ""
+                                    guard let firstId = datasource.msgs.first?.id else { return }
                                     await ToneManager.shared.playSound(tone: .Tock)
                                     await refreshAction?()
                                     await ToneManager.shared.vibrate(vibration: .rigid)
                                     scrollView.scrollTo(firstId, anchor: .top)
                                     moreLoader.state = .None
+                                    scrollView.scrollTo(firstId, anchor: .top)
                                 }
                             }
                         }
                     
-                    Spacer(minLength: 1)
-                        .id(LayoutDefinitions.ScrollableType.Bottom.rawValue)
                 }
                 
             }

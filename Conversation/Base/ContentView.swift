@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-
     var body: some View {
         NavigationView {
             Form {
@@ -23,6 +22,7 @@ struct ContentView: View {
             }
             .navigationTitle("Home")
         }
+        .environmentObject(CurrentUser.shared)
         .environmentObject(AppUserDefault.shared)
         .environmentObject(OutgoingSocket())
         .environmentObject(IncomingSocket())

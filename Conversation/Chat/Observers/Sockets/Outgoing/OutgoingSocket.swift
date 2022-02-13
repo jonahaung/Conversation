@@ -9,8 +9,6 @@ import Foundation
 
 final class OutgoingSocket: ChatRoomSocket {
     
-//    static let shared = OutgoingSocket()
-    
     private lazy var queue: OperationQueue = {
         $0.name = "OutgoingSocket"
         $0.maxConcurrentOperationCount = 1
@@ -38,6 +36,7 @@ final class OutgoingSocket: ChatRoomSocket {
     
     @discardableResult
     func add(msg: Msg) async -> Self {
+        let _ = PersistenceController.shared.create(msg: msg)
         onAddMsg?(msg)
         return self
     }

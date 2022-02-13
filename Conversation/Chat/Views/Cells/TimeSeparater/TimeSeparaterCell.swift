@@ -14,6 +14,7 @@ struct TimeSeparaterCell: View {
         MsgDateView(date: date)
             .font(.system(size: UIFont.systemFontSize, weight: .medium))
             .padding(.vertical, 10)
+            .padding(.top)
             .foregroundStyle(.tertiary)
     }
 }
