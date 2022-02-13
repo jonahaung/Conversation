@@ -18,8 +18,8 @@ struct InputTextView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = inputManager.textView
-        textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize)
-        textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.separator])
+        textView.font = UIFont.systemFont(ofSize: UIFont.labelFontSize, weight: .medium)
+        textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.opaqueSeparator])
         textView.delegate = context.coordinator
         return textView
     }

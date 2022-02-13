@@ -69,7 +69,7 @@ final class IncomingSocket: ChatRoomSocket {
     @objc
     private func handleTimer() {
         onTypingStatusBlock?(Bool.random())
-        let msg = Msg(msgType: .Text, rType: .Receive, progress: .Sent)
+        let msg = Msg(msgType: .Text, rType: .random, progress: .Sent)
         msg.textData = .init(text: Lorem.sentence)
         receive(msg: msg)
     }

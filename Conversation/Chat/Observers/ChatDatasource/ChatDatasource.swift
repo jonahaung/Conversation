@@ -22,7 +22,7 @@ class ChatDatasource: ObservableObject {
         do {
             let offset = PersistenceController.shared.cMsgsCount() - msgs.count - limit
             let new = PersistenceController.shared.cMsgs(limit: 50, offset: max(0, offset)).map(Msg.init)
-            try await Task.sleep(nanoseconds: 2_000_000_000)
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             return new + msgs
         }catch {
             print(error.localizedDescription)
