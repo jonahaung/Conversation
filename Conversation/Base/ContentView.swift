@@ -30,5 +30,9 @@ struct ContentView: View {
             .navigationTitle("Home")
         }
         .navigationViewStyle(.stack)
+        .environmentObject(CurrentUser.shared)
+        .environmentObject(AppUserDefault.shared)
+        .environmentObject(OutgoingSocket())
+        .environmentObject(IncomingSocket())
     }
 }

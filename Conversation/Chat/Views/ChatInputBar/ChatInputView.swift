@@ -43,8 +43,8 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                         inputManager.currentInputItem = .ToolBar
                     }
                     
-                    InputTextView(text: $inputManager.text, height: $chatLayout.textViewHeight)
-                        .frame(height: chatLayout.textViewHeight)
+                    InputTextView(text: $inputManager.text, height: $inputManager.textViewHeight)
+                        .frame(height: inputManager.textViewHeight)
                         .clipShape(RoundedRectangle(cornerRadius: ChatKit.bubbleRadius))
                     
                     SendButton(hasText: inputManager.hasText, onTap: sendText)

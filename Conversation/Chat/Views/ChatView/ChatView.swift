@@ -56,6 +56,7 @@ struct ChatView: View {
             .refreshable {
                 if let msgs = await datasource.getMoreMsg() {
                     datasource.msgs = msgs
+                    
                 }else {
                     datasource.hasMoreData = false
                 }
@@ -70,7 +71,7 @@ struct ChatView: View {
     
     private var accessoryBar: some View {
         HStack {
-            if chatLayout.isTyping {
+            if inputManager.isTyping {
                 TypingView()
             }
             Spacer()

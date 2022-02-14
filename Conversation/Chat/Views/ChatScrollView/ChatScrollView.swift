@@ -53,6 +53,7 @@ struct ChatScrollView<Content: View>: View {
                                     scrollView.scrollTo(firstId, anchor: .top)
                                     scrollView.scrollTo(firstId, anchor: .top)
                                     moreLoader.state = .None
+                                    
                                 }
                             }
                         }

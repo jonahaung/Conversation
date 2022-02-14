@@ -18,7 +18,7 @@ extension ChatView {
         incomingSocket.connect(with: roomProperties.id)
             .onTypingStatus { isTyping in
                 Task {
-                    await chatLayout.setTyping(typing: !chatLayout.isTyping)
+                    await inputManager.setTyping(typing: !inputManager.isTyping)
                 }
             }.onNewMsg { msg in
                 Task {
@@ -33,6 +33,7 @@ extension ChatView {
                     await datasource.add(msg: msg)
                     await chatLayout.sendScrollToBottom()
                     outgoingSocket.send(msg: msg)
+                    
                 }
                 
             }

@@ -9,9 +9,7 @@ import SwiftUI
 
 extension ChatLayout {
     
-    func setTyping(typing: Bool) async {
-        self.isTyping = typing
-    }
+    
     
     func sendScrollToBottom(animated: Bool = true) async {
         let obj = LayoutDefinitions.ScrollableObject(id: LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom, animated: animated)

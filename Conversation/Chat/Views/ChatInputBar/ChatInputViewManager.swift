@@ -14,10 +14,16 @@ enum KeyBoardStatus {
 class ChatInputViewManager: ObservableObject {
     
     @Published var text: String = String()
+    @Published var textViewHeight = CGFloat.zero
+    @Published var isTyping = false
+    
     var hasText: Bool { !text.isEmpty }
     
     @Published var currentInputItem = InputMenuBar.Item.Text
     
+    func setTyping(typing: Bool) async {
+        self.isTyping = typing
+    }
     deinit {
         Log("")
     }

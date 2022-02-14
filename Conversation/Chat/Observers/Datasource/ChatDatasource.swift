@@ -15,7 +15,7 @@ class ChatDatasource: ObservableObject {
     private var limit = 50
     private let conId: String
     private let persistance = PersistenceController.shared
-    @Published var hasMoreData = true
+    var hasMoreData = true
     
     init(conId: String) {
         self.conId = conId
@@ -39,7 +39,6 @@ class ChatDatasource: ObservableObject {
             if offset < 0 {
                 lmt = lmt + offset
             }
-            print(count, msgs.count, offset, lmt)
             let new = persistance.cMsgs(conId: conId, limit: lmt, offset: max(0, offset)).map(Msg.init)
             try await Task.sleep(nanoseconds: 1_000_000_000)
             return new + msgs
@@ -51,16 +50,13 @@ class ChatDatasource: ObservableObject {
     
     func add(msg: Msg) async {
         msgs.append(msg)
-        await ToneManager.shared.playSound(tone: .Tock)
     }
     
     func delete(msg: Msg) {
-        PersistenceController.shared.delete(id: msg.id)
+        
         if let index = msgs.firstIndex(of: msg) {
             msgs.remove(at: index)
-            withAnimation {
-                objectWillChange.send()
-            }
+            PersistenceController.shared.delete(id: msg.id)
         }
     }
     
