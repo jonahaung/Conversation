@@ -33,6 +33,8 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                         inputManager.currentInputItem = item == .ToolBar ? .Text : item
                     }
                 }
+            case .Camera:
+                CameraPicker(onSendPhoto: sendPhoto(image:))
             case .Location:
                 LocationPicker(onSend: sendLocation(coordinate:))
             case .PhotoLibrary:

@@ -1,19 +1,19 @@
 //
-//  PhotoLibrary.swift
+//  CameraPicker.swift
 //  Conversation
 //
-//  Created by Aung Ko Min on 13/2/22.
+//  Created by Aung Ko Min on 14/2/22.
 //
 
 import SwiftUI
 
-struct PhotoPicker: View {
+struct CameraPicker: View {
     
     let onSendPhoto: (UIImage) async -> Void
-    
+    @EnvironmentObject private var inputManager: ChatInputViewManager
     @State private var pickedImage: UIImage?
     @State private var showCamera = false
-    @EnvironmentObject private var inputManager: ChatInputViewManager
+    
     var body: some View {
         InputPicker {
             Group {
@@ -32,8 +32,9 @@ struct PhotoPicker: View {
                 if pickedImage == nil {
                     inputManager.currentInputItem = .Text
                 }
+                
             } content: {
-                PhotoLibrary(image: $pickedImage)
+                Camera(image: $pickedImage)
                     .edgesIgnoringSafeArea(.all)
             }
         } onSend: {
@@ -44,6 +45,5 @@ struct PhotoPicker: View {
             await onSendPhoto(pickedImage)
             self.pickedImage = nil
         }
-        
     }
 }
