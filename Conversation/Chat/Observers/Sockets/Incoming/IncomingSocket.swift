@@ -7,8 +7,9 @@
 
 import UIKit
 
-final class IncomingSocket: ChatRoomSocket {
-    
+final class IncomingSocket: ObservableObject {
+    private var connectedUsers: [String] = []
+    var conId: String = ""
     private lazy var queue: OperationQueue = {
         $0.name = "IncomingSocket"
         $0.maxConcurrentOperationCount = 1
@@ -21,21 +22,24 @@ final class IncomingSocket: ChatRoomSocket {
     private(set) var timer: Timer?
     
     @discardableResult
-    override func connect(with senders: [String]) -> Self {
-        super.connect(with: senders)
+    func connect(with senders: [String], conId: String) -> Self {
+        disconnect()
+        self.conId = conId
+        self.connectedUsers = senders
         if AppUserDefault.shared.autoGenerateMockMessages {
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(handleTimer), userInfo: nil, repeats: true)
         }
+        
         return self
     }
     
     @discardableResult
-    override func disconnect() -> Self {
+    func disconnect() -> Self {
         timer?.invalidate()
         timer = nil
         onTypingStatusBlock = nil
         onNewMsgBlock = nil
-        return super.disconnect()
+        return self
     }
     
     @discardableResult
@@ -69,7 +73,7 @@ final class IncomingSocket: ChatRoomSocket {
     @objc
     private func handleTimer() {
         onTypingStatusBlock?(Bool.random())
-        let msg = Msg(msgType: .Text, rType: .random, progress: .Sent)
+        let msg = Msg(conId: conId, msgType: .Text, rType: .Receive, progress: .Sent)
         msg.textData = .init(text: Lorem.sentence)
         receive(msg: msg)
     }

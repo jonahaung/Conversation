@@ -71,7 +71,7 @@ extension ChatCell {
         
         DragGesture(minimumDistance: 5, coordinateSpace: .global)
             .onChanged { value in
-                guard value.translation.height < 5 else {
+                guard value.translation.height < 10 else {
                     return
                 }
                 let offsetX = value.translation.width
@@ -80,21 +80,20 @@ extension ChatCell {
                         dragOffsetX = 0
                         return
                     }
-                    withAnimation {
-                        dragOffsetX = offsetX
-                    }
+                    dragOffsetX = offsetX
                 } else {
                     if offsetX < 0 {
                         dragOffsetX = 0
                         return
                     }
-                    withAnimation {
-                        dragOffsetX = offsetX
-                    }
+                    dragOffsetX = offsetX
                 }
             }
             .onEnded { value in
                 guard dragOffsetX != 0 else { return }
+                Task {
+                    await ToneManager.shared.playSound(tone: .Tock)
+                }
                 withAnimation(.interactiveSpring()) {
                     dragOffsetX = 0
                 }

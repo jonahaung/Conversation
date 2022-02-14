@@ -9,7 +9,7 @@ import Foundation
 
 extension Msg {
     
-    enum MsgType: Int {
+    enum MsgType: Int16 {
         case Text
         case Image
         case Video

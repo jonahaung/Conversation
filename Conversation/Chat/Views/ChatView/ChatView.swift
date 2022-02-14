@@ -9,19 +9,19 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @StateObject var datasource = ChatDatasource()
-    @StateObject var chatLayout = ChatLayout()
-    @StateObject var msgCreater = MsgCreator()
-    @StateObject var inputManager = ChatInputViewManager()
-    @StateObject var roomProperties = RoomProperties()
+    
+    @StateObject internal var chatLayout = ChatLayout()
+    @StateObject internal var msgCreater = MsgCreator()
+    @StateObject internal var inputManager = ChatInputViewManager()
+    @EnvironmentObject internal var datasource: ChatDatasource
+    @EnvironmentObject internal var roomProperties: RoomProperties
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
     @EnvironmentObject internal var incomingSocket: IncomingSocket
     
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
-            
-            ChatScrollView { proxy in
+            ChatScrollView(hasMoreData: $datasource.hasMoreData) { proxy in
                 LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
@@ -59,16 +59,18 @@ struct ChatView: View {
             }
             .padding(.horizontal, 2)
             .refreshable {
-                datasource.msgs = await datasource.getMoreMsg()
+                if let msgs = await datasource.getMoreMsg() {
+                    datasource.msgs = msgs
+                }else {
+                    datasource.hasMoreData = false
+                }
+                
             }
-            
             ChatInputView()
         }
         .background(roomProperties.bgImage.image)
-        .environmentObject(datasource)
         .environmentObject(chatLayout)
         .environmentObject(msgCreater)
         .environmentObject(inputManager)
-        .environmentObject(roomProperties)
     }
 }

@@ -9,8 +9,11 @@ import SwiftUI
 
 final class RoomProperties: ObservableObject {
     
-    var participentIDs = ["1", "2"]
+    let id: String
     
+    init(id: String) {
+        self.id = id
+    }
     @Published var bgImage = BgImage.Brown
 
     func bubbleColor(for msg: Msg) -> Color {
@@ -18,6 +21,10 @@ final class RoomProperties: ObservableObject {
     }
     func textColor(for msg: Msg) -> Color? {
         return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
+    }
+    
+    deinit {
+        Log("")
     }
 }
 

@@ -8,23 +8,13 @@
 import SwiftUI
 
 extension Msg {
-    enum RecieptType: Int, Codable {
+    enum RecieptType: Int16, Codable {
         case Send
         case Receive
     }
 
 }
 extension Msg.RecieptType {
-    
-    var textColor: Color? {
-        switch self {
-        case .Send:
-            return .init(uiColor: .systemBackground)
-        case .Receive:
-            return nil
-        }
-    }
-    
     var hAlignment: HorizontalAlignment {
         switch self {
         case .Send:
@@ -32,10 +22,5 @@ extension Msg.RecieptType {
         case .Receive:
             return .leading
         }
-    }
-    
-    static var random: Msg.RecieptType {
-        let random = Int.random(in: 0...1)
-        return Msg.RecieptType(rawValue: random) ?? .Send
     }
 }

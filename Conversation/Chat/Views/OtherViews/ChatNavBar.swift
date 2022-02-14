@@ -21,6 +21,7 @@ struct ChatNavBar: View {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Image(systemName: "chevron.backward")
+                        .imageScale(.large)
                         .padding()
                 }
                 HStack {

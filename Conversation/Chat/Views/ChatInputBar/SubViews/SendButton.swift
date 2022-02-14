@@ -14,6 +14,7 @@ struct SendButton: View {
     @EnvironmentObject private var msgCreater: MsgCreator
     @EnvironmentObject private var inputManager: ChatInputViewManager
     @EnvironmentObject private var outgoingSocket: OutgoingSocket
+    @EnvironmentObject internal var roomProperties: RoomProperties
     
     var body: some View {
         Button {
@@ -23,13 +24,13 @@ struct SendButton: View {
                 let text = inputManager.text
                 inputManager.text = String()
                 Task {
-                    let msg = msgCreater.create(text: text)
+                    let msg = msgCreater.create(conId: roomProperties.id, text: text)
                     await ToneManager.shared.vibrate(vibration: .light)
                     await outgoingSocket.add(msg: msg)
                 }
             }else {
                 Task {
-                    let msg = msgCreater.create(emojiId: "hand.thumbsup.fill")
+                    let msg = msgCreater.create(conId: roomProperties.id, emojiId: "hand.thumbsup.fill")
                     await ToneManager.shared.vibrate(vibration: .light)
                     await outgoingSocket.add(msg: msg)
                 }

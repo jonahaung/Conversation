@@ -17,6 +17,10 @@ struct ConversationApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(CurrentUser.shared)
+                .environmentObject(AppUserDefault.shared)
+                .environmentObject(OutgoingSocket())
+                .environmentObject(IncomingSocket())
         }
         .onChange(of: scenePhase, perform: scenePhaseChanged(_:))
     }

@@ -7,8 +7,9 @@
 
 import Foundation
 
-final class OutgoingSocket: ChatRoomSocket {
-    
+final class OutgoingSocket: ObservableObject {
+    private var connectedUsers: [String] = []
+    var conId: String = ""
     private lazy var queue: OperationQueue = {
         $0.name = "OutgoingSocket"
         $0.maxConcurrentOperationCount = 1
@@ -19,13 +20,20 @@ final class OutgoingSocket: ChatRoomSocket {
     private var onAddMsg: ((Msg) -> Void)?
     
     @discardableResult
-    override func connect(with senders: [String]) -> Self {
-        return super.connect(with: senders)
+    func connect(with senders: [String], conId: String) -> Self {
+        disconnect()
+        self.conId = conId
+        self.connectedUsers = senders
+        return self
     }
     @discardableResult
-    override func disconnect() -> Self {
+    func disconnect() -> Self {
         queue.cancelAllOperations()
-        return super.disconnect()
+        queue.isSuspended = true
+        onSentMsgBlock = nil
+        onAddMsg = nil
+        conId = ""
+        return self
     }
     // 1
     @discardableResult

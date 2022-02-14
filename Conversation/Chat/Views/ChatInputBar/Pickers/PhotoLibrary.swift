@@ -13,7 +13,7 @@ struct PhotoLibrary: View {
     @State private var image: UIImage?
     @State private var size: CGSize?
     @EnvironmentObject private var outgoingSocket: OutgoingSocket
-    
+    @EnvironmentObject internal var roomProperties: RoomProperties
     var body: some View {
         VStack {
             if let image = image {
@@ -50,7 +50,7 @@ struct PhotoLibrary: View {
     
     private func send(image: UIImage) {
         Task {
-            let msg = Msg(msgType: .Image, rType: .Send, progress: .Sending)
+            let msg = Msg(conId: roomProperties.id, msgType: .Image, rType: .Send, progress: .Sending)
             msg.imageData = .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")
             msg.imageData?.image = image
             let size = self.size ?? .zero

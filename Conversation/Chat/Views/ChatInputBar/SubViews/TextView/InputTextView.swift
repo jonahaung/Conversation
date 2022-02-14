@@ -17,7 +17,7 @@ struct InputTextView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> GrowingTextView {
-        let textView = inputManager.textView
+        let textView = GrowingTextView()
         textView.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.opaqueSeparator])
         textView.enablesReturnKeyAutomatically = false
@@ -27,7 +27,7 @@ struct InputTextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-
+        uiView.text = inputManager.text
     }
     
     class Coordinator: NSObject, GrowingTextViewDelegate {
@@ -37,9 +37,11 @@ struct InputTextView: UIViewRepresentable {
         init(_ parent: InputTextView) {
             self.parent = parent
         }
-        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
-            parent.inputManager.objectWillChange.send()
+        
+        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
+            parent.inputManager.text = growingTextView.text ?? ""
         }
+
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.textViewHeight = height
         }

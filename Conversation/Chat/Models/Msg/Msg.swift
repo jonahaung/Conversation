@@ -10,6 +10,7 @@ import SwiftUI
 class Msg: ObservableObject, Identifiable {
     
     var id: String
+    let conId: String
     var rType: RecieptType
     var msgType: MsgType
     var date: Date
@@ -29,8 +30,9 @@ class Msg: ObservableObject, Identifiable {
     
     var mediaImage: UIImage?
     
-    init(msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
+    init(conId: String, msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         self.id = UUID().uuidString
+        self.conId = conId
         self.rType = rType
         self.date = Date()
         self.progress = progress
@@ -39,43 +41,45 @@ class Msg: ObservableObject, Identifiable {
         self.imageRatio = 1
     }
     
-    convenience init(textData: Msg.MsgType.TextData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Text, rType: rType, progress: progress)
+    convenience init(conId: String, textData: Msg.MsgType.TextData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Text, rType: rType, progress: progress)
         self.textData = textData
     }
-    convenience init(imageData: Msg.MsgType.ImageData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Image, rType: rType, progress: progress)
+    convenience init(conId: String, imageData: Msg.MsgType.ImageData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Image, rType: rType, progress: progress)
         self.imageData = imageData
     }
-    convenience init(videoData: Msg.MsgType.ViedeoData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Video, rType: rType, progress: progress)
+    convenience init(conId: String, videoData: Msg.MsgType.ViedeoData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Video, rType: rType, progress: progress)
         self.videoData = videoData
     }
-    convenience init(locationData: Msg.MsgType.LocationData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Location, rType: rType, progress: progress)
+    convenience init(conId: String, locationData: Msg.MsgType.LocationData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Location, rType: rType, progress: progress)
         self.locationData = locationData
     }
-    convenience init(emojiData: Msg.MsgType.EmojiData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Emoji, rType: rType, progress: progress)
+    convenience init(conId: String, emojiData: Msg.MsgType.EmojiData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Emoji, rType: rType, progress: progress)
         self.emojiData = emojiData
     }
-    convenience init(attachmentData: Msg.MsgType.AttachmentData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Attachment, rType: rType, progress: progress)
+    convenience init(conId: String, attachmentData: Msg.MsgType.AttachmentData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Attachment, rType: rType, progress: progress)
         self.attachmentData = attachmentData
     }
-    convenience init(voiceData: Msg.MsgType.VoiceData, rType: RecieptType, progress: MsgProgress) {
-        self.init(msgType: .Voice, rType: rType, progress: progress)
+    convenience init(conId: String, voiceData: Msg.MsgType.VoiceData, rType: RecieptType, progress: MsgProgress) {
+        self.init(conId: conId, msgType: .Voice, rType: rType, progress: progress)
         self.voiceData = voiceData
     }
     
     
     init(cMsg: CMsg) {
-        let rType = Msg.RecieptType(rawValue: Int(cMsg.rType))!
-        let msgType = Msg.MsgType(rawValue: Int(cMsg.msgType))!
+        
+        let rType = Msg.RecieptType(rawValue: cMsg.rType)!
+        let msgType = Msg.MsgType(rawValue: cMsg.msgType)!
         let sender = MsgSender(id: cMsg.senderID!, name: cMsg.senderName!, photoURL: cMsg.senderURL!)
         let progress = Msg.MsgProgress(rawValue: cMsg.progress)!
         
         self.id = cMsg.id ?? UUID().uuidString
+        self.conId = cMsg.conId ?? UUID().uuidString
         self.rType = rType
         self.msgType = msgType
         self.date = cMsg.date!
@@ -108,5 +112,10 @@ class Msg: ObservableObject, Identifiable {
 extension Msg: Equatable {
     static func == (lhs: Msg, rhs: Msg) -> Bool {
         lhs.id == rhs.id
+    }
+}
+extension Msg: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self)
     }
 }

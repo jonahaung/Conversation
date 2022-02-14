@@ -32,7 +32,6 @@
 		471425DB27A82E7D00478BED /* AttachmentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425DA27A82E7D00478BED /* AttachmentBubble.swift */; };
 		471425DD27A82EAE00478BED /* VoiceBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425DC27A82EAE00478BED /* VoiceBubble.swift */; };
 		471425F627A8320E00478BED /* MsgProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425F527A8320E00478BED /* MsgProgress.swift */; };
-		471425F827A8322300478BED /* MockDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425F727A8322300478BED /* MockDatabase.swift */; };
 		471425F927A8325800478BED /* RecieptType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471425E327A8305B00478BED /* RecieptType.swift */; };
 		471DA2BA27A6563E00432A1D /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2B727A6563D00432A1D /* Protocol.swift */; };
 		471DA2BB27A6563E00432A1D /* GrowingInternalTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2B827A6563D00432A1D /* GrowingInternalTextView.swift */; };
@@ -52,7 +51,6 @@
 		471F6DB927B8766900690664 /* MsgSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DB827B8766900690664 /* MsgSender.swift */; };
 		471F6DBB27B8794D00690664 /* CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DBA27B8794D00690664 /* CurrentUser.swift */; };
 		473D41E727B41A4C00D41E6B /* MsgSenderOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */; };
-		473D41E927B41B2400D41E6B /* ChatRoomSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41E827B41B2400D41E6B /* ChatRoomSocket.swift */; };
 		473D41EB27B41C8800D41E6B /* MsgReceiverOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */; };
 		473D41EE27B4505600D41E6B /* Sockets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41ED27B4505600D41E6B /* Sockets.swift */; };
 		474F531927B4D248007FFD97 /* LayoutDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474F531827B4D248007FFD97 /* LayoutDefinitions.swift */; };
@@ -138,7 +136,6 @@
 		471425DC27A82EAE00478BED /* VoiceBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceBubble.swift; sourceTree = "<group>"; };
 		471425E327A8305B00478BED /* RecieptType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecieptType.swift; sourceTree = "<group>"; };
 		471425F527A8320E00478BED /* MsgProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MsgProgress.swift; sourceTree = "<group>"; };
-		471425F727A8322300478BED /* MockDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockDatabase.swift; sourceTree = "<group>"; };
 		471DA2B727A6563D00432A1D /* Protocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
 		471DA2B827A6563D00432A1D /* GrowingInternalTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrowingInternalTextView.swift; sourceTree = "<group>"; };
 		471DA2B927A6563E00432A1D /* GrowingTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrowingTextView.swift; sourceTree = "<group>"; };
@@ -157,7 +154,6 @@
 		471F6DB827B8766900690664 /* MsgSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgSender.swift; sourceTree = "<group>"; };
 		471F6DBA27B8794D00690664 /* CurrentUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUser.swift; sourceTree = "<group>"; };
 		473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgSenderOperation.swift; sourceTree = "<group>"; };
-		473D41E827B41B2400D41E6B /* ChatRoomSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomSocket.swift; sourceTree = "<group>"; };
 		473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgReceiverOperation.swift; sourceTree = "<group>"; };
 		473D41ED27B4505600D41E6B /* Sockets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sockets.swift; sourceTree = "<group>"; };
 		474F531827B4D248007FFD97 /* LayoutDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutDefinitions.swift; sourceTree = "<group>"; };
@@ -365,7 +361,6 @@
 				471425F527A8320E00478BED /* MsgProgress.swift */,
 				471425E327A8305B00478BED /* RecieptType.swift */,
 				47CDB8A627A5F787002F2BDF /* MsgActions.swift */,
-				471425F727A8322300478BED /* MockDatabase.swift */,
 				471425AC27A760F500478BED /* MsgType */,
 				471F6DB827B8766900690664 /* MsgSender.swift */,
 			);
@@ -439,7 +434,6 @@
 		473D41E327B419DC00D41E6B /* Sockets */ = {
 			isa = PBXGroup;
 			children = (
-				473D41E827B41B2400D41E6B /* ChatRoomSocket.swift */,
 				473D41E527B419F800D41E6B /* Incoming */,
 				473D41E427B419EF00D41E6B /* Outgoing */,
 			);
@@ -839,7 +833,6 @@
 				471F6DB127B834E200690664 /* TypingView.swift in Sources */,
 				47BC332927B2EA4300664CCD /* BubbleShape.swift in Sources */,
 				471F6DA827B817EB00690664 /* +Date.swift in Sources */,
-				471425F827A8322300478BED /* MockDatabase.swift in Sources */,
 				471DA2BA27A6563E00432A1D /* Protocol.swift in Sources */,
 				471F6DB327B8438D00690664 /* +Bubble.swift in Sources */,
 				471425A227A710B800478BED /* ChatLayout.swift in Sources */,
@@ -878,7 +871,6 @@
 				471425C527A7D39B00478BED /* LeftMenuButton.swift in Sources */,
 				47B3318B27AA7412005CE89A /* ChatScrollViewPreferences.swift in Sources */,
 				471DA2C527A67AE900432A1D /* TextViewState.swift in Sources */,
-				473D41E927B41B2400D41E6B /* ChatRoomSocket.swift in Sources */,
 				471425B127A7613300478BED /* ImageData.swift in Sources */,
 				47F087A627B88884007D79F7 /* Persistence.swift in Sources */,
 				471425B527A7615000478BED /* LocationData.swift in Sources */,

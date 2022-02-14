@@ -10,7 +10,7 @@ import Foundation
 final class TimeSpacer {
     
     private var lastTimestamp: Int64 = 0
-    private var minInterval = Int64(200)
+    private var minInterval = Int64(400)
     
     var canreturn: Bool {
         let currentTimeStamp = Int64(Date().timeIntervalSince1970 * 1000)

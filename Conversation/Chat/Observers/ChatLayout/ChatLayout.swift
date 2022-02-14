@@ -18,7 +18,6 @@ class ChatLayout: ObservableObject {
     
     init() {
         scrollPublisher = scrollSender
-//            .removeDuplicates()
             .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main, options: nil)
             .dropFirst()
@@ -27,4 +26,9 @@ class ChatLayout: ObservableObject {
     
     internal let scrollSender = CurrentValueSubject<LayoutDefinitions.ScrollableObject, Never>(.init(id: "", anchor: .bottom, animated: false))
     let scrollPublisher: AnyPublisher<LayoutDefinitions.ScrollableObject, Never>
+    
+    deinit {
+        Log("Deinit")
+       
+    }
 }

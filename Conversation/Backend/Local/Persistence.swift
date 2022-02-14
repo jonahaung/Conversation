@@ -33,6 +33,7 @@ class PersistenceController {
         let context = self.context
         let cMsg = CMsg(context: context)
         cMsg.id = msg.id
+        cMsg.conId = msg.conId
         cMsg.rType = Int16(msg.rType.rawValue)
         cMsg.msgType = Int16(msg.msgType.rawValue)
         cMsg.progress = Int16(msg.progress.rawValue)
@@ -46,14 +47,16 @@ class PersistenceController {
         cMsg.imageRatio = msg.imageRatio
         return cMsg
     }
-    func cMsgsCount() -> Int {
+    func cMsgsCount(conId: String) -> Int {
         let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)
+        request.predicate = NSPredicate(format: "conId == %@", conId)
         request.resultType = .countResultType
         return (try? context.count(for: request)) ?? 0
     }
     
-    func cMsgs(limit: Int, offset: Int) -> [CMsg] {
+    func cMsgs(conId: String, limit: Int, offset: Int) -> [CMsg] {
         let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)
+        request.predicate = NSPredicate(format: "conId == %@", conId)
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         request.fetchLimit = limit
         request.fetchOffset = offset

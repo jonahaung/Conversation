@@ -15,7 +15,7 @@ extension ChatView {
     }
     
     func connectSockets(scrollProxy: ScrollViewProxy) {
-        incomingSocket.connect(with: ["aung", "Jonah"])
+        incomingSocket.connect(with: ["aung", "Jonah"], conId: roomProperties.id)
             .onTypingStatus { isTyping in
                 Task {
                     await chatLayout.setTyping(typing: true)
@@ -28,7 +28,7 @@ extension ChatView {
                 }
             }
         
-        outgoingSocket.connect(with: ["aung", "Jonah"])
+        outgoingSocket.connect(with: ["aung", "Jonah"], conId: roomProperties.id)
             .onAddMsg{ msg in
                 Task {
                     await chatLayout.hideTypingIfNeeded()

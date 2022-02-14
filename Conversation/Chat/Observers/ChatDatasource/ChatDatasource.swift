@@ -11,17 +11,36 @@ import SwiftUI
 class ChatDatasource: ObservableObject {
     
     @Published var msgs = [Msg]()
-    private var limit = 50
     
-    init() {
-        let offset = max(0, PersistenceController.shared.cMsgsCount() - limit)
-        msgs = PersistenceController.shared.cMsgs(limit: limit, offset: max(0, offset)).map(Msg.init)
+    private var limit = 50
+    private let conId: String
+    private let persistance = PersistenceController.shared
+    @Published var hasMoreData = true
+    
+    init(conId: String) {
+        self.conId = conId
+        let offset = max(0, PersistenceController.shared.cMsgsCount(conId: conId) - limit)
+        msgs = persistance.cMsgs(conId: conId, limit: limit, offset: offset).map(Msg.init)
     }
     
-    func getMoreMsg() async -> [Msg] {
+    func getMoreMsg() async -> [Msg]? {
+        
+        guard hasMoreData else { return nil }
+        
+        let count = persistance.cMsgsCount(conId: conId)
+        
+        if count == msgs.count {
+            return nil
+        }
         do {
-            let offset = PersistenceController.shared.cMsgsCount() - msgs.count - limit
-            let new = PersistenceController.shared.cMsgs(limit: 50, offset: max(0, offset)).map(Msg.init)
+            let offset = count - msgs.count - limit
+            
+            var lmt = self.limit
+            if offset < 0 {
+                lmt = lmt + offset
+            }
+            print(count, msgs.count, offset, lmt)
+            let new = persistance.cMsgs(conId: conId, limit: lmt, offset: max(0, offset)).map(Msg.init)
             try await Task.sleep(nanoseconds: 1_000_000_000)
             return new + msgs
         }catch {
@@ -43,5 +62,9 @@ class ChatDatasource: ObservableObject {
                 objectWillChange.send()
             }
         }
+    }
+    
+    deinit {
+        Log("")
     }
 }

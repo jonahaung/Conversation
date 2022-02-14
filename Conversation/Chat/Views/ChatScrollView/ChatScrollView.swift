@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct ChatScrollView<Content: View>: View {
-    
+    @Environment(\.refresh) private var refreshAction: RefreshAction?
     private let content: (_ proxy: (scrollView: ScrollViewProxy, geometry: GeometryProxy)) -> Content
     
-    init(@ViewBuilder content: @escaping (_ proxy: (scrollView: ScrollViewProxy, geometry: GeometryProxy)) -> Content) {
+    init(hasMoreData: Binding<Bool>, @ViewBuilder content: @escaping (_ proxy: (scrollView: ScrollViewProxy, geometry: GeometryProxy)) -> Content) {
         self.content = content
+        self.hasMoreData = hasMoreData
     }
-    
-    @Environment(\.refresh) private var refreshAction: RefreshAction?
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var datasource: ChatDatasource
-    
     @StateObject private var moreLoader = MoreLoader()
+    private var hasMoreData: Binding<Bool>
     private let timeSpacer = TimeSpacer()
     
     var body: some View {
@@ -31,14 +30,18 @@ struct ChatScrollView<Content: View>: View {
                         .overlay(progressView, alignment: .top)
                         .anchorPreference(key: ChatScrollViewPreferences.Key.self, value: .bounds) {
                             guard timeSpacer.canreturn else { return nil}
-                            return .init(loaclFrame: geometry[$0], globalSize: geometry.size)
+                            
+                            let localFrame = geometry[$0]
+                            let globalSize = geometry.size
+                            return .init(loaclFrame: localFrame, globalSize: globalSize)
                         }
                         .onPreferenceChange(ChatScrollViewPreferences.Key.self) { obj in
                             guard let obj = obj else { return }
-                            chatLayout.positions.cached = (obj.loaclFrame, obj.globalSize)
+                            chatLayout.positions.cached = obj
                             moreLoader.scrollDetector.send(obj)
                         }
                         .onReceive(moreLoader.scrollPublisher) { data in
+                            guard hasMoreData.wrappedValue else { return }
                             if moreLoader.state == .None && (0.0...5.0).contains(data.offsetY) {
                                 Task {
                                     moreLoader.state = .Loaded
@@ -47,8 +50,8 @@ struct ChatScrollView<Content: View>: View {
                                     await refreshAction?()
                                     await ToneManager.shared.vibrate(vibration: .rigid)
                                     scrollView.scrollTo(firstId, anchor: .top)
-                                    moreLoader.state = .None
                                     scrollView.scrollTo(firstId, anchor: .top)
+                                    moreLoader.state = .None
                                 }
                             }
                         }
@@ -62,7 +65,7 @@ struct ChatScrollView<Content: View>: View {
     
     private var progressView: some View {
         Group {
-            if moreLoader.state == .Loaded {
+            if hasMoreData.wrappedValue && moreLoader.state == .Loaded {
                 VStack {
                     ProgressView()
                         .padding()
