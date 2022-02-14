@@ -8,28 +8,29 @@
 import UIKit
 
 final class IncomingSocket: ObservableObject {
-    private var connectedUsers: [String] = []
-    var conId: String = ""
+    
+    private var conId: String = ""
+    
     private lazy var queue: OperationQueue = {
         $0.name = "IncomingSocket"
         $0.maxConcurrentOperationCount = 1
         return $0
     }(OperationQueue())
+    private var timer: Timer?
     
     private var onNewMsgBlock: ((Msg) -> Void)?
     private var onTypingStatusBlock: ((Bool) -> Void)?
     
-    private(set) var timer: Timer?
+    
     
     @discardableResult
-    func connect(with senders: [String], conId: String) -> Self {
+    func connect(with conId: String) -> Self {
         disconnect()
         self.conId = conId
-        self.connectedUsers = senders
         if AppUserDefault.shared.autoGenerateMockMessages {
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(handleTimer), userInfo: nil, repeats: true)
         }
-        
+
         return self
     }
     

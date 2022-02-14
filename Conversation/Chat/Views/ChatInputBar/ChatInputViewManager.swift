@@ -13,16 +13,11 @@ enum KeyBoardStatus {
 
 class ChatInputViewManager: ObservableObject {
     
-    @Published var text: String = ""
+    @Published var text: String = String()
+    var hasText: Bool { !text.isEmpty }
     
-    var currentInputItem = InputToolbar.ItemType.None {
-        didSet {
-            guard oldValue != currentInputItem else { return }
-            withAnimation(.interactiveSpring()) {
-                objectWillChange.send()
-            }
-        }
-    }
+    @Published var currentInputItem = InputMenuBar.Item.Text
+    
     deinit {
         Log("")
     }

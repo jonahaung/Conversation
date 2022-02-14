@@ -6,25 +6,19 @@
 //
 
 import SwiftUI
-import UI
 
-struct ChatInputView: View {
+struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendable {
     
     @EnvironmentObject private var chatLayout: ChatLayout
-    @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject internal var inputManager: ChatInputViewManager
+    @EnvironmentObject internal var outgoingSocket: OutgoingSocket
+    @EnvironmentObject internal var roomProperties: RoomProperties
     
     var body: some View {
         VStack(spacing: 0) {
             Divider()
-            HStack(alignment: .bottom) {
-                LeftMenuButton()
-                InputTextView()
-                    .frame(height: chatLayout.textViewHeight)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: ChatKit.bubbleRadius))
-                SendButton()
-            }
-            .padding(7)
+            
+            
             pickerView()
         }
         .background(.thinMaterial)
@@ -34,17 +28,34 @@ struct ChatInputView: View {
         return Group {
             switch inputManager.currentInputItem {
             case .ToolBar:
-                InputToolbar()
+                InputMenuBar { item in
+                    withAnimation(.interactiveSpring()) {
+                        inputManager.currentInputItem = item == .ToolBar ? .Text : item
+                    }
+                }
             case .Location:
-                LocationPicker()
+                LocationPicker(onSend: sendLocation(coordinate:))
             case .PhotoLibrary:
-                PhotoLibrary()
-                
-            case .None:
-                EmptyView()
+                PhotoPicker(onSendPhoto: sendPhoto(image:))
+            case .Text:
+                HStack(alignment: .bottom) {
+                    PlusMenuButton {
+                        inputManager.currentInputItem = .ToolBar
+                    }
+                    
+                    InputTextView(text: $inputManager.text, height: $chatLayout.textViewHeight)
+                        .frame(height: chatLayout.textViewHeight)
+                        .clipShape(RoundedRectangle(cornerRadius: ChatKit.bubbleRadius))
+                    
+                    SendButton(hasText: inputManager.hasText, onTap: sendText)
+                }
+                .padding(7)
+                .transition(.scale)
             default:
-                VStack {
+                InputPicker {
                     Text(String(describing: inputManager.currentInputItem))
+                } onSend: {
+                    
                 }
             }
         }

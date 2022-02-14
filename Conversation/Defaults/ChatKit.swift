@@ -21,3 +21,6 @@ enum ChatKit {
     static var textTextColorOutgoing = Color(uiColor: UIColor.systemBackground)
     static var textTextColorIncoming: Color? = nil
 }
+
+
+typealias SomeAction = () async -> Void

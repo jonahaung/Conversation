@@ -41,6 +41,7 @@ struct ChatScrollView<Content: View>: View {
                             moreLoader.scrollDetector.send(obj)
                         }
                         .onReceive(moreLoader.scrollPublisher) { data in
+                            chatLayout.positions.isScrolling = false
                             guard hasMoreData.wrappedValue else { return }
                             if moreLoader.state == .None && (0.0...5.0).contains(data.offsetY) {
                                 Task {

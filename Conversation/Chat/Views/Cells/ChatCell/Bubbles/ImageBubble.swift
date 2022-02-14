@@ -12,7 +12,6 @@ struct ImageBubble: View {
     @EnvironmentObject internal var msg: Msg
     
     var body: some View {
-        
         VStack {
             if let path = Media.path(photoId: msg.id), let image = UIImage(path: path) {
                 Image(uiImage: image)
@@ -31,7 +30,6 @@ struct ImageBubble: View {
             }
         }
         .cornerRadius(ChatKit.bubbleRadius)
-        .padding(msg.rType == .Send ? .leading : .trailing)
-        .aspectRatio(msg.imageRatio, contentMode: .fit)
+        .frame(width: 250, height: 250 * 1/msg.imageRatio)
     }
 }

@@ -8,7 +8,6 @@
 import Foundation
 
 final class OutgoingSocket: ObservableObject {
-    private var connectedUsers: [String] = []
     var conId: String = ""
     private lazy var queue: OperationQueue = {
         $0.name = "OutgoingSocket"
@@ -20,16 +19,14 @@ final class OutgoingSocket: ObservableObject {
     private var onAddMsg: ((Msg) -> Void)?
     
     @discardableResult
-    func connect(with senders: [String], conId: String) -> Self {
+    func connect(with conId: String) -> Self {
         disconnect()
         self.conId = conId
-        self.connectedUsers = senders
         return self
     }
     @discardableResult
     func disconnect() -> Self {
         queue.cancelAllOperations()
-        queue.isSuspended = true
         onSentMsgBlock = nil
         onAddMsg = nil
         conId = ""

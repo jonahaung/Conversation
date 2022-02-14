@@ -15,7 +15,7 @@ class ChatLayout: ObservableObject {
     @Published var selectedId: String?
     
     var positions = LayoutDefinitions.ScrollPositions()
-    
+
     init() {
         scrollPublisher = scrollSender
             .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
@@ -29,6 +29,5 @@ class ChatLayout: ObservableObject {
     
     deinit {
         Log("Deinit")
-       
     }
 }

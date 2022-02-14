@@ -11,7 +11,6 @@ struct ChatView: View {
     
     
     @StateObject internal var chatLayout = ChatLayout()
-    @StateObject internal var msgCreater = MsgCreator()
     @StateObject internal var inputManager = ChatInputViewManager()
     @EnvironmentObject internal var datasource: ChatDatasource
     @EnvironmentObject internal var roomProperties: RoomProperties
@@ -36,11 +35,6 @@ struct ChatView: View {
                             .environmentObject(style)
                     }
                     
-                    if chatLayout.isTyping {
-                        TypingView()
-                            .id(LayoutDefinitions.ScrollableType.TypingIndicator)
-                    }
-                    
                     Spacer(minLength: 1)
                         .id(LayoutDefinitions.ScrollableType.Bottom)
                 }
@@ -58,6 +52,7 @@ struct ChatView: View {
                 }
             }
             .padding(.horizontal, 2)
+            .overlay(accessoryBar, alignment: .bottom)
             .refreshable {
                 if let msgs = await datasource.getMoreMsg() {
                     datasource.msgs = msgs
@@ -70,7 +65,15 @@ struct ChatView: View {
         }
         .background(roomProperties.bgImage.image)
         .environmentObject(chatLayout)
-        .environmentObject(msgCreater)
         .environmentObject(inputManager)
+    }
+    
+    private var accessoryBar: some View {
+        HStack {
+            if chatLayout.isTyping {
+                TypingView()
+            }
+            Spacer()
+        }
     }
 }

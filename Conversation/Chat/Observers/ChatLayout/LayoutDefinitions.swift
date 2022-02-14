@@ -22,12 +22,20 @@ struct LayoutDefinitions {
     }
     
     class ScrollPositions {
-        var cached: ChatScrollViewPreferences.Object = .init(loaclFrame: .zero, globalSize: .zero)
+    
+        var cached: ChatScrollViewPreferences.Object = .init(loaclFrame: .zero, globalSize: .zero) {
+            willSet {
+                isScrolling = true
+            }
+        }
+        
+        var isScrolling = false
+        
         func scrolledAtButton() -> Bool {
             guard cached.globalSize != .zero else {
                 return true
             }
-            return (cached.loaclFrame.maxY - cached.globalSize.height) < cached.globalSize.height*2
+            return (cached.loaclFrame.maxY - cached.globalSize.height) < cached.globalSize.height
         }
     }
 }

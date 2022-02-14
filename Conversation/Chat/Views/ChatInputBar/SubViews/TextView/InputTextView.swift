@@ -9,12 +9,8 @@ import SwiftUI
 
 struct InputTextView: UIViewRepresentable {
     
-    @EnvironmentObject private var chatLayout: ChatLayout
-    @EnvironmentObject private var inputManager: ChatInputViewManager
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
+    @Binding var text: String
+    @Binding var height: CGFloat
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
@@ -22,12 +18,17 @@ struct InputTextView: UIViewRepresentable {
         textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.opaqueSeparator])
         textView.enablesReturnKeyAutomatically = false
         textView.maxNumberOfLines = 7
+        textView.backgroundColor = .secondarySystemGroupedBackground
         textView.delegate = context.coordinator
         return textView
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-        uiView.text = inputManager.text
+        uiView.text = text
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
     }
     
     class Coordinator: NSObject, GrowingTextViewDelegate {
@@ -37,13 +38,15 @@ struct InputTextView: UIViewRepresentable {
         init(_ parent: InputTextView) {
             self.parent = parent
         }
-        
+        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
+            parent.text = growingTextView.text ?? String()
+        }
         func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
-            parent.inputManager.text = growingTextView.text ?? ""
+            
         }
 
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
-            parent.chatLayout.textViewHeight = height
+            parent.height = height
         }
         
         func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
