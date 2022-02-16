@@ -16,6 +16,7 @@ struct ConversationApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                
         }
         .onChange(of: scenePhase, perform: scenePhaseChanged(_:))
     }

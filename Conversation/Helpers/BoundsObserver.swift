@@ -8,9 +8,9 @@
 import SwiftUI
 
 extension View {
-    public func saveBounds(viewId: String, color: Color = .clear, cornorRadius: CGFloat = 0, coordinateSpace: CoordinateSpace = .local) -> some View {
+    public func saveBounds(viewId: String, coordinateSpace: CoordinateSpace = .global) -> some View {
         background(GeometryReader { proxy in
-            color.cornerRadius(cornorRadius).preference(key: SaveBoundsPrefKey.self, value: [SaveBoundsPrefData(viewId: viewId, bounds: proxy.frame(in: coordinateSpace))])
+            Color.clear.preference(key: SaveBoundsPrefKey.self, value: [SaveBoundsPrefData(viewId: viewId, bounds: proxy.frame(in: coordinateSpace))])
         })
     }
     

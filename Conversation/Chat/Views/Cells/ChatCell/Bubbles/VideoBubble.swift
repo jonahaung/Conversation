@@ -14,4 +14,5 @@ struct VideoBubble: View {
     var body: some View {
         Text("Video Data")
     }
+    
 }

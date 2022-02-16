@@ -17,9 +17,9 @@ struct LocationPicker: View {
     var body: some View {
         InputPicker {
             VStack {
-                Text(locationManager.address)
-                    .italic()
                 Map(coordinateRegion: .constant(MKCoordinateRegion(center: locationManager.location.coordinate, span: .init(latitudeDelta: 0.05, longitudeDelta: 0.05))), showsUserLocation: true)
+                    .overlay(Text(locationManager.address).italic().padding(), alignment: .bottom)
+                
             }
             .task {
                 locationManager.start()

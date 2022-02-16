@@ -8,6 +8,7 @@
 import Foundation
 
 final class OutgoingSocket: ObservableObject {
+    
     var conId: String = ""
     private lazy var queue: OperationQueue = {
         $0.name = "OutgoingSocket"
@@ -55,16 +56,18 @@ final class OutgoingSocket: ObservableObject {
     @discardableResult
     func send(msg: Msg) -> Self {
         let operation = MsgSenderOperation(msg)
-        operation.completionBlock = { [weak self] in
-            if operation.isCancelled {
-                return
-            }
+        operation.completionBlock = { [weak self, weak msg, weak operation] in
+            guard let op = operation, !op.isCancelled, let self = self, let msg = msg else { return }
             DispatchQueue.main.async {
-                operation.msg.applyAction(action: .MsgProgress(value: .Read))
-                self?.onSentMsgBlock?(operation.msg)
+                msg.applyAction(action: .MsgProgress(value: .Sent))
+                self.onSentMsgBlock?(msg)
             }
         }
         queue.addOperation(operation)
         return self
+    }
+    
+    deinit {
+        Log("")
     }
 }

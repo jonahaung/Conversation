@@ -65,9 +65,8 @@ extension ChatCell {
                                 await ToneManager.shared.playSound(tone: .Tock)
                             }
                             
-                            if msg.progress == .Sending {
-                                
-                                outgoingSocket.send(msg: msg)
+                            if msg.progress == .Sent {
+                                msg.applyAction(action: .MsgProgress(value: .Read))
                             }
                         }
                 }

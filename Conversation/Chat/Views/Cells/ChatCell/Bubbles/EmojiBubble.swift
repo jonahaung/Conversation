@@ -17,7 +17,7 @@ struct EmojiBubble: View {
         Image(systemName: data.emojiID)
             .resizable()
             .frame(width: data.size.width, height: data.size.height)
-            .foregroundColor(roomProperties.bubbleColor(for: msg))
+            .foregroundColor(.accentColor)
             .padding()
     }
 }

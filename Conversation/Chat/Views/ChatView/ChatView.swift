@@ -12,15 +12,20 @@ struct ChatView: View {
     
     @StateObject internal var chatLayout = ChatLayout()
     @StateObject internal var inputManager = ChatInputViewManager()
-    @EnvironmentObject internal var datasource: ChatDatasource
-    @EnvironmentObject internal var roomProperties: RoomProperties
-    @EnvironmentObject internal var outgoingSocket: OutgoingSocket
+    @StateObject internal var datasource: ChatDatasource
+    @StateObject internal var roomProperties: RoomProperties
+    @StateObject internal var outgoingSocket = OutgoingSocket()
     @EnvironmentObject internal var incomingSocket: IncomingSocket
+    
+    init(conId: String) {
+        _datasource = .init(wrappedValue: ChatDatasource(conId: conId))
+        _roomProperties = .init(wrappedValue: RoomProperties(id: conId))
+    }
     
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
-            ChatScrollView(hasMoreData: $datasource.hasMoreData) { proxy in
+            ChatScrollView(hasMoreData: $datasource.hasMoreData) { scrollView in
                 LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
@@ -34,47 +39,43 @@ struct ChatView: View {
                             .environmentObject(msg)
                             .environmentObject(style)
                     }
-                    
-                    Spacer(minLength: 1)
+                    Color.clear
+                        .frame(height: chatLayout.inputViewFrame.height)
                         .id(LayoutDefinitions.ScrollableType.Bottom)
                 }
-                .onAppear {
-                    connectSockets(scrollProxy: proxy.scrollView)
+                .offset(y: chatLayout.contentOffsetY)
+                .task {
+                    scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom)
+                }
+                .onAppear{
+                    connectSockets()
                 }
                 .onDisappear{
                     disConnectSockets()
                 }
-                .task {
-                    proxy.scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom)
-                }
                 .onReceive(chatLayout.scrollPublisher) {
-                    chatLayout.scroll(to: $0, from: proxy.scrollView)
+                    chatLayout.scroll(to: $0, from: scrollView)
                 }
             }
-            .padding(.horizontal, 2)
-            .overlay(accessoryBar, alignment: .bottom)
+            .padding(.horizontal, 3)
             .refreshable {
                 if let msgs = await datasource.getMoreMsg() {
                     datasource.msgs = msgs
-                    
                 }else {
                     datasource.hasMoreData = false
                 }
-                
             }
-            ChatInputView()
+            .overlay(ChatInputView(), alignment: .bottom)
+            
         }
         .background(roomProperties.bgImage.image)
         .environmentObject(chatLayout)
         .environmentObject(inputManager)
+        .environmentObject(datasource)
+        .environmentObject(roomProperties)
+        .environmentObject(outgoingSocket)
+        .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
     }
     
-    private var accessoryBar: some View {
-        HStack {
-            if inputManager.isTyping {
-                TypingView()
-            }
-            Spacer()
-        }
-    }
+    
 }

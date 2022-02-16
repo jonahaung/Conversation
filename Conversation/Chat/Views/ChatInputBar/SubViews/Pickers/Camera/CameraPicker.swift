@@ -12,7 +12,6 @@ struct CameraPicker: View {
     let onSendPhoto: (UIImage) async -> Void
     @EnvironmentObject private var inputManager: ChatInputViewManager
     @State private var pickedImage: UIImage?
-    @State private var showCamera = false
     
     var body: some View {
         InputPicker {
@@ -21,21 +20,12 @@ struct CameraPicker: View {
                     Image(uiImage: pickedImage)
                         .resizable()
                         .scaledToFit()
+                        .padding()
                 } else {
-                    Divider()
-                        .task {
-                            showCamera = true
-                        }
+                    Camera(image: $pickedImage) {
+                        inputManager.currentInputItem = .Text
+                    }
                 }
-            }
-            .fullScreenCover(isPresented: $showCamera) {
-                if pickedImage == nil {
-                    inputManager.currentInputItem = .Text
-                }
-                
-            } content: {
-                Camera(image: $pickedImage)
-                    .edgesIgnoringSafeArea(.all)
             }
         } onSend: {
             guard let pickedImage = pickedImage else {

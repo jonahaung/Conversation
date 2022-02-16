@@ -8,29 +8,35 @@
 import SwiftUI
 
 struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendable {
-    
+    static let id = "ChatInputView"
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
     @EnvironmentObject internal var roomProperties: RoomProperties
     
     var body: some View {
-        VStack(spacing: 0) {
-            Divider()
+        VStack {
+            accessoryBar
+            VStack(spacing: 0) {
+               
+                pickerView()
+            }
+            .background(.regularMaterial)
+            .saveBounds(viewId: ChatInputView.id)
             
-            
-            pickerView()
         }
-        .background(.thinMaterial)
     }
     
     private func pickerView() -> some View {
         return Group {
             switch inputManager.currentInputItem {
             case .ToolBar:
-                InputMenuBar { item in
-                    withAnimation(.interactiveSpring()) {
-                        inputManager.currentInputItem = item == .ToolBar ? .Text : item
+                VStack(spacing: 0){
+                    Divider()
+                    InputMenuBar { item in
+                        withAnimation(.interactiveSpring()) {
+                            inputManager.currentInputItem = item == .ToolBar ? .Text : item
+                        }
                     }
                 }
             case .Camera:
@@ -44,15 +50,13 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                     PlusMenuButton {
                         inputManager.currentInputItem = .ToolBar
                     }
-                    
-                    InputTextView(text: $inputManager.text, height: $inputManager.textViewHeight)
+                    InputTextView()
                         .frame(height: inputManager.textViewHeight)
-                        .clipShape(RoundedRectangle(cornerRadius: ChatKit.bubbleRadius))
-                    
                     SendButton(hasText: inputManager.hasText, onTap: sendText)
                 }
                 .padding(7)
                 .transition(.scale)
+                
             default:
                 InputPicker {
                     Text(String(describing: inputManager.currentInputItem))
@@ -61,5 +65,31 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 }
             }
         }
+    }
+    
+    private var accessoryBar: some View {
+        HStack {
+            Group {
+                if inputManager.isTyping {
+                    TypingView()
+                }
+                
+                Spacer()
+                if !chatLayout.scrolledAtButton {
+                    Button {
+                        Task {
+                            await chatLayout.sendScrollToBottom(isForced: true)
+                        }
+                    } label: {
+                        Image(systemName: "chevron.down.circle")
+                            .font(.title)
+                            .padding(.trailing)
+                    }
+                    .transition(.move(edge: .trailing))
+                }
+            }
+        }
+        
+        
     }
 }

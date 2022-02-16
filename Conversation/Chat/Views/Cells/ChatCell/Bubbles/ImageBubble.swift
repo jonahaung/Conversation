@@ -12,24 +12,16 @@ struct ImageBubble: View {
     @EnvironmentObject internal var msg: Msg
     
     var body: some View {
-        VStack {
+        Group {
             if let path = Media.path(photoId: msg.id), let image = UIImage(path: path) {
                 Image(uiImage: image)
                     .resizable()
+                    .cornerRadius(8)
+                    .tapToPresent(ImageViewer(image: image))
             } else {
-                AsyncImage(
-                    url: URL(string: msg.imageData?.urlString ?? ""),
-                    content: { image in
-                        image.resizable()
-                            .aspectRatio(contentMode: .fit)
-                    },
-                    placeholder: {
-                        ProgressView()
-                    }
-                )
+                ProgressView()
             }
         }
-        .cornerRadius(ChatKit.bubbleRadius)
         .frame(width: 250, height: 250 * 1/msg.imageRatio)
     }
 }

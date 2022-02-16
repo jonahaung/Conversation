@@ -31,8 +31,13 @@ extension ChatCell {
                 if let data = msg.textData {
                     TextBubble(data: data)
                         .foregroundColor(roomProperties.textColor(for: msg))
-                        .background(roomProperties.bubbleColor(for: msg))
-                        .clipShape(BubbleShape(corners: style.bubbleCorner))
+                        .background(
+                            roomProperties.bubbleColor(for: msg)
+                                .clipShape(
+                                    BubbleShape(corners: style.bubbleCorner)
+                                )
+                        )
+                        
                 }
             case .Image:
                 ImageBubble()
@@ -60,7 +65,7 @@ extension ChatCell {
         }
     }
     private var bubbleTapGesture: some Gesture {
-        TapGesture(count: 1)
+        TapGesture(count: 2)
             .onEnded {
                 didTapBubble()
             }

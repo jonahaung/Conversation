@@ -10,11 +10,7 @@ import Combine
 
 final class MoreLoader: ObservableObject {
 
-    enum State {
-        case None, Loaded
-    }
     
-    @Published var state = State.None
     
     
     let scrollDetector: CurrentValueSubject = CurrentValueSubject<ChatScrollViewPreferences.Object, Never>(.init(loaclFrame: .zero, globalSize: .zero))
@@ -26,5 +22,9 @@ final class MoreLoader: ObservableObject {
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .dropFirst()
             .eraseToAnyPublisher()
+    }
+    
+    deinit {
+        Log("")
     }
 }

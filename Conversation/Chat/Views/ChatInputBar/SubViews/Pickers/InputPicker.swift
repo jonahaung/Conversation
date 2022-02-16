@@ -28,11 +28,10 @@ struct InputPicker<Content: View>: View {
                 }
                 
                 Spacer()
-                
                 SendButton(hasText: true, onTap: onSend)
             }
+            .padding()
         }
-        .padding()
         .transition(.scale)
     }
 }

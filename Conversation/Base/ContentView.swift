@@ -16,23 +16,17 @@ struct ContentView: View {
                 ForEach(cons, id: \.self) { con in
                     Text(con)
                         .tapToPush(
-                            ChatView()
+                            ChatView(conId: con)
                                 .navigationBarHidden(true)
-                                .environmentObject(ChatDatasource(conId: con))
-                                .environmentObject(RoomProperties(id: con))
                         )
-                }
-                
-                NavigationLink("Settings") {
-                    SettingsView()
                 }
             }
             .navigationTitle("Home")
+            .navigationBarItems(trailing: Text("Settings").tapToPush(SettingsView()))
         }
         .navigationViewStyle(.stack)
         .environmentObject(CurrentUser.shared)
+        .environmentObject(IncomingSocket.shared)
         .environmentObject(AppUserDefault.shared)
-        .environmentObject(OutgoingSocket())
-        .environmentObject(IncomingSocket())
     }
 }

@@ -9,7 +9,9 @@ import SwiftUI
 
 final class AppUserDefault: ObservableObject {
     
-    static let shared = AppUserDefault()
+    static let shared: AppUserDefault = {
+        return $0
+    }(AppUserDefault())
     
     private static let _autoGenerateMockMsgs = "autoGenerateMockMsgs"
     @AppStorage(AppUserDefault._autoGenerateMockMsgs)

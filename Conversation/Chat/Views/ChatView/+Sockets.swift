@@ -14,16 +14,17 @@ extension ChatView {
         outgoingSocket.disconnect()
     }
     
-    func connectSockets(scrollProxy: ScrollViewProxy) {
+    func connectSockets() {
         incomingSocket.connect(with: roomProperties.id)
-            .onTypingStatus { isTyping in
-                Task {
-                    await inputManager.setTyping(typing: !inputManager.isTyping)
-                }
-            }.onNewMsg { msg in
+            .onNewMsg { msg in
                 Task {
                     await datasource.add(msg: msg)
                     await chatLayout.sendScrollToBottom()
+                }
+            }
+            .onTypingStatus { isTyping in
+                Task {
+                    await inputManager.setTyping(typing: !inputManager.isTyping)
                 }
             }
         
@@ -33,9 +34,7 @@ extension ChatView {
                     await datasource.add(msg: msg)
                     await chatLayout.sendScrollToBottom()
                     outgoingSocket.send(msg: msg)
-                    
                 }
-                
             }
             .onSentMsg { msg in
                 Task {

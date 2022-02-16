@@ -9,22 +9,17 @@ import SwiftUI
 
 struct InputTextView: UIViewRepresentable {
     
-    @Binding var text: String
-    @Binding var height: CGFloat
+    @EnvironmentObject private var chatLayout: ChatLayout
+    @EnvironmentObject private var inputManager: ChatInputViewManager
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
-        textView.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
-        textView.placeholder = NSAttributedString(string: "Text ...", attributes: [.font: textView.font!, .foregroundColor: UIColor.opaqueSeparator])
-        textView.enablesReturnKeyAutomatically = false
-        textView.maxNumberOfLines = 7
-        textView.backgroundColor = .secondarySystemGroupedBackground
         textView.delegate = context.coordinator
         return textView
     }
     
     func updateUIView(_ uiView: GrowingTextView, context: Context) {
-        uiView.text = text
+        uiView.text = inputManager.text
     }
     
     func makeCoordinator() -> Coordinator {
@@ -38,22 +33,25 @@ struct InputTextView: UIViewRepresentable {
         init(_ parent: InputTextView) {
             self.parent = parent
         }
+        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
+           
+        }
+        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
+            if parent.chatLayout.scrolledAtButton {
+                Task {
+                    await  parent.chatLayout.sendScrollToBottom(animated: true, isForced: true)
+                }
+            }
+            return true
+        }
         func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
-            parent.text = growingTextView.text ?? String()
-        }
-        func growingTextViewDidChangeSelection(_ growingTextView: GrowingTextView) {
-            
-        }
-
-        func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
-            parent.height = height
+            parent.inputManager.text = growingTextView.text
         }
         
-        func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool {
-            if !growingTextView.hasText {
-                _ = growingTextView.resignFirstResponder()
-            }
-            return growingTextView.hasText
+        func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
+            parent.chatLayout.contentOffsetY = -(height - growingTextView.minHeight)
+            parent.inputManager.textViewHeight = height
         }
+        
     }
 }

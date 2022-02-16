@@ -14,24 +14,25 @@ struct TapToPresentStyle<Destination: View>: ViewModifier {
     
     @State private var sheetIsPresented = false
     @State private var fullScreenIsPresented = false
+    @Environment(\.presentationMode) private var presentationMode
     
     func body(content: Content) -> some View {
-        Button{
-            if isFullScreen {
-                fullScreenIsPresented = true
-            } else {
-                sheetIsPresented = true
+        content
+            .onTapGesture {
+                if isFullScreen {
+                    fullScreenIsPresented = true
+                } else {
+                    sheetIsPresented = true
+                }
             }
-        } label: {
-            content
-        }
-        .fullScreenCover(isPresented: $fullScreenIsPresented) {
-            destination
-        }
-        .sheet(isPresented: $sheetIsPresented) {
-            destination
-        }
+            .fullScreenCover(isPresented: $fullScreenIsPresented) {
+                destination
+            }
+            .sheet(isPresented: $sheetIsPresented) {
+                destination
+            }
     }
+
 }
 
 

@@ -9,6 +9,10 @@ import UIKit
 
 final class IncomingSocket: ObservableObject {
     
+    static let shared: IncomingSocket = {
+        return $0
+    }(IncomingSocket())
+    
     private var conId: String = ""
     
     private lazy var queue: OperationQueue = {
@@ -38,6 +42,8 @@ final class IncomingSocket: ObservableObject {
     func disconnect() -> Self {
         timer?.invalidate()
         timer = nil
+        queue.cancelAllOperations()
+        conId = ""
         onTypingStatusBlock = nil
         onNewMsgBlock = nil
         return self
@@ -56,19 +62,20 @@ final class IncomingSocket: ObservableObject {
     }
     
     private func receive(msg: Msg) {
-        let op = MsgReceiverOperation(msg)
-        op.completionBlock = { [weak self] in
+        let operation = MsgReceiverOperation(msg)
+        operation.completionBlock = {  [weak self, weak msg, weak operation] in
+            guard let op = operation, !op.isCancelled, let self = self, let msg = msg else { return }
             if op.isCancelled {
                 return
             }
             DispatchQueue.main.async {
-                op.msg.applyAction(action: .MsgProgress(value: .Read))
-                let cMsg = PersistenceController.shared.create(msg: op.msg)
-                let msg = Msg(cMsg: cMsg)
-                self?.onNewMsgBlock?(msg)
+                msg.applyAction(action: .MsgProgress(value: .Read))
+                let cMsg = PersistenceController.shared.create(msg: msg)
+                let _ = Msg(cMsg: cMsg)
+                self.onNewMsgBlock?(msg)
             }
         }
-        queue.addOperation(op)
+        queue.addOperation(operation)
     }
     
     @objc
@@ -77,5 +84,9 @@ final class IncomingSocket: ObservableObject {
         let msg = Msg(conId: conId, msgType: .Text, rType: .Receive, progress: .Sent)
         msg.textData = .init(text: Lorem.sentence)
         receive(msg: msg)
+    }
+    
+    deinit {
+        Log("")
     }
 }

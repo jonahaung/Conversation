@@ -31,14 +31,11 @@ extension ChatView {
         var showTimeSeparater = false
         
         if isFromCurrentUser(msg: msg) {
-            
             corners.formUnion(.topLeft)
             corners.formUnion(.bottomLeft)
             
             if let pre = prevMsg(for: msg, at: i) {
-                
                 showTimeSeparater = msg.date.getDifference(from: pre.date, unit: .second) > 30
-                
                 let sameSender = msg.rType == pre.rType
                 let sameType = msg.msgType == pre.msgType
                 
@@ -48,7 +45,6 @@ extension ChatView {
             } else {
                 corners.formUnion(.topRight)
             }
-            
             if let next = nextMsg(for: msg, at: i) {
                 let sameSender = msg.rType == next.rType
                 let sameType = msg.msgType == next.msgType
@@ -59,7 +55,6 @@ extension ChatView {
             }else {
                 corners.formUnion(.bottomRight)
             }
-            
         } else {
             corners.formUnion(.topRight)
             corners.formUnion(.bottomRight)
@@ -80,7 +75,6 @@ extension ChatView {
             if let next = nextMsg(for: msg, at: i) {
                 let sameSender = msg.rType == next.rType
                 let sameType = msg.msgType == next.msgType
-                
                 if !sameSender || !sameType || msg.id == chatLayout.selectedId || next.id == chatLayout.selectedId  || next.date.getDifference(from: msg.date, unit: .second) > 30 {
                     corners.formUnion(.bottomLeft)
                     showAvatar = true
@@ -89,7 +83,6 @@ extension ChatView {
                 corners.formUnion(.bottomLeft)
             }
         }
-        
         return MsgStyle(bubbleCorner: corners, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater)
     }
 }
