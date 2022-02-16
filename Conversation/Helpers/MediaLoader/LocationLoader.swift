@@ -42,7 +42,7 @@ class LocationLoader: NSObject {
                         point.y += pin.centerOffset.y - (pin.bounds.size.height / 2)
                         pin.image?.draw(at: point)
                         let image = UIGraphicsGetImageFromCurrentImageContext()
-                        msg.locationData?.image = image
+                        msg.mediaImage = image
                         msg.objectWillChange.send()
                     }
                     UIGraphicsEndImageContext()

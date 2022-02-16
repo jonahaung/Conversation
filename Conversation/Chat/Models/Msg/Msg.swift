@@ -27,8 +27,12 @@ class Msg: ObservableObject, Identifiable {
     var voiceData: MsgType.VoiceData?
     
     var imageRatio: Double
-    
     var mediaImage: UIImage?
+    var bubbleSize: CGSize? {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     init(conId: String, msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         self.id = UUID().uuidString

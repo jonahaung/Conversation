@@ -39,12 +39,10 @@ extension View {
     
     public func retrieveSize(viewId: String, _ rect: Binding<CGSize?>) -> some View {
         onPreferenceChange(SaveSizePrefKey.self) { preferences in
-            DispatchQueue.main.async {
-                // The async is used to prevent a possible blocking loop,
-                // due to the child and the ancestor modifying each other.
-                let p = preferences.first(where: { $0.viewId == viewId })
-                rect.wrappedValue = p?.size ?? .zero
-            }
+            // The async is used to prevent a possible blocking loop,
+            // due to the child and the ancestor modifying each other.
+            let p = preferences.first(where: { $0.viewId == viewId })
+            rect.wrappedValue = p?.size ?? .zero
         }
     }
 }

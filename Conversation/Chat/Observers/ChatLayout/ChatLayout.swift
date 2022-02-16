@@ -8,36 +8,16 @@
 import SwiftUI
 import Combine
 
-class ChatLayout: ObservableObject {
+
+class ChatLayout: ObservableObject, LayoutCalculator {
     
-    @Published var selectedId: String?
+    
     @Published var contentOffsetY = CGFloat.zero
     @Published var inputViewFrame: CGRect = .zero
+    
     @Published var isLoadingMore = false
-    
-    var cached: ChatScrollViewPreferences.Object = .init(loaclFrame: .zero, globalSize: .zero)
-    
-    
-    var isScrolling = false {
-        didSet {
-            guard oldValue != isScrolling else { return }
-            if !isScrolling {
-                if cached.loaclFrame.height > cached.globalSize.height {
-                    scrolledAtButton = (cached.loaclFrame.maxY - cached.globalSize.height) < cached.globalSize.height
-                }
-            }
-        }
-    }
-    
-    var scrolledAtButton = true {
-        willSet {
-            guard newValue != scrolledAtButton else { return }
-            withAnimation(.interactiveSpring()) {
-                objectWillChange.send()
-            }
-        }
-    }
-    
+    var layout = ChatLayoutObject.init(scrolledAtButton: true, isScrolling: false, canLoadMoreData: false)
+
     init() {
         scrollPublisher = scrollSender
             .debounce(for: .seconds(0.1), scheduler: DispatchQueue.main)
@@ -50,6 +30,41 @@ class ChatLayout: ObservableObject {
     internal let scrollQueue = OperationQueue()
     
     deinit {
+        scrollQueue.cancelAllOperations()
         Log("Deinit")
     }
+    
+    func updateLayout(obj: ChatScrollViewPreferences.Object) {
+        layout = calculateLayout(object: obj)
+        withAnimation(.interactiveSpring()) {
+            objectWillChange.send()
+        }
+    }
+}
+
+
+protocol LayoutCalculator {
+
+    func calculateLayout(object: ChatScrollViewPreferences.Object) -> ChatLayoutObject
+}
+
+extension LayoutCalculator {
+    
+    func calculateLayout(object: ChatScrollViewPreferences.Object) -> ChatLayoutObject {
+        var scrolledAtButton = true
+        let isScrolling = true
+        let canLoadMoreData = (0.0...5.0).contains(object.offsetY)
+        
+        if object.loaclFrame.height > object.globalSize.height {
+            scrolledAtButton = (object.loaclFrame.maxY - object.globalSize.height) < object.globalSize.height
+        }
+        return ChatLayoutObject(scrolledAtButton: scrolledAtButton, isScrolling: isScrolling, canLoadMoreData: canLoadMoreData)
+    }
+}
+
+struct ChatLayoutObject {
+    
+    var scrolledAtButton: Bool
+    var isScrolling: Bool
+    var canLoadMoreData: Bool
 }

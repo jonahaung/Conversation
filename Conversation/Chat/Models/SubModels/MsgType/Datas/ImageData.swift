@@ -12,6 +12,6 @@ extension Msg.MsgType {
     struct ImageData: ChatDataRepresenting {
         
         let urlString: String
-        var image: UIImage?
+       
     }
 }

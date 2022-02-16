@@ -20,7 +20,7 @@ extension ChatLayout {
             guard let self = self else { return }
             guard !self.isLoadingMore else { return }
             
-            if !obj.isFroced && !self.scrolledAtButton {
+            if !obj.isFroced && !self.layout.scrolledAtButton {
                 return
             }
             if obj.animated {

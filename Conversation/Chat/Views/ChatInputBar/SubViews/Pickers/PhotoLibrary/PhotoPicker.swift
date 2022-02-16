@@ -14,7 +14,7 @@ struct PhotoPicker: View {
     @State private var pickedImage: UIImage?
 //    @State private var showCamera = false
     @EnvironmentObject private var inputManager: ChatInputViewManager
-    
+    @State private var shwoPicker = false
     
     var body: some View {
         InputPicker {
@@ -23,13 +23,16 @@ struct PhotoPicker: View {
                     Image(uiImage: pickedImage)
                         .resizable()
                         .scaledToFit()
-                        .padding()
                 } else {
-                    PhotoLibrary(image: $pickedImage) {
-                        inputManager.currentInputItem = .Text
+                    Button("Pick") {
+                        shwoPicker = true
                     }
-                    
                 }
+            }
+            .sheet(isPresented: $shwoPicker) {
+                
+            } content: {
+                PhotoLibrary(image: $pickedImage, showPicker: $shwoPicker)
             }
         } onSend: {
             guard let pickedImage = pickedImage else {
@@ -38,5 +41,8 @@ struct PhotoPicker: View {
             await onSendPhoto(pickedImage)
             self.pickedImage = nil
         }
+       
+        
+
     }
 }

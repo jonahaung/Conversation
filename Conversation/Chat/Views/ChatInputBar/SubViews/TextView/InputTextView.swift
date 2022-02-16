@@ -37,7 +37,7 @@ struct InputTextView: UIViewRepresentable {
            
         }
         func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
-            if parent.chatLayout.scrolledAtButton {
+            if parent.chatLayout.layout.scrolledAtButton {
                 Task {
                     await  parent.chatLayout.sendScrollToBottom(animated: true, isForced: true)
                 }

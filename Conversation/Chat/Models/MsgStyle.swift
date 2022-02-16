@@ -9,13 +9,13 @@ import SwiftUI
 
 class MsgStyle: ObservableObject {
     
-    var bubbleCorner: UIRectCorner
-    var showAvatar: Bool
-    var showTimeSeparater: Bool
+    let showAvatar: Bool
+    let showTimeSeparater: Bool
+    let bubbleShape: BubbleShape
     
     init(bubbleCorner: UIRectCorner, showAvatar: Bool, showTimeSeparater: Bool) {
-        self.bubbleCorner = bubbleCorner
         self.showAvatar = showAvatar
         self.showTimeSeparater = showTimeSeparater
+        self.bubbleShape = BubbleShape(corners: bubbleCorner)
     }
 }

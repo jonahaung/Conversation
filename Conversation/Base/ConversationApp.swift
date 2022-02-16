@@ -16,6 +16,7 @@ struct ConversationApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(AppUserDefault.shared)
                 
         }
         .onChange(of: scenePhase, perform: scenePhaseChanged(_:))
@@ -28,8 +29,6 @@ struct ConversationApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    let persistance = PersistenceController.shared
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         return true
     }
@@ -41,6 +40,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        persistance.save()
+        PersistenceController.shared.save()
     }
 }

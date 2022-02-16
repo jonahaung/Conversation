@@ -40,7 +40,6 @@
 		471DA2C327A66A2E00432A1D /* BoundsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2C227A66A2E00432A1D /* BoundsObserver.swift */; };
 		471DA2C527A67AE900432A1D /* TextViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DA2C427A67AE900432A1D /* TextViewState.swift */; };
 		471F6DA027B8038600690664 /* RoomProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6D9F27B8038600690664 /* RoomProperties.swift */; };
-		471F6DA227B8076000690664 /* +MsgStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA127B8076000690664 /* +MsgStyle.swift */; };
 		471F6DA527B8080000690664 /* RoomPropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA427B8080000690664 /* RoomPropertiesView.swift */; };
 		471F6DA827B817EB00690664 /* +Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DA727B817EB00690664 /* +Date.swift */; };
 		471F6DAB27B821E100690664 /* ChatNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F6DAA27B821E100690664 /* ChatNavBar.swift */; };
@@ -147,7 +146,6 @@
 		471DA2C227A66A2E00432A1D /* BoundsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsObserver.swift; sourceTree = "<group>"; };
 		471DA2C427A67AE900432A1D /* TextViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewState.swift; sourceTree = "<group>"; };
 		471F6D9F27B8038600690664 /* RoomProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomProperties.swift; sourceTree = "<group>"; };
-		471F6DA127B8076000690664 /* +MsgStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+MsgStyle.swift"; sourceTree = "<group>"; };
 		471F6DA427B8080000690664 /* RoomPropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomPropertiesView.swift; sourceTree = "<group>"; };
 		471F6DA727B817EB00690664 /* +Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Date.swift"; sourceTree = "<group>"; };
 		471F6DAA27B821E100690664 /* ChatNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavBar.swift; sourceTree = "<group>"; };
@@ -520,7 +518,6 @@
 			isa = PBXGroup;
 			children = (
 				47CDB88F27A5F071002F2BDF /* ChatView.swift */,
-				471F6DA127B8076000690664 /* +MsgStyle.swift */,
 				473D41ED27B4505600D41E6B /* +Sockets.swift */,
 			);
 			path = ChatView;
@@ -864,7 +861,6 @@
 				47207E9527BA69270031E083 /* InputPicker.swift in Sources */,
 				471425D727A82DE300478BED /* VoiceData.swift in Sources */,
 				47207E8F27BA5BDE0031E083 /* MsgSendable.swift in Sources */,
-				471F6DA227B8076000690664 /* +MsgStyle.swift in Sources */,
 				471DA2C027A6596A00432A1D /* ChatInputViewManager.swift in Sources */,
 				47CDB87C27A5EE92002F2BDF /* ContentView.swift in Sources */,
 				471425D427A82C0E00478BED /* ChatDataRepresenting.swift in Sources */,

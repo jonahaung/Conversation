@@ -11,15 +11,15 @@ extension ChatCell {
     
     internal func bubbleView() -> some View {
         Group {
-            if AppUserDefault.shared.canDragCell {
+            if let size = msg.bubbleSize {
                 plainBubbleView()
+                    .frame(size: size)
                     .offset(x: dragOffsetX)
                     .gesture(bubbleTapGesture)
-            }else {
+            } else {
                 plainBubbleView()
-                    .onTapGesture {
-                        didTapBubble()
-                    }
+                    .saveSize(viewId: msg.id)
+                    .retrieveSize(viewId: msg.id, $msg.bubbleSize)
             }
         }
     }
@@ -31,12 +31,7 @@ extension ChatCell {
                 if let data = msg.textData {
                     TextBubble(data: data)
                         .foregroundColor(roomProperties.textColor(for: msg))
-                        .background(
-                            roomProperties.bubbleColor(for: msg)
-                                .clipShape(
-                                    BubbleShape(corners: style.bubbleCorner)
-                                )
-                        )
+                        .background(roomProperties.bubbleColor(for: msg).clipShape(style.bubbleShape))
                         
                 }
             case .Image:
@@ -61,21 +56,21 @@ extension ChatCell {
             await ToneManager.shared.vibrate(vibration: .soft)
         }
         withAnimation(.interactiveSpring()) {
-            chatLayout.selectedId = chatLayout.selectedId == msg.id ? nil : msg.id
+            datasource.selectedId = datasource.selectedId == msg.id ? nil : msg.id
         }
     }
     private var bubbleTapGesture: some Gesture {
-        TapGesture(count: 2)
+        TapGesture(count: 1)
             .onEnded {
                 didTapBubble()
             }
-            .exclusively(before: bubbleDragGesture)
     }
     
     private var bubbleDragGesture: some Gesture {
         
-        DragGesture(minimumDistance: 5, coordinateSpace: .global)
+        DragGesture(minimumDistance: 5, coordinateSpace: .local)
             .onChanged { value in
+                guard msg.rType == .Receive else { return }
                 guard value.translation.height < 10 else {
                     return
                 }
@@ -103,5 +98,6 @@ extension ChatCell {
                     dragOffsetX = 0
                 }
             }
+        
     }
 }

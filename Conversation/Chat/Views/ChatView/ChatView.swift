@@ -30,7 +30,7 @@ struct ChatView: View {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         
-                        let style = msgStyle(for: msg, at: index)
+                        let style = datasource.msgStyle(for: msg, at: index)
                         
                         if style.showTimeSeparater {
                             TimeSeparaterCell(date: msg.date)
@@ -39,8 +39,7 @@ struct ChatView: View {
                             .environmentObject(msg)
                             .environmentObject(style)
                     }
-                    Color.clear
-                        .frame(height: chatLayout.inputViewFrame.height)
+                    Spacer(minLength: chatLayout.inputViewFrame.height)
                         .id(LayoutDefinitions.ScrollableType.Bottom)
                 }
                 .offset(y: chatLayout.contentOffsetY)
@@ -66,7 +65,7 @@ struct ChatView: View {
                 }
             }
             .overlay(ChatInputView(), alignment: .bottom)
-            
+            .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
         }
         .background(roomProperties.bgImage.image)
         .environmentObject(chatLayout)
@@ -74,8 +73,5 @@ struct ChatView: View {
         .environmentObject(datasource)
         .environmentObject(roomProperties)
         .environmentObject(outgoingSocket)
-        .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
     }
-    
-    
 }

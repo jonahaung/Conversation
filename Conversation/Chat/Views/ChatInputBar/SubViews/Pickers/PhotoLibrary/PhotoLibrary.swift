@@ -10,7 +10,8 @@ import SwiftUI
 public struct PhotoLibrary: UIViewControllerRepresentable {
 
     @Binding var image: UIImage?
-    let onCancel: () async -> Void
+    @Binding var showPicker: Bool
+    
     
     public func makeUIViewController(context: Context) -> UIImagePickerController {
         let controller = UIImagePickerController()
@@ -34,15 +35,33 @@ public struct PhotoLibrary: UIViewControllerRepresentable {
         }
         
         public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[.originalImage] as? UIImage ?? info[.editedImage] as? UIImage{
-                parent.image = image
+            DispatchQueue.main.async {
+                if let image = info[.originalImage] as? UIImage ?? info[.editedImage] as? UIImage{
+                    self.parent.image = self.resize(image, to: 250)
+                    self.parent.showPicker = false
+                }
             }
         }
         public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            Task {
-                await parent.onCancel()
+            parent.showPicker = false
+        }
+        
+        private func resize(_ image: UIImage, to width: CGFloat) -> UIImage {
+            
+            let oldWidth = image.size.width
+            let scaleFactor = width / oldWidth
+            
+            let newHeight = image.size.height * scaleFactor
+            let newWidth = oldWidth * scaleFactor
+            
+            let newSize = CGSize(width: newWidth, height: newHeight)
+
+            return UIGraphicsImageRenderer(size: newSize).image { _ in
+                image.draw(in: .init(origin: .zero, size: newSize))
             }
         }
     }
+    
+    
 }
 

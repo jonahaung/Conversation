@@ -18,10 +18,8 @@ struct InputPicker<Content: View>: View {
             content()
             HStack {
                 Button {
-                    Task {
-                        withAnimation(.interactiveSpring()) {
-                            inputManager.currentInputItem = .Text
-                        }
+                    withAnimation(.interactiveSpring()) {
+                        inputManager.currentInputItem = .Text
                     }
                 } label: {
                     Image(systemName: "xmark.circle.fill")

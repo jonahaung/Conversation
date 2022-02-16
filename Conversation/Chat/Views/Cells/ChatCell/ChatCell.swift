@@ -13,6 +13,7 @@ struct ChatCell: View {
     @EnvironmentObject internal var style: MsgStyle
     @EnvironmentObject internal var roomProperties: RoomProperties
     @EnvironmentObject internal var chatLayout: ChatLayout
+    @EnvironmentObject internal var datasource: ChatDatasource
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
     
     @State internal var dragOffsetX = CGFloat.zero
@@ -26,6 +27,11 @@ struct ChatCell: View {
                 bottomView()
             }
             rightView()
+        }
+        .onDisappear{
+            if dragOffsetX != 0 {
+                dragOffsetX = 0
+            }
         }
         .transition(.move(edge: .bottom))
         .id(msg.id)
@@ -60,15 +66,6 @@ extension ChatCell {
                         .foregroundStyle(.tertiary)
                 } else {
                     msg.progress.view()
-                        .onTapGesture {
-                            Task {
-                                await ToneManager.shared.playSound(tone: .Tock)
-                            }
-                            
-                            if msg.progress == .Sent {
-                                msg.applyAction(action: .MsgProgress(value: .Read))
-                            }
-                        }
                 }
             } else {
                 Spacer(minLength: ChatKit.cellAlignmentSpacing)
@@ -78,7 +75,7 @@ extension ChatCell {
     
     private func topView() -> some View {
         Group {
-            if msg.id == chatLayout.selectedId {
+            if msg.id == datasource.selectedId {
                 Group {
                     if msg.rType == .Send {
                         Text(msg.date, formatter: MsgDateView.relativeDateFormatter)
@@ -95,7 +92,7 @@ extension ChatCell {
     }
     private func bottomView() -> some View {
         Group {
-            if msg.id == chatLayout.selectedId {
+            if msg.id == datasource.selectedId {
                 Text(msg.progress.description)
                     .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
                     .foregroundStyle(.tertiary)

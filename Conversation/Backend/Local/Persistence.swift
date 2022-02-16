@@ -29,7 +29,7 @@ class PersistenceController {
         })
     }
     
-    func create(msg: Msg) -> CMsg {
+    func create(msg: Msg) {
         let context = self.context
         let cMsg = CMsg(context: context)
         cMsg.id = msg.id
@@ -45,7 +45,7 @@ class PersistenceController {
         cMsg.senderName = msg.sender.name
         cMsg.senderURL = msg.sender.photoURL
         cMsg.imageRatio = msg.imageRatio
-        return cMsg
+        save()
     }
     func cMsgsCount(conId: String) -> Int {
         let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)

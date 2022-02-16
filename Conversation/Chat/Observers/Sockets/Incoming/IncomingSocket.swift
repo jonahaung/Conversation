@@ -70,8 +70,7 @@ final class IncomingSocket: ObservableObject {
             }
             DispatchQueue.main.async {
                 msg.applyAction(action: .MsgProgress(value: .Read))
-                let cMsg = PersistenceController.shared.create(msg: msg)
-                let _ = Msg(cMsg: cMsg)
+                let _ = PersistenceController.shared.create(msg: msg)
                 self.onNewMsgBlock?(msg)
             }
         }
@@ -81,8 +80,12 @@ final class IncomingSocket: ObservableObject {
     @objc
     private func handleTimer() {
         onTypingStatusBlock?(Bool.random())
-        let msg = Msg(conId: conId, msgType: .Text, rType: .Receive, progress: .Sent)
-        msg.textData = .init(text: Lorem.sentence)
+        let rType = [Msg.RecieptType.Send, .Receive].random() ?? .Send
+        let progress = rType == .Send ? Msg.MsgProgress.Sending : .SendingFailed
+        let msg = Msg(conId: conId, msgType: .Text, rType: rType, progress: .Sending)
+        
+        let text = [Lorem.sentence, Lorem.shortTweet, Lorem.tweet, Lorem.fullName, Lorem.title].random() ?? Lorem.emailAddress
+        msg.textData = .init(text: text)
         receive(msg: msg)
     }
     

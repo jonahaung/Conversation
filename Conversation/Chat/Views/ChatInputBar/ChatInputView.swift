@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendable {
+    
     static let id = "ChatInputView"
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
@@ -15,15 +16,14 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
     @EnvironmentObject internal var roomProperties: RoomProperties
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             accessoryBar
             VStack(spacing: 0) {
-               
+                Divider()
                 pickerView()
             }
-            .background(.regularMaterial)
+            .background(.thickMaterial)
             .saveBounds(viewId: ChatInputView.id)
-            
         }
     }
     
@@ -31,12 +31,9 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
         return Group {
             switch inputManager.currentInputItem {
             case .ToolBar:
-                VStack(spacing: 0){
-                    Divider()
-                    InputMenuBar { item in
-                        withAnimation(.interactiveSpring()) {
-                            inputManager.currentInputItem = item == .ToolBar ? .Text : item
-                        }
+                InputMenuBar { item in
+                    withAnimation(.interactiveSpring()) {
+                        inputManager.currentInputItem = item == .ToolBar ? .Text : item
                     }
                 }
             case .Camera:
@@ -75,7 +72,7 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 }
                 
                 Spacer()
-                if !chatLayout.scrolledAtButton {
+                if !chatLayout.layout.scrolledAtButton {
                     Button {
                         Task {
                             await chatLayout.sendScrollToBottom(isForced: true)
@@ -85,11 +82,10 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                             .font(.title)
                             .padding(.trailing)
                     }
-                    .transition(.move(edge: .trailing))
+                    .transition(.move(edge: .bottom))
                 }
             }
         }
-        
-        
+
     }
 }
