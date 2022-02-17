@@ -25,11 +25,11 @@ struct ChatNavBar: View {
                         .padding()
                 }
                 HStack {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: (30), height: 30)
-                        .foregroundStyle(.tertiary)
-                    
+                    AvatarView()
+                        .frame(width: 35, height: 35)
+                        .padding(2)
+                        .background(Color.teal)
+                        .clipShape(Circle())
                     VStack(alignment: .leading, spacing: 0) {
                         Text(currentUser.user.name)
                             .font(.system(size: UIFont.systemFontSize, weight: .bold))

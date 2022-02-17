@@ -27,32 +27,20 @@ extension Msg {
                 return "Read"
             }
         }
-        
-        func view() -> AnyView {
-            Group {
-                switch self {
-                case .Sending:
-                    Image(systemName: "rays")
-                        .resizable()
-                        .foregroundColor(Color(uiColor: .tertiaryLabel))
-                case .Sent:
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .foregroundColor(Color(uiColor: .tertiaryLabel))
-                case .SendingFailed:
-                    Image(systemName: ".exclamationmark.circle")
-                        .resizable()
-                        .foregroundColor(.red)
-                case .Received:
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .foregroundColor(.mint)
-                case .Read:
-                    Color.clear
-                }
+        func iconName() -> String? {
+            switch self {
+            case .Sending:
+                return "circle"
+            case .Sent:
+                return "checkmark.circle.fill"
+            case .SendingFailed:
+                return "exclamationmark.circle"
+            case .Received:
+                return nil
+            case .Read:
+                return nil
             }
-            .frame(size: .init(size: ChatKit.cellMsgStatusSize))
-            .any
         }
+        
     }
 }

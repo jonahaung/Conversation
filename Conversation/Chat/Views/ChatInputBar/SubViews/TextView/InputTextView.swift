@@ -33,25 +33,18 @@ struct InputTextView: UIViewRepresentable {
         init(_ parent: InputTextView) {
             self.parent = parent
         }
-        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
-           
-        }
-        func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool {
-            if parent.chatLayout.layout.scrolledAtButton {
-                Task {
-                    await  parent.chatLayout.sendScrollToBottom(animated: true, isForced: true)
-                }
-            }
-            return true
-        }
+        
         func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
             parent.inputManager.text = growingTextView.text
         }
         
-        func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
-            parent.chatLayout.contentOffsetY = -(height - growingTextView.minHeight)
-            parent.inputManager.textViewHeight = height
+        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
+            
         }
         
+        func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
+            parent.chatLayout.scrollView?.contentOffset.y += difference
+            parent.inputManager.textViewHeight = height
+        }
     }
 }

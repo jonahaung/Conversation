@@ -11,6 +11,7 @@ struct ImageBubble: View {
     
     @EnvironmentObject internal var msg: Msg
     
+    
     var body: some View {
         Group {
             if let path = Media.path(photoId: msg.id), let image = UIImage(path: path) {
@@ -25,6 +26,7 @@ struct ImageBubble: View {
             }
         }
         .frame(width: ChatKit.mediaMaxWidth, height: ChatKit.mediaMaxWidth * 1/msg.imageRatio)
+        
     }
     
     private func resize(_ image: UIImage, to width: CGFloat) -> UIImage {

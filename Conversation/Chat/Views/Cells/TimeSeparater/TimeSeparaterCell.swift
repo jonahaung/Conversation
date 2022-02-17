@@ -12,9 +12,9 @@ struct TimeSeparaterCell: View {
     let date: Date
     
     var body: some View {
-        MsgDateView(date: date)
+        Text(MsgDateView.dateFormatter.string(for: date) ?? "No Date")
             .font(.system(size: UIFont.systemFontSize, weight: .medium))
             .frame(height: 50)
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(.secondary)
     }
 }

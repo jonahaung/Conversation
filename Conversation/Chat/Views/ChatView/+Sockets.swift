@@ -17,22 +17,27 @@ extension ChatView {
     func connectSockets() {
         incomingSocket.connect(with: roomProperties.id)
             .onNewMsg { msg in
-                Task {
-                    await datasource.add(msg: msg)
-                    await chatLayout.sendScrollToBottom()
+                DispatchQueue.main.async {
+                    datasource.add(msg: msg)
+                    if chatLayout.isCloseToBottom() {
+                        chatLayout.scrollToBottom(animated: true)
+                    }
                 }
             }
             .onTypingStatus { isTyping in
-                Task {
-                    await inputManager.setTyping(typing: !inputManager.isTyping)
+                DispatchQueue.main.async {
+                    inputManager.setTyping(typing: !inputManager.isTyping)
                 }
             }
         
         outgoingSocket.connect(with: roomProperties.id)
             .onAddMsg{ msg in
-                Task {
-                    await datasource.add(msg: msg)
-                    await chatLayout.sendScrollToBottom()
+                DispatchQueue.main.async {
+                    datasource.add(msg: msg)
+                    
+                    if chatLayout.isCloseToBottom() {
+                        chatLayout.scrollToBottom(animated: true)
+                    }
                     outgoingSocket.send(msg: msg)
                 }
             }

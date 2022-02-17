@@ -20,6 +20,8 @@ extension PhotoMsgSendable {
         msg.imageRatio = image.size.width/image.size.height
         if let data = image.jpegData(compressionQuality: 0.8) {
             Media.save(photoId: msg.id, data: data)
+            MediaQueue.create(msg)
+            
         }
         await outgoingSocket.add(msg: msg)
         await resetView()

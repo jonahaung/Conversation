@@ -27,6 +27,9 @@ struct ContentView: View {
         .navigationViewStyle(.stack)
         .environmentObject(CurrentUser.shared)
         .environmentObject(IncomingSocket.shared)
-        
+//        .task {
+//            MediaUploader.setup()
+//        }
+//        
     }
 }

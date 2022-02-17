@@ -20,7 +20,7 @@ class ChatInputViewManager: ObservableObject {
     @Published var isTyping = false
     @Published var currentInputItem = InputMenuBar.Item.Text
     
-    func setTyping(typing: Bool) async {
+    func setTyping(typing: Bool) {
         self.isTyping = typing
     }
     

@@ -20,4 +20,7 @@ final class AppUserDefault: ObservableObject {
     private static let _cellDraggable = "_cellDraggable"
     @AppStorage(AppUserDefault._cellSpacing) var canDragCell = false
     
+    private static let _pageSize = "pageSize"
+    @AppStorage(_pageSize) var pagnitionSize = 50
+    
 }

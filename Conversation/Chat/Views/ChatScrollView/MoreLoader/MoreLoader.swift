@@ -10,16 +10,13 @@ import Combine
 
 final class MoreLoader: ObservableObject {
 
-    
-    
-    
     let scrollDetector: CurrentValueSubject = CurrentValueSubject<ChatScrollViewPreferences.Object, Never>(.init(loaclFrame: .zero, globalSize: .zero))
     let scrollPublisher: AnyPublisher<ChatScrollViewPreferences.Object, Never>
     
     init() {
         scrollPublisher = scrollDetector
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .dropFirst()
             .eraseToAnyPublisher()
     }

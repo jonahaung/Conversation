@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct ChatView: View {
-    
     
     @StateObject internal var chatLayout = ChatLayout()
     @StateObject internal var inputManager = ChatInputViewManager()
@@ -25,49 +25,47 @@ struct ChatView: View {
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
-            ChatScrollView(hasMoreData: $datasource.hasMoreData) { scrollView in
+            ChatScrollView { scrollView in
                 LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
                     
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
-                        
-                        let style = datasource.msgStyle(for: msg, at: index)
-                        
-                        if style.showTimeSeparater {
-                            TimeSeparaterCell(date: msg.date)
-                        }
                         ChatCell()
                             .environmentObject(msg)
-                            .environmentObject(style)
+                            .environmentObject(datasource.msgStyle(for: msg, at: index))
                     }
-                    Spacer(minLength: chatLayout.inputViewFrame.height)
-                        .id(LayoutDefinitions.ScrollableType.Bottom)
+                    Color.clear
+                        .frame(height: chatLayout.inputViewFrame.height)
+                        .id("1")
                 }
-                .offset(y: chatLayout.contentOffsetY)
+                .redacted(reason: chatLayout.isLoading ? .placeholder : [])
                 .task {
-                    scrollView.scrollTo(LayoutDefinitions.ScrollableType.Bottom, anchor: .bottom)
+                    scrollView.scrollTo("1", anchor: .bottom)
+                    chatLayout.delegate = datasource
                 }
-                .onAppear{
-                    connectSockets()
-                }
-                .onDisappear{
-                    disConnectSockets()
-                }
-                .onReceive(chatLayout.scrollPublisher) {
-                    chatLayout.scroll(to: $0, from: scrollView)
+                .onChange(of: chatLayout.scrollId) { newValue in
+                    if let newValue = newValue {
+                        scrollView.scrollTo(newValue, anchor: .top)
+                    }
                 }
             }
-            .padding(.horizontal, 3)
-            .refreshable {
-                if let msgs = await datasource.getMoreMsg() {
-                    datasource.msgs = msgs
-                }else {
-                    datasource.hasMoreData = false
-                }
+            .overlay( ChatInputView() , alignment: .bottom )
+            .introspectScrollView { scrollView in
+                scrollView.keyboardDismissMode = .interactive
+                scrollView.delegate = chatLayout
+                scrollView.delaysContentTouches = true
+                scrollView.alwaysBounceVertical = true
+                scrollView.decelerationRate = .normal
+                chatLayout.scrollView = scrollView
             }
-            .overlay(ChatInputView(), alignment: .bottom)
-            .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
+            .onAppear{
+                connectSockets()
+            }
+            .onDisappear{
+                disConnectSockets()
+            }
         }
         .background(roomProperties.bgImage.image)
+        .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
         .environmentObject(chatLayout)
         .environmentObject(inputManager)
         .environmentObject(datasource)

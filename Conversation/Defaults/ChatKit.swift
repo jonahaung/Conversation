@@ -15,11 +15,13 @@ enum ChatKit {
     static var cellAlignmentSpacing = CGFloat(40)
     static var cellMsgStatusSize = CGFloat(15)
 
-    static var textBubbleColorOutgoing = Color.accentColor.opacity(0.9)
-    static var textBubbleColorIncoming = Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8)
+    static var textBubbleColorOutgoing = Color.accentColor
+    static var textBubbleColorIncoming = Color(uiColor: .secondarySystemGroupedBackground)
     static var mediaMaxWidth = CGFloat(250)
     static var textTextColorOutgoing = Color(uiColor: UIColor.systemBackground)
     static var textTextColorIncoming: Color? = nil
+    
+    static let cellLeftRightViewWidth = 15.00
 }
 
 

@@ -10,6 +10,7 @@ import SwiftUI
 struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendable {
     
     static let id = "ChatInputView"
+    
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
@@ -22,7 +23,7 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 Divider()
                 pickerView()
             }
-            .background(.thickMaterial)
+            .background(.thinMaterial)
             .saveBounds(viewId: ChatInputView.id)
         }
     }
@@ -72,11 +73,9 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 }
                 
                 Spacer()
-                if !chatLayout.layout.scrolledAtButton {
+                if !chatLayout.isCloseToTop() {
                     Button {
-                        Task {
-                            await chatLayout.sendScrollToBottom(isForced: true)
-                        }
+                        chatLayout.scrollToBottom(animated: true)
                     } label: {
                         Image(systemName: "chevron.down.circle")
                             .font(.title)
