@@ -60,6 +60,9 @@
 		473D41E727B41A4C00D41E6B /* MsgSenderOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */; };
 		473D41EB27B41C8800D41E6B /* MsgReceiverOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */; };
 		473D41EE27B4505600D41E6B /* +Sockets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41ED27B4505600D41E6B /* +Sockets.swift */; };
+		4762074627BEAD8A00FD70B0 /* EmojiImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762074327BEAD8A00FD70B0 /* EmojiImageExtension.swift */; };
+		4762074727BEAD8A00FD70B0 /* ModalViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762074427BEAD8A00FD70B0 /* ModalViewExtension.swift */; };
+		4762074827BEAD8A00FD70B0 /* DateDistanceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762074527BEAD8A00FD70B0 /* DateDistanceExtension.swift */; };
 		47623F8027AFB8C500F7EE1C /* MoreLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47623F7F27AFB8C500F7EE1C /* MoreLoader.swift */; };
 		47623F8227AFDEAC00F7EE1C /* ToneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47623F8127AFDEAC00F7EE1C /* ToneManager.swift */; };
 		477292C827BDB97E005960AA /* CellProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477292C727BDB97E005960AA /* CellProgressView.swift */; };
@@ -182,6 +185,9 @@
 		473D41E627B41A4C00D41E6B /* MsgSenderOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgSenderOperation.swift; sourceTree = "<group>"; };
 		473D41EA27B41C8800D41E6B /* MsgReceiverOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgReceiverOperation.swift; sourceTree = "<group>"; };
 		473D41ED27B4505600D41E6B /* +Sockets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Sockets.swift"; sourceTree = "<group>"; };
+		4762074327BEAD8A00FD70B0 /* EmojiImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiImageExtension.swift; sourceTree = "<group>"; };
+		4762074427BEAD8A00FD70B0 /* ModalViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewExtension.swift; sourceTree = "<group>"; };
+		4762074527BEAD8A00FD70B0 /* DateDistanceExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateDistanceExtension.swift; sourceTree = "<group>"; };
 		47623F7F27AFB8C500F7EE1C /* MoreLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreLoader.swift; sourceTree = "<group>"; };
 		47623F8127AFDEAC00F7EE1C /* ToneManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToneManager.swift; sourceTree = "<group>"; };
 		477292C727BDB97E005960AA /* CellProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellProgressView.swift; sourceTree = "<group>"; };
@@ -383,7 +389,6 @@
 			children = (
 				47CDB8AC27A60238002F2BDF /* MsgDateView.swift */,
 				477292C727BDB97E005960AA /* CellProgressView.swift */,
-				477292C927BDBA60005960AA /* AvatarView.swift */,
 				477292CB27BDC3C5005960AA /* HiddenLabelView.swift */,
 			);
 			path = SubViews;
@@ -453,6 +458,7 @@
 				471F6DB027B834E200690664 /* TypingView.swift */,
 				471F6DAA27B821E100690664 /* ChatNavBar.swift */,
 				47207E9F27BC21500031E083 /* ImageViewer.swift */,
+				477292C927BDBA60005960AA /* AvatarView.swift */,
 				47207EA127BC2A9C0031E083 /* LocationViewer.swift */,
 			);
 			path = OtherViews;
@@ -629,6 +635,9 @@
 		47A4E4A927B92CF000E9AC7F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				4762074527BEAD8A00FD70B0 /* DateDistanceExtension.swift */,
+				4762074327BEAD8A00FD70B0 /* EmojiImageExtension.swift */,
+				4762074427BEAD8A00FD70B0 /* ModalViewExtension.swift */,
 				47A4E4B427B92CFF00E9AC7F /* Array+Extension.swift */,
 				47A4E4AA27B92CFF00E9AC7F /* Data+Extension.swift */,
 				47A4E4AC27B92CFF00E9AC7F /* String+Extension.swift */,
@@ -894,6 +903,8 @@
 				473D41EB27B41C8800D41E6B /* MsgReceiverOperation.swift in Sources */,
 				47A4E4C027B92CFF00E9AC7F /* Array+Extension.swift in Sources */,
 				47CDB8AF27A605E9002F2BDF /* MsgContextMenu.swift in Sources */,
+				4762074827BEAD8A00FD70B0 /* DateDistanceExtension.swift in Sources */,
+				4762074627BEAD8A00FD70B0 /* EmojiImageExtension.swift in Sources */,
 				47CDB8B327A60969002F2BDF /* ChatInputView.swift in Sources */,
 				471425B327A7614100478BED /* ViedeoData.swift in Sources */,
 				471425B727A7616200478BED /* AttachmentData.swift in Sources */,
@@ -932,6 +943,7 @@
 				471F6DB727B847FF00690664 /* TimeSeparaterCell.swift in Sources */,
 				47A4E4A227B9299800E9AC7F /* Dir.swift in Sources */,
 				477292D127BDC593005960AA /* ImageLoader.swift in Sources */,
+				4762074727BEAD8A00FD70B0 /* ModalViewExtension.swift in Sources */,
 				47A4E4CA27B9456D00E9AC7F /* TapToPresentStyle.swift in Sources */,
 				47A4E49E27B9299800E9AC7F /* Cryptor.swift in Sources */,
 				477292C827BDB97E005960AA /* CellProgressView.swift in Sources */,

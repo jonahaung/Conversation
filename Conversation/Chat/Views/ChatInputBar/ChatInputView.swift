@@ -23,7 +23,7 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 Divider()
                 pickerView()
             }
-            .background(.thinMaterial)
+            .background(.regularMaterial)
             .saveBounds(viewId: ChatInputView.id)
         }
     }

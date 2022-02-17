@@ -18,7 +18,7 @@ struct AvatarView: View {
                     .resizable()
                     .scaledToFit()
                     .clipShape(Circle())
-                
+                    
             }else {
                 ProgressView()
             }

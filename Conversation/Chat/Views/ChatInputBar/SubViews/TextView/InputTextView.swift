@@ -38,10 +38,7 @@ struct InputTextView: UIViewRepresentable {
             parent.inputManager.text = growingTextView.text
         }
         
-        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
-            
-        }
-        
+
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.chatLayout.scrollView?.contentOffset.y += difference
             parent.inputManager.textViewHeight = height

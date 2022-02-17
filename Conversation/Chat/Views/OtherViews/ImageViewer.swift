@@ -14,6 +14,7 @@ struct ImageViewer: View {
         Image(uiImage: image)
             .resizable()
             .scaledToFit()
+            
         
     }
 }

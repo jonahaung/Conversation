@@ -26,7 +26,6 @@ struct ImageBubble: View {
             }
         }
         .frame(width: ChatKit.mediaMaxWidth, height: ChatKit.mediaMaxWidth * 1/msg.imageRatio)
-        
     }
     
     private func resize(_ image: UIImage, to width: CGFloat) -> UIImage {

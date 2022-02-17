@@ -27,7 +27,6 @@ struct ChatView: View {
             ChatNavBar()
             ChatScrollView { scrollView in
                 LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
-                    
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         ChatCell()
                             .environmentObject(msg)
@@ -37,13 +36,15 @@ struct ChatView: View {
                         .frame(height: chatLayout.inputViewFrame.height)
                         .id("1")
                 }
-                .redacted(reason: chatLayout.isLoading ? .placeholder : [])
                 .task {
-                    scrollView.scrollTo("1", anchor: .bottom)
                     chatLayout.delegate = datasource
+                    scrollView.scrollTo("1", anchor: .bottom)
                 }
                 .onChange(of: chatLayout.scrollId) { newValue in
                     if let newValue = newValue {
+                        if let scrollView = chatLayout.scrollView {
+                            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+                        }
                         scrollView.scrollTo(newValue, anchor: .top)
                     }
                 }
@@ -54,7 +55,6 @@ struct ChatView: View {
                 scrollView.delegate = chatLayout
                 scrollView.delaysContentTouches = true
                 scrollView.alwaysBounceVertical = true
-                scrollView.decelerationRate = .normal
                 chatLayout.scrollView = scrollView
             }
             .onAppear{

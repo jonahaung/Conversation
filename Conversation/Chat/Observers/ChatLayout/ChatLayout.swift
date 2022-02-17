@@ -11,7 +11,7 @@ import UIKit
 
 protocol ChatLayoutDelegate: AnyObject {
     var msgs: [Msg] { get set }
-    var hasMoreData: Bool { get }
+    var hasMoreData: Bool { get set }
     func getMoreMsg() async -> [Msg]?
 }
 
@@ -21,6 +21,7 @@ class ChatLayout: NSObject, ObservableObject {
     @Published var inputViewFrame: CGRect = .zero
     @Published var scrollId: String?
     @Published var isLoading = false
+    
     weak var scrollView: UIScrollView?
     weak var delegate: ChatLayoutDelegate?
     
@@ -30,42 +31,47 @@ class ChatLayout: NSObject, ObservableObject {
 }
 
 extension ChatLayout: UIScrollViewDelegate {
-
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard let scrollView = self.scrollView else { return }
+    private func loadMoreIfNeeded() {
         guard !isLoading else { return }
+        guard delegate?.hasMoreData == true else { return }
+        guard let scrollView = self.scrollView else { return }
         if scrollView.contentOffset.y == 0 {
-            Task {
-                guard let msgs = delegate?.msgs else { return }
-                guard let firstId = msgs.first?.id else { return }
-                isLoading = true
+            isLoading = true
+            let firstId = delegate?.msgs .first?.id ?? ""
+            Task { [weak self] in
+                guard let self = self else { return }
                 if let msgs = await delegate?.getMoreMsg() {
-                    delegate?.msgs = msgs
-                    self.scrollId = firstId
-                    self.isLoading = false
+                    DispatchQueue.main.async {
+                        scrollView.setContentOffset(scrollView.contentOffset, animated: true)
+                        self.delegate?.msgs = msgs
+                        self.scrollId = firstId
+                        self.isLoading = false
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.delegate?.hasMoreData = false
+                        self.isLoading = false
+                    }
                 }
-            }
-        } else {
-            withAnimation {
-                objectWillChange.send()
             }
         }
     }
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-       
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        loadMoreIfNeeded()
     }
     
     public func isCloseToBottom() -> Bool {
         guard let scrollView = self.scrollView else { return true }
         guard scrollView.contentSize.height > 0 else { return true }
-        return (self.visibleRect(scrollView).maxY / scrollView.contentSize.height) > (1 - 0.05)
+        return (self.visibleRect().maxY / scrollView.contentSize.height) > (1 - 0.05)
     }
     
     public func isCloseToTop() -> Bool {
         guard let scrollView = self.scrollView else { return true }
         guard scrollView.contentSize.height > 0 else { return true }
-        return (self.visibleRect(scrollView).minY / scrollView.contentSize.height) < 0.05
+        return (self.visibleRect().minY / scrollView.contentSize.height) < 0.05
     }
     
     
@@ -87,15 +93,16 @@ extension ChatLayout: UIScrollViewDelegate {
     }
     
     func scrollToPreservePosition(oldRefRect: CGRect?, newRefRect: CGRect?) {
-        guard let collectionView = self.scrollView else { return }
+        guard let scrollView = self.scrollView else { return }
         guard let oldRefRect = oldRefRect, let newRefRect = newRefRect else {
             return
         }
         let diffY = newRefRect.minY - oldRefRect.minY
-        collectionView.contentOffset = CGPoint(x: 0, y: collectionView.contentOffset.y + diffY)
+        scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y + diffY)
     }
     
-    private func visibleRect(_ scrollView: UIScrollView) -> CGRect {
+    func visibleRect() -> CGRect {
+        guard let scrollView = scrollView else { return .zero }
         let contentInset = scrollView.contentInset
         let collectionViewBounds = scrollView.bounds
         let contentSize = scrollView.contentSize
@@ -104,11 +111,11 @@ extension ChatLayout: UIScrollViewDelegate {
     
     public func autoLoadMoreContentIfNeeded() {
         guard delegate?.hasMoreData == true else { return }
-
+        
         if self.isCloseToTop() {
-            print("previous")
+            //            loadMoreIfNeeded()
         } else if self.isCloseToBottom() {
-            print("next")
+            //            print("next")
         }
     }
 }

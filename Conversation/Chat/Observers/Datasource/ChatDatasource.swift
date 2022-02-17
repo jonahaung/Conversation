@@ -11,11 +11,11 @@ import SwiftUI
 class ChatDatasource: ObservableObject, ChatLayoutDelegate {
     
     @Published var msgs = [Msg]()
-    @Published var selectedId: String?
-    internal var hasMoreData = true
-    
     private var cachedStyles = [String: MsgStyle]()
     
+    @Published var selectedId: String?
+    internal var hasMoreData = true
+
     private var pageSize = AppUserDefault.shared.pagnitionSize
     private let conId: String
     private let persistanceController = PersistenceController.shared
@@ -46,7 +46,7 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
             pageSize = pageSize + fetchOffset
         }
         let newMsgs = persistanceController.cMsgs(conId: conId, limit: pageSize, offset: max(0, fetchOffset)).map(Msg.init)
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
         return newMsgs + msgs
     }
     

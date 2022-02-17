@@ -77,11 +77,11 @@ actor ToneManager {
 
     static let shared = ToneManager()
     
-    func playSound(tone: AlertTones) async {
+    func playSound(tone: AlertTones) {
         AudioServicesPlaySystemSound(tone.rawValue)
     }
 
-    func vibrate(vibration: Vibration) async {
+    func vibrate(vibration: Vibration) {
         vibration.vibrate()
     }
 }
