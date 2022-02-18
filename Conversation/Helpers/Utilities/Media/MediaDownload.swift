@@ -20,22 +20,22 @@ class MediaDownload: NSObject {
         }
     }
     
-    class func photo(_ name: String) async throws -> String {
-        return try await start("media", name, "jpg", true)
+    class func photo(_ id: String) async throws -> String {
+        return try await start("media", id, "jpg", true)
     }
     
-    class func video(_ name: String) async throws -> String {
-        return try await start("media", name, "mp4", true)
+    class func video(_ id: String) async throws -> String {
+        return try await start("media", id, "mp4", true)
     }
     
-    class func audio(_ name: String) async throws -> String {
-        return try await  start("media", name, "m4a", true)
+    class func audio(_ id: String) async throws -> String {
+        return try await  start("media", id, "m4a", true)
     }
     
     
-    private class func start(_ dir: String, _ name: String, _ ext: String, _ manual: Bool) async throws -> String {
+    private class func start(_ dir: String, _ id: String, _ ext: String, _ manual: Bool) async throws -> String {
         
-        let file = "\(name).\(ext)"
+        let file = "\(id).\(ext)"
         let path = Dir.document(dir, and: file)
         
         let fileManual = file + ".manual"
@@ -52,9 +52,12 @@ class MediaDownload: NSObject {
             if (File.exist(pathManual)) {
                 throw NSError(domain: "Manual download required.", code: 101)
             }
-            try? "manual".write(toFile: pathManual, atomically: false, encoding: .utf8)
+            do {
+                try "manual".write(toFile: pathManual, atomically: false, encoding: .utf8)
+            }catch {
+                throw error
+            }
         }
-        
         
         let time = Int(Date().timeIntervalSince1970)
         
@@ -67,13 +70,20 @@ class MediaDownload: NSObject {
                 }
             }
         }
-        try? "\(time)".write(toFile: pathLoading, atomically: false, encoding: .utf8)
+        do {
+            try "\(time)".write(toFile: pathLoading, atomically: false, encoding: .utf8)
+        } catch {
+            throw error
+        }
         
-        let key = "\(dir)/\(name).\(ext)"
-        let storage = Storage.storage().reference(withPath: key)
-        let url = try await storage.writeAsync(toFile: URL(fileURLWithPath: path))
-        let data = Data(path: url.path)
-        data?.write(path: path, options: .atomic)
+        let key = "\(id).\(ext)"
+        let storage = Storage.storage().reference(withPath: dir).child(key)
+        let _ = try await storage.writeAsync(toFile: URL(fileURLWithPath: path))
+        guard let data = Data(path: path) else {
+            throw NSError(domain: "Not valid data", code: 103)
+        }
+        print(data)
+        data.write(path: path, options: .atomic)
         return path
     }
 }

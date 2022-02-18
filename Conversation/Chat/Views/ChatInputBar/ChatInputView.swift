@@ -67,24 +67,10 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
     
     private var accessoryBar: some View {
         HStack {
-            Group {
-                if inputManager.isTyping {
-                    TypingView()
-                }
-                
+            if inputManager.isTyping {
+                TypingView()
                 Spacer()
-                if !chatLayout.isCloseToTop() {
-                    Button {
-                        chatLayout.scrollToBottom(animated: true)
-                    } label: {
-                        Image(systemName: "chevron.down.circle")
-                            .font(.title)
-                            .padding(.trailing)
-                    }
-                    .transition(.move(edge: .bottom))
-                }
             }
         }
-
     }
 }

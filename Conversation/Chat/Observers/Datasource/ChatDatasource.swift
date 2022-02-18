@@ -46,7 +46,7 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
             pageSize = pageSize + fetchOffset
         }
         let newMsgs = persistanceController.cMsgs(conId: conId, limit: pageSize, offset: max(0, fetchOffset)).map(Msg.init)
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        try? await Task.sleep(nanoseconds: 500_000_000)
         return newMsgs + msgs
     }
     

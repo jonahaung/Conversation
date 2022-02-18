@@ -7,14 +7,26 @@
 
 import SwiftUI
 
+struct ScrollItem: Equatable {
+    let id: String
+    let anchor: UnitPoint
+}
 struct ChatScrollView<Content: View>: View {
     
-    let content: (_ scrollView: ScrollViewProxy) -> Content
-    
+    @Binding var scrollID: ScrollItem?
+    let content: () -> Content
+        
     var body: some View {
-        ScrollViewReader { scrollView in
-            ScrollView(showsIndicators: false) {
-                content(scrollView)
+        ScrollViewReader { scrollViewProxy in
+            ScrollView {
+                content()
+                
+            }
+            .onChange(of: scrollID) { newValue in
+                if let newValue = newValue {
+                    scrollID = nil
+                    scrollViewProxy.scrollTo(newValue.id, anchor: newValue.anchor)
+                }
             }
         }
     }

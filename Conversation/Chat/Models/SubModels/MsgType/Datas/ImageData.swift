@@ -8,10 +8,6 @@
 import SwiftUI
 
 extension Msg.MsgType {
-    
-    struct ImageData: ChatDataRepresenting {
-        
-        let urlString: String
-       
+    struct ImageData {
     }
 }

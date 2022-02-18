@@ -10,6 +10,9 @@ import CoreData
 class PersistenceController {
     
     static let shared = PersistenceController()
+    class func setup() {
+        _ = shared
+    }
     private let container: NSPersistentCloudKitContainer
     
     lazy var context: NSManagedObjectContext = { [unowned container] in
@@ -21,7 +24,7 @@ class PersistenceController {
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-//        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.automaticallyMergesChangesFromParent = true
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
@@ -38,9 +41,9 @@ class PersistenceController {
         cMsg.msgType = Int16(msg.msgType.rawValue)
         cMsg.progress = Int16(msg.progress.rawValue)
         cMsg.date = msg.date
-        cMsg.data = msg.textData?.text ?? msg.imageData?.urlString ?? msg.emojiData?.emojiID
-        cMsg.lat = msg.locationData?.location.latitude ?? 0
-        cMsg.long = msg.locationData?.location.longitude ?? 0
+        cMsg.data = msg.textData?.text ?? msg.attachmentData?.urlString ?? msg.emojiData?.emojiID
+        cMsg.lat = msg.locationData?.longitude ?? 0
+        cMsg.long = msg.locationData?.latitude ?? 0
         cMsg.senderID = msg.sender.id
         cMsg.senderName = msg.sender.name
         cMsg.senderURL = msg.sender.photoURL

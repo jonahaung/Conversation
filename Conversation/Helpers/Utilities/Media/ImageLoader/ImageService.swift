@@ -41,15 +41,12 @@ class ImageService {
         return UIGraphicsImageRenderer(size: newSize).image { _ in
             image.draw(in: .init(origin: .zero, size: newSize))
         }
-        
     }
-    
 }
 
 
 
 extension UIImage {
-    @available(iOS 15, *)
     var thumbnail: UIImage? {
         get async {
             let size = CGSize(width: 30, height: 30)

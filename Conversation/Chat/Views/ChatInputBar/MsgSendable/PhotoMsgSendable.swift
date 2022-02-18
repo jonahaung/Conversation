@@ -15,7 +15,7 @@ extension PhotoMsgSendable {
     
     func sendPhoto(image: UIImage) async {
         let msg = Msg(conId: roomProperties.id, msgType: .Image, rType: .Send, progress: .Sending)
-        msg.imageData = .init(urlString: "https://www.lookslikefilm.com/wp-content/uploads/2020/01/Sarah-Kossak-Gupta.jpg")
+        msg.imageData = .init()
         msg.mediaImage = image
         msg.imageRatio = image.size.width/image.size.height
         if let data = image.jpegData(compressionQuality: 0.8) {

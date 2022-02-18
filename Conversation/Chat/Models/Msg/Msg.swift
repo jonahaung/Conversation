@@ -93,18 +93,18 @@ class Msg: ObservableObject, Identifiable {
         case .Text:
             self.textData  = .init(text: txt)
         case .Image:
-            self.imageData = .init(urlString: txt)
+            self.imageData = .init()
         case .Video:
-            self.videoData = .init(urlString: txt)
+            self.videoData = .init(duration: 0)
         case .Location:
-            self.locationData = .init(location: .init(latitude: cMsg.lat, longitude: cMsg.long))
+            self.locationData = .init(latitude: cMsg.lat, longitude: cMsg.long)
         case .Emoji:
             let random = CGFloat.random(in: 30..<150)
             self.emojiData = .init(emojiID: txt, size: .init(width: random, height: random))
         case .Attachment:
             self.attachmentData = .init(urlString: txt)
         case .Voice:
-            self.voiceData = .init(urlString: txt)
+            self.voiceData = .init()
         }
     }
 }

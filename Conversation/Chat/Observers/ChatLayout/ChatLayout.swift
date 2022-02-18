@@ -19,8 +19,8 @@ protocol ChatLayoutDelegate: AnyObject {
 class ChatLayout: NSObject, ObservableObject {
     
     @Published var inputViewFrame: CGRect = .zero
-    @Published var scrollId: String?
-    @Published var isLoading = false
+    @Published var scrollItem: ScrollItem?
+    var isLoading = false
     
     weak var scrollView: UIScrollView?
     weak var delegate: ChatLayoutDelegate?
@@ -37,15 +37,15 @@ extension ChatLayout: UIScrollViewDelegate {
         guard delegate?.hasMoreData == true else { return }
         guard let scrollView = self.scrollView else { return }
         if scrollView.contentOffset.y == 0 {
+            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
             isLoading = true
             let firstId = delegate?.msgs .first?.id ?? ""
             Task { [weak self] in
                 guard let self = self else { return }
                 if let msgs = await delegate?.getMoreMsg() {
                     DispatchQueue.main.async {
-                        scrollView.setContentOffset(scrollView.contentOffset, animated: true)
                         self.delegate?.msgs = msgs
-                        self.scrollId = firstId
+                        self.scrollItem = .init(id: firstId, anchor: .top)
                         self.isLoading = false
                     }
                 } else {
@@ -77,12 +77,10 @@ extension ChatLayout: UIScrollViewDelegate {
     
     func scrollToBottom(animated: Bool) {
         guard let scrollView = self.scrollView else { return }
-        
         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
-        
-        scrollView.contentInset.bottom = scrollView.frame.size.height - abs(inputViewFrame.minY)
-        
-        let offsetY = max(scrollView.contentInset.top, scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInset.bottom)
+        let bottom = scrollView.frame.height - abs(inputViewFrame.minY)
+        let exactBottom = scrollView.contentSize.height - scrollView.frame.size.height
+        let offsetY = exactBottom + bottom
         if animated {
             UIView.animate(withDuration: 0.2) {
                 scrollView.contentOffset = CGPoint(x: 0, y: offsetY)

@@ -14,10 +14,10 @@ struct LocationBubble: View {
     
     var body: some View {
         Group {
-            if let coordinate = msg.locationData?.location.location2D, let image = msg.mediaImage {
+            if let data = msg.locationData, let image = msg.mediaImage {
                 Image(uiImage: image)
                     .cornerRadius(ChatKit.bubbleRadius)
-                    .tapToPresent(LocationViewer(coordinate: coordinate))
+                    .tapToPresent(LocationViewer(coordinate: CLLocationCoordinate2D(latitude: data.latitude, longitude: data.longitude)))
             }else {
                 ProgressView()
                     .task {

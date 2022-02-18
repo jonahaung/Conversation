@@ -12,20 +12,12 @@ import Firebase
 struct ConversationApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @Environment(\.scenePhase) private var scenePhase
-    
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(AppUserDefault.shared)
-                
         }
-        .onChange(of: scenePhase, perform: scenePhaseChanged(_:))
-    }
-    
-    private func scenePhaseChanged(_ phase: ScenePhase) {
-        
     }
 }
 
@@ -33,6 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        PersistenceController.setup()
         return true
     }
     

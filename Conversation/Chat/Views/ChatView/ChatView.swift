@@ -25,44 +25,25 @@ struct ChatView: View {
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
-            ChatScrollView { scrollView in
+            ChatScrollView(scrollID: $chatLayout.scrollItem) {
                 LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         ChatCell()
                             .environmentObject(msg)
                             .environmentObject(datasource.msgStyle(for: msg, at: index))
                     }
-                    Color.clear
-                        .frame(height: chatLayout.inputViewFrame.height)
+                    Spacer(minLength: chatLayout.inputViewFrame.height)
                         .id("1")
                 }
-                .task {
-                    chatLayout.delegate = datasource
-                    scrollView.scrollTo("1", anchor: .bottom)
-                }
-                .onChange(of: chatLayout.scrollId) { newValue in
-                    if let newValue = newValue {
-                        if let scrollView = chatLayout.scrollView {
-                            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
-                        }
-                        scrollView.scrollTo(newValue, anchor: .top)
-                    }
-                }
+                .padding(.horizontal, 5)
             }
-            .overlay( ChatInputView() , alignment: .bottom )
             .introspectScrollView { scrollView in
                 scrollView.keyboardDismissMode = .interactive
+                scrollView.contentInsetAdjustmentBehavior = .never
                 scrollView.delegate = chatLayout
-                scrollView.delaysContentTouches = true
-                scrollView.alwaysBounceVertical = true
                 chatLayout.scrollView = scrollView
             }
-            .onAppear{
-                connectSockets()
-            }
-            .onDisappear{
-                disConnectSockets()
-            }
+            .overlay(ChatInputView(), alignment: .bottom)
         }
         .background(roomProperties.bgImage.image)
         .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
@@ -71,5 +52,15 @@ struct ChatView: View {
         .environmentObject(datasource)
         .environmentObject(roomProperties)
         .environmentObject(outgoingSocket)
+        .task {
+            chatLayout.scrollToBottom(animated: false)
+            chatLayout.delegate = datasource
+        }
+        .onAppear{
+            connectSockets()
+        }
+        .onDisappear{
+            disConnectSockets()
+        }
     }
 }

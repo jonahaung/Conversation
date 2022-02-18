@@ -8,9 +8,7 @@
 import SwiftUI
 
 extension Msg.MsgType {
-    
-    struct TextData: ChatDataRepresenting {
-        
+    struct TextData {
         let text: String
     }
 }

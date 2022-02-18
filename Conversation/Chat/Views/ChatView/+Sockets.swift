@@ -34,8 +34,7 @@ extension ChatView {
             .onAddMsg{ msg in
                 DispatchQueue.main.async {
                     datasource.add(msg: msg)
-                    
-                    if chatLayout.isCloseToBottom() {
+                    if !chatLayout.isCloseToTop() {
                         chatLayout.scrollToBottom(animated: true)
                     }
                     outgoingSocket.send(msg: msg)

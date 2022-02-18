@@ -8,9 +8,6 @@
 import Foundation
 
 extension Msg.MsgType {
-    
-    struct VoiceData: ChatDataRepresenting {
-        let urlString: String
+    struct VoiceData {
     }
-    
 }

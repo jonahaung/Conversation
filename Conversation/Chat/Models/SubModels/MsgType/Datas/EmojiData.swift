@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-
 extension Msg.MsgType {
-    
-    struct EmojiData: ChatDataRepresenting {
+    struct EmojiData {
         let emojiID: String
         let size: CGSize
     }

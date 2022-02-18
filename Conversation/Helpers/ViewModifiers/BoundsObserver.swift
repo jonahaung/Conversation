@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-    public func saveBounds(viewId: String, coordinateSpace: CoordinateSpace = .global) -> some View {
+    public func saveBounds(viewId: String, coordinateSpace: CoordinateSpace = .local) -> some View {
         background(GeometryReader { proxy in
             Color.clear.preference(key: SaveBoundsPrefKey.self, value: [SaveBoundsPrefData(viewId: viewId, bounds: proxy.frame(in: coordinateSpace))])
         })

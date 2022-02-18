@@ -14,9 +14,16 @@ extension ChatCell {
             switch msg.msgType {
             case .Text:
                 TextBubble(data: msg.textData ?? .init(text: "no text"))
-                    .foregroundColor(roomProperties.textColor(for: msg))
-                    .background(roomProperties.bubbleColor(for: msg))
-                    .clipShape(BubbleShape(corners: style.bubbleCorner))
+                    .foregroundColor(
+                        roomProperties.textColor(for: msg)
+                    )
+                    .background(
+                        roomProperties.bubbleColor(for: msg)
+                            .clipShape(
+                                BubbleShape(corners: style.bubbleCorner)
+                            )
+                    )
+                    
             case .Image:
                 ImageBubble()
             case .Location:

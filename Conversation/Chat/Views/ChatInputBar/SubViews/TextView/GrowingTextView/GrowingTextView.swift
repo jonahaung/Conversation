@@ -271,13 +271,6 @@ extension GrowingTextView: UITextViewDelegate {
         if let delegate = delegate, delegate.responds(to: DelegateSelectors.shouldChangeText) {
             return delegate.growingTextView!(self, shouldChangeTextInRange: range, replacementText: text)
         }
-
-        if text == "\n" {
-            if !hasText {
-                textView.resignFirstResponder()
-                return false
-            }
-        }
         return true
     }
 

@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-enum KeyBoardStatus {
-    case Shown, Hidden
-}
-
 class ChatInputViewManager: ObservableObject {
     
     @Published var text = String()

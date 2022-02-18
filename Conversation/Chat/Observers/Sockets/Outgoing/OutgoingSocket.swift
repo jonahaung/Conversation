@@ -44,6 +44,7 @@ final class OutgoingSocket: ObservableObject {
     func add(msg: Msg) async -> Self {
         let _ = PersistenceController.shared.create(msg: msg)
         onAddMsg?(msg)
+        await ToneManager.shared.playSound(tone: .Tock)
         return self
     }
     
@@ -59,7 +60,7 @@ final class OutgoingSocket: ObservableObject {
         operation.completionBlock = { [weak self, weak msg, weak operation] in
             guard let op = operation, !op.isCancelled, let self = self, let msg = msg else { return }
             DispatchQueue.main.async {
-//                msg.applyAction(action: .MsgProgress(value: .Sent))
+                msg.applyAction(action: .MsgProgress(value: .Sent))
                 self.onSentMsgBlock?(msg)
             }
         }

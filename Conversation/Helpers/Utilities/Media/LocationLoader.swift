@@ -19,7 +19,7 @@ class LocationLoader: NSObject {
         guard let data = msg.locationData else { return }
 
 		var region: MKCoordinateRegion = MKCoordinateRegion()
-        region.center = data.location.location2D
+        region.center = .init(latitude: data.latitude, longitude: data.longitude)
 		region.span.latitudeDelta = CLLocationDegrees(0.005)
 		region.span.longitudeDelta = CLLocationDegrees(0.005)
 
@@ -37,7 +37,7 @@ class LocationLoader: NSObject {
                     do {
                         snapshot.image.draw(at: CGPoint.zero)
                         let pin = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
-                        var point = snapshot.point(for: data.location.location2D)
+                        var point = snapshot.point(for: region.center)
                         point.x += pin.centerOffset.x - (pin.bounds.size.width / 2)
                         point.y += pin.centerOffset.y - (pin.bounds.size.height / 2)
                         pin.image?.draw(at: point)

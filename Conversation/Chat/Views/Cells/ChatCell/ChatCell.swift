@@ -22,8 +22,7 @@ struct ChatCell: View {
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
             }
-            
-            HStack(alignment: .bottom, spacing: 0) {
+            HStack(alignment: .bottom, spacing: 2) {
                
                 if msg.rType == .Send {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
@@ -55,10 +54,10 @@ struct ChatCell: View {
                 } else {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 }
-                
             }
+            
         }
-        .transition(.move(edge: .bottom))
+        
         .id(msg.id)
     }
 }

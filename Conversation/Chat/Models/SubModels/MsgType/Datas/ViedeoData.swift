@@ -8,10 +8,7 @@
 import Foundation
 
 extension Msg.MsgType {
-    
-    struct ViedeoData: ChatDataRepresenting {
-        
-        let urlString: String
-        
+    struct ViedeoData {
+        let duration: Double
     }
 }

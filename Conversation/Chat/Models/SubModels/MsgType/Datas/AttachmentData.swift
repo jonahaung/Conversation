@@ -6,10 +6,8 @@
 //
 
 import Foundation
-
 extension Msg.MsgType {
-    
-    struct AttachmentData: ChatDataRepresenting {
+    struct AttachmentData {
         let urlString: String
     }
 }

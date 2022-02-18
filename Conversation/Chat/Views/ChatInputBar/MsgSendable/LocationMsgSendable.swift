@@ -13,9 +13,8 @@ protocol LocationMsgSendable: MsgSendable {
 }
 
 extension TextMsgSendable {
-    
     func sendLocation(coordinate: CLLocationCoordinate2D) async {
-        let msg = Msg(conId: roomProperties.id, locationData: .init(location: .init(latitude: coordinate.latitude, longitude: coordinate.longitude)), rType: .Send, progress: .Sending)
+        let msg = Msg(conId: roomProperties.id, locationData: .init(latitude: coordinate.latitude, longitude: coordinate.longitude), rType: .Send, progress: .Sending)
         await outgoingSocket.add(msg: msg)
         await resetView()
     }

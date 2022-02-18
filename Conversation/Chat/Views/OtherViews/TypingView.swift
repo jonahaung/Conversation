@@ -16,9 +16,6 @@ struct TypingView: View {
         AvatarView()
             .frame(width: 25, height: 25)
             .offset(x: CGFloat.random(in: 0...30), y: offset)
-            .task {
-                await ToneManager.shared.playSound(tone: .Typing)
-            }
             .onReceive(timer) { output in
                 withAnimation(.interactiveSpring()) {
                     self.offset = CGFloat.random(in: -30...0)
