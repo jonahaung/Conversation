@@ -43,8 +43,8 @@ struct ChatView: View {
                 scrollView.delegate = chatLayout
                 chatLayout.scrollView = scrollView
             }
-            .overlay(ChatInputView(), alignment: .bottom)
         }
+        .overlay(ChatInputView(), alignment: .bottom)
         .background(roomProperties.bgImage.image)
         .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
         .environmentObject(chatLayout)
@@ -53,8 +53,8 @@ struct ChatView: View {
         .environmentObject(roomProperties)
         .environmentObject(outgoingSocket)
         .task {
-            chatLayout.scrollToBottom(animated: false)
             chatLayout.delegate = datasource
+            chatLayout.scrollItem = .init(id: "1", anchor: .bottom)
         }
         .onAppear{
             connectSockets()

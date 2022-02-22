@@ -37,13 +37,14 @@ extension ChatLayout: UIScrollViewDelegate {
         guard delegate?.hasMoreData == true else { return }
         guard let scrollView = self.scrollView else { return }
         if scrollView.contentOffset.y == 0 {
-            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            
             isLoading = true
             let firstId = delegate?.msgs .first?.id ?? ""
             Task { [weak self] in
                 guard let self = self else { return }
                 if let msgs = await delegate?.getMoreMsg() {
                     DispatchQueue.main.async {
+                        scrollView.setContentOffset(scrollView.contentOffset, animated: false)
                         self.delegate?.msgs = msgs
                         self.scrollItem = .init(id: firstId, anchor: .top)
                         self.isLoading = false

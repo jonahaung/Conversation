@@ -61,7 +61,6 @@
 		473D41EE27B4505600D41E6B /* +Sockets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473D41ED27B4505600D41E6B /* +Sockets.swift */; };
 		4762074627BEAD8A00FD70B0 /* EmojiImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762074327BEAD8A00FD70B0 /* EmojiImageExtension.swift */; };
 		4762074727BEAD8A00FD70B0 /* ModalViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762074427BEAD8A00FD70B0 /* ModalViewExtension.swift */; };
-		47623F8027AFB8C500F7EE1C /* MoreLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47623F7F27AFB8C500F7EE1C /* MoreLoader.swift */; };
 		47623F8227AFDEAC00F7EE1C /* ToneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47623F8127AFDEAC00F7EE1C /* ToneManager.swift */; };
 		477292C827BDB97E005960AA /* CellProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477292C727BDB97E005960AA /* CellProgressView.swift */; };
 		477292CA27BDBA60005960AA /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477292C927BDBA60005960AA /* AvatarView.swift */; };
@@ -101,11 +100,9 @@
 		47A4E4CB27B9456D00E9AC7F /* TapToPushStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A4E4C927B9456D00E9AC7F /* TapToPushStyle.swift */; };
 		47A4E4CD27B9465F00E9AC7F /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A4E4CC27B9465F00E9AC7F /* PhotoPicker.swift */; };
 		47B3318127AA70D4005CE89A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3318027AA70D4005CE89A /* Log.swift */; };
-		47B3318B27AA7412005CE89A /* ChatScrollViewPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3318A27AA7412005CE89A /* ChatScrollViewPreferences.swift */; };
 		47BC332927B2EA4300664CCD /* BubbleShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC332827B2EA4300664CCD /* BubbleShape.swift */; };
 		47BC332B27B2F0D400664CCD /* MsgStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC332A27B2F0D400664CCD /* MsgStyle.swift */; };
 		47BC332D27B390C200664CCD /* IncomingSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC332C27B390C200664CCD /* IncomingSocket.swift */; };
-		47BC332F27B3B03800664CCD /* TimeSpacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC332E27B3B03800664CCD /* TimeSpacer.swift */; };
 		47BC333227B3BA1100664CCD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC333127B3BA1100664CCD /* SettingsView.swift */; };
 		47BC333427B3BB4800664CCD /* AppUserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC333327B3BB4800664CCD /* AppUserDefault.swift */; };
 		47BC333827B3FE8200664CCD /* OutgoingSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC333727B3FE8200664CCD /* OutgoingSocket.swift */; };
@@ -184,7 +181,6 @@
 		473D41ED27B4505600D41E6B /* +Sockets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Sockets.swift"; sourceTree = "<group>"; };
 		4762074327BEAD8A00FD70B0 /* EmojiImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiImageExtension.swift; sourceTree = "<group>"; };
 		4762074427BEAD8A00FD70B0 /* ModalViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewExtension.swift; sourceTree = "<group>"; };
-		47623F7F27AFB8C500F7EE1C /* MoreLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreLoader.swift; sourceTree = "<group>"; };
 		47623F8127AFDEAC00F7EE1C /* ToneManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToneManager.swift; sourceTree = "<group>"; };
 		477292C727BDB97E005960AA /* CellProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellProgressView.swift; sourceTree = "<group>"; };
 		477292C927BDBA60005960AA /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -214,11 +210,9 @@
 		47A4E4C927B9456D00E9AC7F /* TapToPushStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapToPushStyle.swift; sourceTree = "<group>"; };
 		47A4E4CC27B9465F00E9AC7F /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		47B3318027AA70D4005CE89A /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		47B3318A27AA7412005CE89A /* ChatScrollViewPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollViewPreferences.swift; sourceTree = "<group>"; };
 		47BC332827B2EA4300664CCD /* BubbleShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleShape.swift; sourceTree = "<group>"; };
 		47BC332A27B2F0D400664CCD /* MsgStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgStyle.swift; sourceTree = "<group>"; };
 		47BC332C27B390C200664CCD /* IncomingSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IncomingSocket.swift; sourceTree = "<group>"; };
-		47BC332E27B3B03800664CCD /* TimeSpacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSpacer.swift; sourceTree = "<group>"; };
 		47BC333127B3BA1100664CCD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47BC333327B3BB4800664CCD /* AppUserDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUserDefault.swift; sourceTree = "<group>"; };
 		47BC333727B3FE8200664CCD /* OutgoingSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutgoingSocket.swift; sourceTree = "<group>"; };
@@ -355,7 +349,6 @@
 			isa = PBXGroup;
 			children = (
 				471425BA27A78D0C00478BED /* ChatScrollView.swift */,
-				47B3318927AA73CA005CE89A /* MoreLoader */,
 			);
 			path = ChatScrollView;
 			sourceTree = "<group>";
@@ -649,16 +642,6 @@
 			path = Datasource;
 			sourceTree = "<group>";
 		};
-		47B3318927AA73CA005CE89A /* MoreLoader */ = {
-			isa = PBXGroup;
-			children = (
-				47B3318A27AA7412005CE89A /* ChatScrollViewPreferences.swift */,
-				47623F7F27AFB8C500F7EE1C /* MoreLoader.swift */,
-				47BC332E27B3B03800664CCD /* TimeSpacer.swift */,
-			);
-			path = MoreLoader;
-			sourceTree = "<group>";
-		};
 		47BC333027B3BA0100664CCD /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -890,7 +873,6 @@
 				477292CC27BDC3C5005960AA /* HiddenLabelView.swift in Sources */,
 				471DA2C327A66A2E00432A1D /* BoundsObserver.swift in Sources */,
 				471DA2BB27A6563E00432A1D /* GrowingInternalTextView.swift in Sources */,
-				47BC332F27B3B03800664CCD /* TimeSpacer.swift in Sources */,
 				47CDB8B127A607AC002F2BDF /* MsgType.swift in Sources */,
 				477292D327BDF913005960AA /* MediaDownload.swift in Sources */,
 				47A4E4BB27B92CFF00E9AC7F /* UIImage+Extension.swift in Sources */,
@@ -925,7 +907,6 @@
 				471425A227A710B800478BED /* ChatLayout.swift in Sources */,
 				47BC333227B3BA1100664CCD /* SettingsView.swift in Sources */,
 				47CDB8AD27A60238002F2BDF /* MsgDateView.swift in Sources */,
-				47623F8027AFB8C500F7EE1C /* MoreLoader.swift in Sources */,
 				471425C327A7D33D00478BED /* SendButton.swift in Sources */,
 				47BC333827B3FE8200664CCD /* OutgoingSocket.swift in Sources */,
 				47BC332D27B390C200664CCD /* IncomingSocket.swift in Sources */,
@@ -956,7 +937,6 @@
 				47207E9927BAA6C40031E083 /* PhotoLibrary.swift in Sources */,
 				47A4E4B827B92CFF00E9AC7F /* String+Extension.swift in Sources */,
 				471425C527A7D39B00478BED /* PlusMenuButton.swift in Sources */,
-				47B3318B27AA7412005CE89A /* ChatScrollViewPreferences.swift in Sources */,
 				471425B127A7613300478BED /* ImageData.swift in Sources */,
 				47F087A627B88884007D79F7 /* Persistence.swift in Sources */,
 				471425B527A7615000478BED /* LocationData.swift in Sources */,
