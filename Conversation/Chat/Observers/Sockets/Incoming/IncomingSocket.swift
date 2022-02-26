@@ -70,7 +70,7 @@ final class IncomingSocket: ObservableObject {
             }
             DispatchQueue.main.async {
                 msg.applyAction(action: .MsgProgress(value: .Read))
-                let _ = PersistenceController.shared.create(msg: msg)
+                CMsg.create(msg: msg)
                 self.onNewMsgBlock?(msg)
             }
         }
@@ -82,7 +82,7 @@ final class IncomingSocket: ObservableObject {
         onTypingStatusBlock?(Bool.random())
         let rType = [Msg.RecieptType.Send, .Receive].random() ?? .Send
         let progress = rType == .Send ? Msg.MsgProgress.Sending : .SendingFailed
-        let msg = Msg(conId: conId, msgType: .Text, rType: rType, progress: .Sending)
+        let msg = Msg(conId: conId, msgType: .Text, rType: rType, progress: progress)
         
         let text = [Lorem.sentence, Lorem.shortTweet, Lorem.tweet, Lorem.fullName, Lorem.title].random() ?? Lorem.emailAddress
         msg.textData = .init(text: text)

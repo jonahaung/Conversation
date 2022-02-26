@@ -14,11 +14,8 @@ final class AppUserDefault: ObservableObject {
     private static let _autoGenerateMockMsgs = "autoGenerateMockMsgs"
     @AppStorage(AppUserDefault._autoGenerateMockMsgs) var autoGenerateMockMessages = true
     
-    private static let _cellSpacing = "_cellSpacing"
-    @AppStorage(AppUserDefault._cellSpacing) var chatCellSpacing = 2.0
-    
     private static let _cellDraggable = "_cellDraggable"
-    @AppStorage(AppUserDefault._cellSpacing) var canDragCell = false
+    @AppStorage(AppUserDefault._cellDraggable) var canDragCell = false
     
     private static let _pageSize = "pageSize"
     @AppStorage(_pageSize) var pagnitionSize = 50

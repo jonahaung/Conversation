@@ -101,8 +101,8 @@ extension Media {
     }
     //-------------------------------------------------------------------------------------------------------------------------------------------
     class func cleanupExpired() {
-        var mediaKeep = MediaKeep.Keep
-        switch mediaKeep {
+        
+        switch MediaKeep.Keep {
         case .Keep:
             break
         case .Month:
@@ -110,7 +110,6 @@ extension Media {
         case .Week:
             cleanupExpired(days: 30)
         }
-        
     }
     
     //-------------------------------------------------------------------------------------------------------------------------------------------

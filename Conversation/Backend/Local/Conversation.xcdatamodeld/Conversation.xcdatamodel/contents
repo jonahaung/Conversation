@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CCon" representedClassName="CCon" syncable="YES" codeGenerationType="class">
+        <attribute name="bgImageIndext" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="cellSpacingValue" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="isBubbleDraggable" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="showAvatar" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="themeColorIndex" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="CMsg" representedClassName="CMsg" syncable="YES" codeGenerationType="class">
         <attribute name="conId" attributeType="String"/>
         <attribute name="data" optional="YES" attributeType="String"/>
@@ -24,5 +34,6 @@
     <elements>
         <element name="CMsg" positionX="-63" positionY="-18" width="128" height="224"/>
         <element name="MediaQueue" positionX="-63" positionY="90" width="128" height="14"/>
+        <element name="CCon" positionX="-63" positionY="81" width="128" height="149"/>
     </elements>
 </model>

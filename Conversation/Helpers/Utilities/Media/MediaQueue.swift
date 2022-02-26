@@ -11,7 +11,7 @@ import CoreData
 extension MediaQueue {
     
     class func fetch(id: String) -> MediaQueue? {
-        let context = PersistenceController.shared.context
+        let context = Persistence.shared.context
         let request = NSFetchRequest<MediaQueue>.init(entityName: MediaQueue.entity().name!)
         request.fetchLimit = 1
         request.predicate = .init(format: "id == %@", id)
@@ -23,8 +23,9 @@ extension MediaQueue {
             return nil
         }
     }
+    
     class func fetchOne() -> MediaQueue? {
-        let context = PersistenceController.shared.context
+        let context = Persistence.shared.context
         let request = NSFetchRequest<MediaQueue>.init(entityName: MediaQueue.entity().name!)
         request.predicate = NSPredicate(format: "isQueued == %@", NSNumber(value: true))
         request.fetchLimit = 1
@@ -37,11 +38,11 @@ extension MediaQueue {
         }
     }
     class func create(id: String) -> MediaQueue {
-        let context = PersistenceController.shared.context
+        let context = Persistence.shared.context
         let mediaQueue = MediaQueue(context: context)
         mediaQueue.id = id
         
-        PersistenceController.shared.save()
+        Persistence.shared.save()
         return mediaQueue
     }
     
@@ -49,13 +50,13 @@ extension MediaQueue {
         _ = MediaQueue.create(id: msg.id)
     }
     
-    class func restart(_ objectId: String) {
+    class func restart(_ id: String) {
         
-        if let mediaQueue = MediaQueue.fetch(id: objectId) {
+        if let mediaQueue = MediaQueue.fetch(id: id) {
             mediaQueue.update(isFailed: false)
         }
-        if let dbmessage = PersistenceController.shared.fetch(id: objectId) {
-            dbmessage.progress = Msg.MsgProgress.SendingFailed.rawValue
+        if let cMsg = CMsg.msg(for: id) {
+            cMsg.progress = Msg.MsgProgress.SendingFailed.rawValue
         }
     }
 }
@@ -78,6 +79,6 @@ extension MediaQueue {
         }
     }
     private func update() {
-        PersistenceController.shared.save()
+        Persistence.shared.save()
     }
 }

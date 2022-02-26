@@ -10,9 +10,9 @@ import SwiftUI
 struct ChatNavBar: View {
     
     @Environment(\.presentationMode) private var presentationMode
-    @EnvironmentObject private var roomProperties: RoomProperties
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var currentUser: CurrentUser
+    @EnvironmentObject private var cCon: CCon
     
     var body: some View {
         VStack(spacing: 0) {
@@ -31,7 +31,7 @@ struct ChatNavBar: View {
                         .background(Color.teal)
                         .clipShape(Circle())
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(currentUser.user.name)
+                        Text(cCon.name!)
                             .font(.system(size: UIFont.systemFontSize, weight: .bold))
                         Text(currentUser.activeDate, formatter: MsgDateView.dateFormatter)
                             .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
@@ -42,8 +42,8 @@ struct ChatNavBar: View {
                 Spacer()
                 
                 NavigationLink {
-                    RoomPropertiesView()
-                        .environmentObject(roomProperties)
+                    CConSettingsView()
+                        .environmentObject(cCon)
                 } label: {
                     Image(systemName: "ellipsis")
                         .padding()

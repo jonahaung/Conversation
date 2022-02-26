@@ -20,7 +20,7 @@ extension Msg {
     }
     
     func updateStore() -> Bool {
-        guard let cMsg = PersistenceController.shared.fetch(id: id) else {
+        guard let cMsg = CMsg.msg(for: id) else {
             return false
         }
         if cMsg.progress != self.progress.rawValue {

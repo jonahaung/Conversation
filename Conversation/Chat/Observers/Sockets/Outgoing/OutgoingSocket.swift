@@ -42,7 +42,7 @@ final class OutgoingSocket: ObservableObject {
     
     @discardableResult
     func add(msg: Msg) async -> Self {
-        let _ = PersistenceController.shared.create(msg: msg)
+        CMsg.create(msg: msg)
         onAddMsg?(msg)
         await ToneManager.shared.playSound(tone: .Tock)
         return self

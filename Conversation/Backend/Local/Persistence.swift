@@ -7,18 +7,19 @@
 
 import CoreData
 
-class PersistenceController {
+class Persistence {
     
-    static let shared = PersistenceController()
+    static let shared = Persistence()
     class func setup() {
         _ = shared
     }
+    
     private let container: NSPersistentCloudKitContainer
     
     lazy var context: NSManagedObjectContext = { [unowned container] in
         return container.newBackgroundContext()
     }()
-
+    
     init(inMemory: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "Conversation")
         if inMemory {
@@ -32,68 +33,11 @@ class PersistenceController {
         })
     }
     
-    func create(msg: Msg) {
-        let context = self.context
-        let cMsg = CMsg(context: context)
-        cMsg.id = msg.id
-        cMsg.conId = msg.conId
-        cMsg.rType = Int16(msg.rType.rawValue)
-        cMsg.msgType = Int16(msg.msgType.rawValue)
-        cMsg.progress = Int16(msg.progress.rawValue)
-        cMsg.date = msg.date
-        cMsg.data = msg.textData?.text ?? msg.attachmentData?.urlString ?? msg.emojiData?.emojiID
-        cMsg.lat = msg.locationData?.longitude ?? 0
-        cMsg.long = msg.locationData?.latitude ?? 0
-        cMsg.senderID = msg.sender.id
-        cMsg.senderName = msg.sender.name
-        cMsg.senderURL = msg.sender.photoURL
-        cMsg.imageRatio = msg.imageRatio
-       
-    }
-    func cMsgsCount(conId: String) -> Int {
-        let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)
-        request.predicate = NSPredicate(format: "conId == %@", conId)
-        request.resultType = .countResultType
-        return (try? context.count(for: request)) ?? 0
-    }
-    
-    func cMsgs(conId: String, limit: Int, offset: Int) -> [CMsg] {
-        let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)
-        request.predicate = NSPredicate(format: "conId == %@", conId)
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-        request.fetchLimit = limit
-        request.fetchOffset = offset
-        do {
-            return try context.fetch(request)
-        }catch {
-            print(error.localizedDescription)
-            return []
-        }
-    }
-    func fetch(id: String) -> CMsg? {
-        let request = NSFetchRequest<CMsg>.init(entityName: CMsg.entity().name!)
-        request.fetchLimit = 1
-        request.predicate = .init(format: "id == %@", id)
-        do {
-            let results = try context.fetch(request)
-            return results.first
-        } catch {
-            print(error.localizedDescription)
-            return nil
-        }
-    }
-    
-    func delete(id: String) {
-        guard let cMsg = fetch(id: id) else { return }
-        context.delete(cMsg)
-    }
-    
     func save() {
         let context = self.context
         if context.hasChanges {
             do {
                 try context.save()
-                Log("Saved")
             }catch {
                 print(error.localizedDescription)
             }

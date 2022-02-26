@@ -15,7 +15,7 @@ extension ChatView {
     }
     
     func connectSockets() {
-        incomingSocket.connect(with: roomProperties.id)
+        incomingSocket.connect(with: cCon.id!)
             .onNewMsg { msg in
                 DispatchQueue.main.async {
                     datasource.add(msg: msg)
@@ -30,7 +30,7 @@ extension ChatView {
                 }
             }
         
-        outgoingSocket.connect(with: roomProperties.id)
+        outgoingSocket.connect(with: cCon.id!)
             .onAddMsg{ msg in
                 DispatchQueue.main.async {
                     datasource.add(msg: msg)

@@ -15,8 +15,13 @@ struct ConversationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(AppUserDefault.shared)
+            NavigationView {
+                InBoxView()
+            }
+            .navigationViewStyle(.stack)
+            .environmentObject(CurrentUser.shared)
+            .environmentObject(IncomingSocket.shared)
+            .environmentObject(AppUserDefault.shared)
         }
     }
 }
@@ -25,7 +30,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        PersistenceController.setup()
+        Persistence.setup()
         return true
     }
     
@@ -36,6 +41,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        PersistenceController.shared.save()
+        Persistence.shared.save()
     }
 }

@@ -13,20 +13,19 @@ struct ChatView: View {
     @StateObject internal var chatLayout = ChatLayout()
     @StateObject internal var inputManager = ChatInputViewManager()
     @StateObject internal var datasource: ChatDatasource
-    @StateObject internal var roomProperties: RoomProperties
     @StateObject internal var outgoingSocket = OutgoingSocket()
     @EnvironmentObject internal var incomingSocket: IncomingSocket
+    @EnvironmentObject internal var cCon: CCon
     
-    init(conId: String) {
-        _datasource = .init(wrappedValue: ChatDatasource(conId: conId))
-        _roomProperties = .init(wrappedValue: RoomProperties(id: conId))
+    init(cCon: CCon) {
+        _datasource = .init(wrappedValue: ChatDatasource(cCon: cCon))
     }
     
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
             ChatScrollView(scrollID: $chatLayout.scrollItem) {
-                LazyVStack(spacing: AppUserDefault.shared.chatCellSpacing) {
+                LazyVStack(spacing: cCon.cellSpacing) {
                     ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
                         ChatCell()
                             .environmentObject(msg)
@@ -45,12 +44,12 @@ struct ChatView: View {
             }
         }
         .overlay(ChatInputView(), alignment: .bottom)
-        .background(roomProperties.bgImage.image)
+        .background(cCon.bgImage.image)
+        .accentColor(cCon.themeColor.color)
         .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
         .environmentObject(chatLayout)
         .environmentObject(inputManager)
         .environmentObject(datasource)
-        .environmentObject(roomProperties)
         .environmentObject(outgoingSocket)
         .task {
             chatLayout.delegate = datasource

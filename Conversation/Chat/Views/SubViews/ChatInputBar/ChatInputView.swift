@@ -14,7 +14,7 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
-    @EnvironmentObject internal var roomProperties: RoomProperties
+    @EnvironmentObject internal var cCon: CCon
     
     var body: some View {
         VStack(spacing: 0) {

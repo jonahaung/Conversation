@@ -15,7 +15,7 @@ struct TypingView: View {
     var body: some View {
         AvatarView()
             .frame(width: 25, height: 25)
-            .offset(x: CGFloat.random(in: 0...30), y: offset)
+            .offset(x: 0, y: offset)
             .onReceive(timer) { output in
                 withAnimation(.interactiveSpring()) {
                     self.offset = CGFloat.random(in: -30...0)

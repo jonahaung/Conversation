@@ -48,7 +48,7 @@ extension MediaUploader {
         if (uploading) { return }
         if let mediaQueue = MediaQueue.fetchOne() {
             guard let id = mediaQueue.id else { return }
-            guard let dbmessage = PersistenceController.shared.fetch(id: id) else {
+            guard let dbmessage = CMsg.msg(for: id) else {
                 return
             }
             print(dbmessage)

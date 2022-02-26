@@ -14,7 +14,6 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Toggle("Auto Generate Msgs", isOn: $appUserDefault.autoGenerateMockMessages)
-            Stepper("Cell Spacing \(Int(appUserDefault.chatCellSpacing))", value: $appUserDefault.chatCellSpacing, in: 0...10)
             Toggle("Cell Draggable", isOn: $appUserDefault.canDragCell)
             Stepper("Page Size \(appUserDefault.pagnitionSize)", value: $appUserDefault.pagnitionSize, in: 50...200)
         }

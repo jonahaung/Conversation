@@ -15,23 +15,22 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
     
     @Published var selectedId: String?
     internal var hasMoreData = true
-
+    
     private var pageSize = AppUserDefault.shared.pagnitionSize
-    private let conId: String
-    private let persistanceController = PersistenceController.shared
+    private let cCon: CCon
     
     
-    init(conId: String) {
-        self.conId = conId
-        let storedMsgsCount = persistanceController.cMsgsCount(conId: conId)
+    init(cCon: CCon) {
+        self.cCon = cCon
+        let storedMsgsCount = CMsg.count(for: cCon.id!)
         let offset = max(0, storedMsgsCount - pageSize)
-        msgs = persistanceController.cMsgs(conId: conId, limit: pageSize, offset: offset).map(Msg.init)
+        msgs = CMsg.msgs(for: cCon.id!, limit: pageSize, offset: offset).map(Msg.init)
     }
     
     func getMoreMsg() async -> [Msg]? {
         guard hasMoreData else { return nil }
         
-        let storedMsgsCount = persistanceController.cMsgsCount(conId: conId)
+        let storedMsgsCount = CMsg.count(for: cCon.id!)
         let msgsCount = msgs.count
         
         if storedMsgsCount == msgsCount {
@@ -45,7 +44,7 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
         if fetchOffset < 0 {
             pageSize = pageSize + fetchOffset
         }
-        let newMsgs = persistanceController.cMsgs(conId: conId, limit: pageSize, offset: max(0, fetchOffset)).map(Msg.init)
+        let newMsgs = CMsg.msgs(for: cCon.id!, limit: pageSize, offset: max(0, fetchOffset)).map(Msg.init)
         try? await Task.sleep(nanoseconds: 500_000_000)
         return newMsgs + msgs
     }
@@ -57,7 +56,7 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
     func delete(msg: Msg) {
         if let index = msgs.firstIndex(of: msg) {
             msgs.remove(at: index)
-            PersistenceController.shared.delete(id: msg.id)
+            CMsg.delete(id: msg.id)
         }
     }
     
@@ -86,7 +85,7 @@ extension ChatDatasource {
     internal func msgStyle(for msg: Msg, at index: Int) -> MsgStyle {
         
         let canCacheStyle = index != 0 && selectedId == nil && index != msgs.count-1
-
+        
         if canCacheStyle, let style = cachedStyles[msg.id] {
             return style
         }
@@ -138,13 +137,12 @@ extension ChatDatasource {
             }
             
             if let nextMsg = nextMsg(for: msg, at: index) {
-                
                 let sameSender = msg.rType == nextMsg.rType
                 let sameType = msg.msgType == nextMsg.msgType
                 
                 if !sameSender || !sameType || msg.id == selectedId || nextMsg.id == selectedId  || nextMsg.date.getDifference(from: msg.date, unit: .second) > 30 {
                     corners.formUnion(.bottomLeft)
-                    showAvatar = true
+                    showAvatar = cCon.showAvatar
                 }
             }else {
                 corners.formUnion(.bottomLeft)

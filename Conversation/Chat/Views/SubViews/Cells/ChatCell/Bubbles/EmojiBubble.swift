@@ -11,7 +11,6 @@ struct EmojiBubble: View {
     
     let data: Msg.MsgType.EmojiData
     @EnvironmentObject private var msg: Msg
-    @EnvironmentObject private var roomProperties: RoomProperties
     
     var body: some View {
         Image(systemName: data.emojiID)

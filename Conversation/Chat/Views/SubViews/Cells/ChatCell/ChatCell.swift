@@ -11,7 +11,7 @@ struct ChatCell: View {
     
     @EnvironmentObject internal var msg: Msg
     @EnvironmentObject internal var style: MsgStyle
-    @EnvironmentObject internal var roomProperties: RoomProperties
+    @EnvironmentObject internal var cCon: CCon
     @EnvironmentObject internal var chatLayout: ChatLayout
     @EnvironmentObject internal var datasource: ChatDatasource
     
@@ -22,15 +22,16 @@ struct ChatCell: View {
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
             }
+            
             HStack(alignment: .bottom, spacing: 2) {
-               
+                
                 if msg.rType == .Send {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 } else {
                     VStack {
-//                        if style.showAvatar {
-//                            AvatarView()
-//                        }
+                        if style.showAvatar {
+                            AvatarView()
+                        }
                     }
                     .frame(width: ChatKit.cellLeftRightViewWidth)
                 }
@@ -43,7 +44,7 @@ struct ChatCell: View {
                     }
                     
                     bubbleView()
-                   
+                    
                     if msg.id == datasource.selectedId {
                         HiddenLabelView(text: msg.progress.description)
                     }
@@ -55,9 +56,7 @@ struct ChatCell: View {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 }
             }
-            
         }
-        
         .id(msg.id)
     }
 }
