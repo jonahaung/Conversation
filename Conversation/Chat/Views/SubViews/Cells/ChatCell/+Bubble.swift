@@ -16,10 +16,10 @@ extension ChatCell {
                 case .Text:
                     TextBubble(data: msg.textData ?? .init(text: "no text"))
                         .foregroundColor(
-                            con.textColor(for: msg)
+                            coordinator.con.textColor(for: msg)
                         )
                         .background(
-                            con.bubbleColor(for: msg)
+                            coordinator.con.bubbleColor(for: msg)
                                 .clipShape(
                                     BubbleShape(corners: style.bubbleCorner)
                                 )
@@ -43,7 +43,7 @@ extension ChatCell {
         }
         
         return Group {
-            if con.isBubbleDraggable {
+            if coordinator.con.isBubbleDraggable {
                 bubble()
                     .offset(x: dragOffsetX)
                     .gesture(bubbleTapGesture.exclusively(before: bubbleDragGesture))
@@ -58,7 +58,7 @@ extension ChatCell {
     private var bubbleTapGesture: some Gesture {
         TapGesture(count: 1).onEnded { _ in
             withAnimation(.interactiveSpring()) {
-                datasource.selectedId = msg.id == datasource.selectedId ? nil : msg.id
+                coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
                 generateFeedback()
             }
         }

@@ -15,31 +15,21 @@ struct ScrollItem: Equatable {
 }
 struct ChatScrollView<Content: View>: View {
     
-    @Binding var scrollItem: ScrollItem?
     let content: () -> Content
     
-    @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
-    @EnvironmentObject internal var con: Con
+    @EnvironmentObject internal var coordinator: Coordinator
     
     var body: some View {
         ScrollViewReader { scrollViewProxy in
             ScrollView {
                 content()
             }
-            .introspectScrollView { scrollView in
-                if chatLayout.scrollView == nil {
-                    scrollView.keyboardDismissMode = .interactive
-                    scrollView.contentInsetAdjustmentBehavior = .never
-                    scrollView.isPagingEnabled = con.isPagingEnabled
-                    chatLayout.scrollView = scrollView
-                    scrollView.delegate = chatLayout
-                }
-            }
+            
             .overlay(accessoryBar, alignment: .bottom)
-            .onChange(of: scrollItem) { newValue in
+            .onChange(of: coordinator.scrollItem) { newValue in
                 if let newValue = newValue {
-                    scrollItem = nil
+                    coordinator.scrollItem = nil
                     if newValue.animate {
                         withAnimation {
                             scrollViewProxy.scrollTo(newValue.id, anchor: newValue.anchor)
@@ -58,9 +48,9 @@ struct ChatScrollView<Content: View>: View {
                 TypingView()
             }
             Spacer()
-            if chatLayout.showScrollButton {
+            if coordinator.showScrollButton {
                 Button {
-                    chatLayout.scrollItem = .init(id: 0, anchor: .bottom, animate: true)
+                    coordinator.scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
                 } label: {
                     Image(systemName: "chevron.down")
                         .imageScale(.large)

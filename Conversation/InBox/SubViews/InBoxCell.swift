@@ -63,7 +63,6 @@ struct InBoxCell: View {
         }
         .tapToPush(
             ChatView(con: con)
-                .environmentObject(con)
                 .navigationBarHidden(true)
         )
         .task {

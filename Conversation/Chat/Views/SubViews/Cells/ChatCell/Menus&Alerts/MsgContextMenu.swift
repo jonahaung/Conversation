@@ -10,7 +10,7 @@ import SwiftUI
 struct MsgContextMenu: View {
     
     @EnvironmentObject private var msg: Msg
-    @EnvironmentObject private var datasource: ChatDatasource
+    @EnvironmentObject private var coordinator: Coordinator
     
     var body: some View {
         Button(action: {
@@ -21,8 +21,8 @@ struct MsgContextMenu: View {
         }
         
         Button(action: {
-            DispatchQueue.main.async {
-                datasource.delete(msg: msg)
+            Task {
+                await coordinator.delete(msg: msg)
             }
         }) {
             Label("Delete", systemImage: "trash.fill")

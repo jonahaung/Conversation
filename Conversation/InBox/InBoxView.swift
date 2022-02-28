@@ -27,7 +27,6 @@ struct InBoxView: View {
         }
         .task {
             manager.fetch()
-            MediaUploader.setup()
         }
         .navigationTitle("Inbox")
         .navigationBarItems(leading: navLeading, trailing: navTrailing)

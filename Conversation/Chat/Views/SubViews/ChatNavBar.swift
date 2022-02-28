@@ -10,9 +10,9 @@ import SwiftUI
 struct ChatNavBar: View {
     
     @Environment(\.presentationMode) private var presentationMode
-    @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var currentUser: CurrentUser
-    @EnvironmentObject private var con: Con
+    @EnvironmentObject private var coordinator: Coordinator
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -30,7 +30,7 @@ struct ChatNavBar: View {
                         .background(Color.teal)
                         .clipShape(Circle())
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(con.name)
+                        Text(coordinator.con.name)
                             .font(.system(size: UIFont.systemFontSize, weight: .bold))
                         Text(currentUser.activeDate, formatter: MsgDateView.dateFormatter)
                             .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
@@ -39,13 +39,10 @@ struct ChatNavBar: View {
                 }
                 
                 Spacer()
-                NavigationLink {
-                    ConSettingsView()
-                        .environmentObject(con)
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .padding()
-                }
+                
+                Image(systemName: "ellipsis")
+                    .padding()
+                    .tapToPush(ConSettingsView().environmentObject(coordinator))
             }
             Divider()
         }

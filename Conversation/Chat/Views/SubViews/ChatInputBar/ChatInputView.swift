@@ -11,10 +11,9 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
     
     static let id = 1
     
-    @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
-    @EnvironmentObject internal var con: Con
+    @EnvironmentObject internal var coordinator: Coordinator
     
     var body: some View {
         VStack(spacing: 0) {

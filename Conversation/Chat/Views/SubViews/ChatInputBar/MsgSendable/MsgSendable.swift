@@ -11,7 +11,7 @@ import SwiftUI
 protocol MsgSendable {
     var inputManager: ChatInputViewManager { get }
     var outgoingSocket: OutgoingSocket { get }
-    var con: Con { get }
+    var coordinator: Coordinator { get }
     
     func resetView() async
 }

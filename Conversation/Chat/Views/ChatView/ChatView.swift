@@ -6,47 +6,45 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct ChatView: View {
     
-    @StateObject internal var chatLayout = ChatLayout()
     @StateObject internal var inputManager = ChatInputViewManager()
-    @StateObject internal var datasource: ChatDatasource
     @StateObject internal var outgoingSocket = OutgoingSocket()
     @EnvironmentObject internal var incomingSocket: IncomingSocket
-    @EnvironmentObject internal var con: Con
+    @StateObject internal var coordinator: Coordinator
     
     init(con: Con) {
-        _datasource = .init(wrappedValue: ChatDatasource(con: con))
+        _coordinator = .init(wrappedValue: .init(con: con))
     }
     
     var body: some View {
         VStack(spacing: 0) {
             ChatNavBar()
-            ChatScrollView(scrollItem: $chatLayout.scrollItem) {
-                LazyVStack(spacing: con.cellSpacing) {
-                    ForEach(Array(datasource.msgs.enumerated()), id: \.offset) { index, msg in
+            ChatScrollView {
+                LazyVStack(spacing: coordinator.con.cellSpacing) {
+                    ForEach(Array(coordinator.msgs.enumerated()), id: \.offset) { index, msg in
                         ChatCell()
                             .environmentObject(msg)
-                            .environmentObject(datasource.msgStyle(for: msg, at: index))
+                            .environmentObject(coordinator.msgStyle(for: msg, at: index))
                     }
                     Color.clear
                         .frame(height: 1)
                         .id(0)
                 }
             }
-            
+            .introspectScrollView {
+                coordinator.connect(scrollView: $0)
+            }
             ChatInputView()
         }
         .coordinateSpace(name: "ChatView")
-        .background(con.bgImage.image)
-        .retrieveBounds(viewId: ChatInputView.id, $chatLayout.inputViewFrame)
-        .accentColor(con.themeColor.color)
+        .background(coordinator.con.bgImage.image)
+        .retrieveBounds(viewId: ChatInputView.id, $coordinator.inputBarRect)
+        .accentColor(coordinator.con.themeColor.color)
         .task {
-            if chatLayout.delegate ==  nil {
-                chatLayout.scrollItem = .init(id: 0, anchor: .bottom)
-                chatLayout.delegate = datasource
-            }
+            coordinator.task()
         }
         .onAppear{
             connectSockets()
@@ -54,9 +52,8 @@ struct ChatView: View {
         .onDisappear{
             disconnectSockets()
         }
-        .environmentObject(chatLayout)
         .environmentObject(inputManager)
-        .environmentObject(datasource)
         .environmentObject(outgoingSocket)
+        .environmentObject(coordinator)
     }
 }

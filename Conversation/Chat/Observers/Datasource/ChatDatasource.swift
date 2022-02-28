@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-class ChatDatasource: ObservableObject, ChatLayoutDelegate {
+class ChatDatasource: ObservableObject {
     
     private var cachedMsgStyles = [String: MsgStyle]()
-    @Published var selectedId: String?
+    
     internal var con: Con
     
     private var slidingWindow: SlidingDataSource<Msg>!
@@ -28,7 +28,14 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
         self.slidingWindow = SlidingDataSource(items: messages, pageSize: pageSize)
     }
     
-
+    var hasMoreNext: Bool {
+        return self.slidingWindow.hasMore()
+    }
+    
+    var hasMorePrevious: Bool {
+        return self.slidingWindow.hasPrevious()
+    }
+    
     func add(msg: Msg) {
         slidingWindow.insertItem(msg, position: .bottom)
         objectWillChange.send()
@@ -39,25 +46,15 @@ class ChatDatasource: ObservableObject, ChatLayoutDelegate {
         CMsg.delete(id: msg.id)
         slidingWindow.remove(msg: msg)
     }
-    
-    var hasMoreNext: Bool {
-        return self.slidingWindow.hasMore()
-    }
-    
-    var hasMorePrevious: Bool {
-        return self.slidingWindow.hasPrevious()
-    }
 
-    func loadNext() {
+    func loadNext() async {
         self.slidingWindow.loadNext()
         self.slidingWindow.adjustWindow(focusPosition: 1, maxWindowSize: self.preferredMaxWindowSize)
-//        objectWillChange.send()
     }
     
-    func loadPrevious() {
+    func loadPrevious() async {
         self.slidingWindow.loadPrevious()
         self.slidingWindow.adjustWindow(focusPosition: 0, maxWindowSize: self.preferredMaxWindowSize)
-//        self.objectWillChange.send()
     }
     
     func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double, completion:(_ didAdjust: Bool) -> Void) {
@@ -87,7 +84,7 @@ extension ChatDatasource {
     }
     
     
-    internal func msgStyle(for msg: Msg, at index: Int) -> MsgStyle {
+    internal func msgStyle(for msg: Msg, at index: Int, selectedId: String?) -> MsgStyle {
         
         let canCacheStyle = index != 0 && selectedId == nil && index != msgs.count-1
         

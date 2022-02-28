@@ -15,14 +15,9 @@ extension ChatView {
     }
     
     func connectSockets() {
-        incomingSocket.connect(with: con.id)
+        incomingSocket.connect(with: coordinator.con.id)
             .onNewMsg { msg in
-                DispatchQueue.main.async {
-                    datasource.add(msg: msg)
-                    if datasource.hasMoreNext == false {
-                        chatLayout.scrollToBottom(animated: true)
-                    }
-                }
+                coordinator.add(msg: msg)
             }
             .onTypingStatus { isTyping in
                 DispatchQueue.main.async {
@@ -30,15 +25,10 @@ extension ChatView {
                 }
             }
         
-        outgoingSocket.connect(with: con.id)
+        outgoingSocket.connect(with: coordinator.con.id)
             .onAddMsg{ msg in
-                DispatchQueue.main.async {
-                    datasource.add(msg: msg)
-                    if datasource.hasMoreNext == false {
-                        chatLayout.scrollToBottom(animated: true)
-                    }
-                    outgoingSocket.send(msg: msg)
-                }
+                coordinator.add(msg: msg)
+                outgoingSocket.send(msg: msg)
             }
             .onSentMsg { msg in
                 Task {

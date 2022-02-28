@@ -9,8 +9,8 @@ import SwiftUI
 
 struct InputTextView: UIViewRepresentable {
     
-    @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject private var inputManager: ChatInputViewManager
+    @EnvironmentObject private var coordinator: Coordinator
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
@@ -22,11 +22,11 @@ struct InputTextView: UIViewRepresentable {
         uiView.text = inputManager.text
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    func makeCoordinator() -> TextViewCoordinator {
+        TextViewCoordinator(self)
     }
     
-    class Coordinator: NSObject, GrowingTextViewDelegate {
+    class TextViewCoordinator: NSObject, GrowingTextViewDelegate {
         
         private let parent: InputTextView
         
@@ -41,12 +41,11 @@ struct InputTextView: UIViewRepresentable {
         
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.inputManager.textViewHeight = height
-//            guard difference > 0 else { return }
-//            if let scrollView = parent.chatLayout.scrollView {
-//                var offset = scrollView.contentOffset
-//                offset.y += difference
-//                scrollView.setContentOffset(offset, animated: true)
-//            }
+            if growingTextView.frame.height > 0 {
+                Task {
+                    await parent.coordinator.adjustContentOffset(inputViewSizeDidChange: difference)
+                }
+            }
         }
     }
 }

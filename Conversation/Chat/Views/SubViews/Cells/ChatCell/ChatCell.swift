@@ -11,9 +11,7 @@ struct ChatCell: View {
     
     @EnvironmentObject internal var msg: Msg
     @EnvironmentObject internal var style: MsgStyle
-    @EnvironmentObject internal var con: Con
-    @EnvironmentObject internal var chatLayout: ChatLayout
-    @EnvironmentObject internal var datasource: ChatDatasource
+    @EnvironmentObject internal var coordinator: Coordinator
     
     @State internal var dragOffsetX = CGFloat.zero
     
@@ -39,14 +37,14 @@ struct ChatCell: View {
                 
                 VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                     
-                    if msg.id == datasource.selectedId {
+                    if msg.id == coordinator.selectedId {
                         let text = msg.rType == .Send ? MsgDateView.dateFormatter.string(from: msg.date) : msg.sender.name
                         HiddenLabelView(text: text)
                     }
                     
                     bubbleView()
                     
-                    if msg.id == datasource.selectedId {
+                    if msg.id == coordinator.selectedId {
                         HiddenLabelView(text: msg.progress.description)
                     }
                 }
