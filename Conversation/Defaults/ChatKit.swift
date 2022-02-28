@@ -10,18 +10,19 @@ import SwiftUI
 
 enum ChatKit {
 
-    static var bubbleRadius = CGFloat(UIFont.labelFontSize)
-    static var cellAlignmentSpacing = CGFloat(35)
-    static var cellMsgStatusSize = CGFloat(15)
-
-    static var textBubbleColorIncoming = Color(uiColor: .secondarySystemGroupedBackground)
-    static var textBubbleColorIncomingPlain = Color(uiColor: .systemGray6)
+    static let bubbleRadius = CGFloat(17)
     
-    static var mediaMaxWidth = CGFloat(250)
-    static var textTextColorOutgoing = Color(uiColor: UIColor.systemBackground)
-    static var textTextColorIncoming: Color? = nil
-    
+    static let cellAlignmentSpacing = CGFloat(30)
+    static let cellMsgStatusSize = CGFloat(15)
+    static let cellHorizontalPadding = CGFloat(8)
+    static let textBubbleColorIncoming = Color(uiColor: .secondarySystemGroupedBackground)
+    static let textBubbleColorIncomingPlain = Color(uiColor: .systemGray6)
     static let cellLeftRightViewWidth = 15.00
+    
+    static let mediaMaxWidth = CGFloat(250)
+    static let textTextColorOutgoing = Color(uiColor: UIColor.systemBackground)
+    static let textTextColorIncoming: Color? = nil
+
 }
 
 

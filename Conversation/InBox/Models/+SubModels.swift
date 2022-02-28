@@ -1,5 +1,5 @@
 //
-//  +Theme.swift
+//  +SubModels.swift
 //  Conversation
 //
 //  Created by Aung Ko Min on 27/2/22.
@@ -7,42 +7,25 @@
 
 import SwiftUI
 
-extension CCon {
-    
-    var cellSpacing: CGFloat {
-        get {
-            return CGFloat(cellSpacingValue)
-        }
-        set {
-            cellSpacingValue = Int16(newValue)
-            Persistence.shared.save()
-        }
-    }
-}
-
-extension CCon {
-
-    func bubbleColor(for msg: Msg) -> Color {
-        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
-        return msg.rType == .Send ? .accentColor : incomingColor
-    }
-    
-    func textColor(for msg: Msg) -> Color? {
-        return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
-    }
-    
-    var themeColor: ThemeColor {
-        get {
-            return ThemeColor(rawValue: themeColorIndex) ?? .Blue
-        }
-        set {
-            themeColorIndex = newValue.rawValue
-            Persistence.shared.save()
+extension Con {
+    enum BgImage: Int16, CaseIterable {
+        
+        case None, One, White, Blue, Brown
+        
+        var name: String { "chatBg\(rawValue)" }
+        
+        var image: some View {
+            Group {
+                if self == .None {
+                    Color.clear
+                } else {
+                    Image(name)
+                        .resizable()
+                        .clipped()
+                }
+            }
         }
     }
-}
-
-extension CCon {
     
     enum ThemeColor: Int16, CaseIterable {
         
@@ -69,13 +52,13 @@ extension CCon {
             case .Cyan:
                 return .cyan
             case .Red:
-                return .red
+                return .red.opacity(0.9)
             case .Indigo:
                 return .indigo
             case .Purple:
                 return .purple
             case .Pink:
-                return .pink
+                return .pink.opacity(0.8)
             case .Brown:
                 return .brown
             case .Gray:
@@ -84,3 +67,4 @@ extension CCon {
         }
     }
 }
+

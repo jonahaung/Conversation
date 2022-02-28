@@ -7,17 +7,19 @@
 
 import SwiftUI
 
-struct CConSettingsView: View {
+struct ConSettingsView: View {
     
-    @EnvironmentObject private var cCon: CCon
+    @EnvironmentObject private var con: Con
     
     var body: some View {
         Form {
-            Text(cCon.name!)
-            Toggle("Show Avatar", isOn: $cCon.showAvatar)
-            Toggle("Bubble Drag", isOn: $cCon.isBubbleDraggable)
-            Picker(selection: $cCon.themeColor) {
-                ForEach(CCon.ThemeColor.allCases, id: \.self) { themeColor in
+            Text(con.name)
+            Toggle("Show Avatar", isOn: $con.showAvatar)
+            Toggle("Bubble Drag", isOn: $con.isBubbleDraggable)
+            Toggle("Paginition Enabled", isOn: $con.isPagingEnabled)
+            
+            Picker(selection: $con.themeColor) {
+                ForEach(Con.ThemeColor.allCases, id: \.self) { themeColor in
                     Label {
                         Text(themeColor.name)
                     } icon: {
@@ -29,9 +31,9 @@ struct CConSettingsView: View {
                 Text("Theme Color")
             }
             
-            Stepper("Cell Spacing  \(Int(cCon.cellSpacing))", value: $cCon.cellSpacing, in: 0...10)
-            Picker(selection: $cCon.bgImage) {
-                ForEach(CCon.BgImage.allCases, id: \.self) { bgImage in
+            Stepper("Cell Spacing  \(Int(con.cellSpacing))", value: $con.cellSpacing, in: 0...10)
+            Picker(selection: $con.bgImage) {
+                ForEach(Con.BgImage.allCases, id: \.self) { bgImage in
                     bgImage.image
                         .padding()
                 }

@@ -38,16 +38,15 @@ struct InputTextView: UIViewRepresentable {
             parent.inputManager.text = growingTextView.text
         }
         
+        
         func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
             parent.inputManager.textViewHeight = height
-        }
-        
-        func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat) {
-            if let scrollView = parent.chatLayout.scrollView, parent.inputManager.hasText {
-                var offset = scrollView.contentOffset
-                offset.y += difference
-                scrollView.setContentOffset(offset, animated: true)
-            }
+//            guard difference > 0 else { return }
+//            if let scrollView = parent.chatLayout.scrollView {
+//                var offset = scrollView.contentOffset
+//                offset.y += difference
+//                scrollView.setContentOffset(offset, animated: true)
+//            }
         }
     }
 }

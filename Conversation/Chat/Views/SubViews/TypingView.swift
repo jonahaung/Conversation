@@ -9,16 +9,18 @@ import SwiftUI
 
 struct TypingView: View {
     
-    private let timer = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
     @State private var offset = CGFloat(0)
-    
+    @State private var scale = 1.0
     var body: some View {
         AvatarView()
-            .frame(width: 25, height: 25)
-            .offset(x: 0, y: offset)
+            .frame(width: 17 * scale, height: 17 * scale)
+            .padding(3)
+            .offset(y: offset)
             .onReceive(timer) { output in
-                withAnimation(.interactiveSpring()) {
-                    self.offset = CGFloat.random(in: -30...0)
+                withAnimation {
+                    self.offset = CGFloat.random(in: -20...0)
+                    self.scale = self.scale == 1 ? 0.7 : 1
                 }
             }
     }

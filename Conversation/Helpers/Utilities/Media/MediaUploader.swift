@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class MediaUploader: NSObject {
     
@@ -31,7 +32,7 @@ class MediaUploader: NSObject {
 extension MediaUploader {
     
     @objc private func initTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             Task {
                 await self.uploadNext()
                 print("next")
@@ -44,23 +45,27 @@ extension MediaUploader {
         timer = nil
     }
     
-    private func uploadNext() async {
+    func uploadNext() async {
         if (uploading) { return }
-        if let mediaQueue = MediaQueue.fetchOne() {
-            guard let id = mediaQueue.id else { return }
-            guard let dbmessage = CMsg.msg(for: id) else {
+        
+        if let msgQueue = MediaQueue.fetchOne() {
+            guard let id = msgQueue.id else { return }
+            guard let cMsg = CMsg.msg(for: id) else {
                 return
             }
-            print(dbmessage)
-            let msg = Msg(cMsg: dbmessage)
+            let msg = Msg(cMsg: cMsg)
             uploading = true
             do {
                 try await upload(msg)
-                dbmessage.progress = Msg.MsgProgress.Sent.rawValue
-                mediaQueue.update(isQueued: false)
+                cMsg.progress = Msg.MsgProgress.Sent.rawValue
+                msgQueue.update(isQueued: false)
+                print("uploaded")
+                uploading = false
             }catch {
-                dbmessage.progress = Msg.MsgProgress.SendingFailed.rawValue
-                mediaQueue.update(isFailed: true)
+                print(error)
+                cMsg.progress = Msg.MsgProgress.SendingFailed.rawValue
+                msgQueue.update(isFailed: true)
+                uploading = false
             }
         }
     }
@@ -69,36 +74,36 @@ extension MediaUploader {
 extension MediaUploader {
     
     private func upload(_ msg: Msg) async throws {
-        if (msg.msgType == .Image) { try await uploadPhoto(msg) }
-        if (msg.msgType == .Video) { try await uploadVideo(msg) }
-        if (msg.msgType == .Video) { try await uploadAudio(msg) }
+        if (msg.msgType == .Image) { try await uploadPhoto(msg.id) }
+        if (msg.msgType == .Video) { try await uploadVideo(msg.id) }
+        if (msg.msgType == .Video) { try await uploadAudio(msg.id) }
     }
     
-    private func uploadPhoto(_ msg: Msg) async throws {
-        if let path = Media.path(photoId: msg.id) {
-            if let data = Data(path: path) {
-                try await MediaUpload.photo(msg.id, data)
+    private func uploadPhoto(_ id: String) async throws {
+        if let path = Media.path(photoId: id) {
+            if let data = UIImage(path: path)?.jpegData(compressionQuality: 0.8) {
+                try await MediaUpload.photo(id, data)
             } else { throw NSError(domain: "Media file error.", code: 102) }
         } else { throw NSError(domain: "Missing media file.", code: 103) }
     }
     
     
-    private func uploadVideo(_ msg: Msg) async throws {
-        if let path = Media.path(videoId: msg.id) {
+    private func uploadVideo(_ id: String) async throws {
+        if let path = Media.path(videoId: id) {
             if let data = Data(path: path) {
                 if let encrypted = Cryptor.encrypt(data: data) {
-                    try await MediaUpload.video(msg.id, encrypted)
+                    try await MediaUpload.video(id, encrypted)
                 } else { throw NSError(domain: "Media encryption error.", code: 101) }
             } else { throw NSError(domain: "Media file error.", code: 102) }
         } else { throw NSError(domain: "Missing media file.", code: 103) }
     }
     
     
-    private func uploadAudio(_ msg: Msg) async throws {
-        if let path = Media.path(audioId: msg.id) {
+    private func uploadAudio(_ id: String) async throws {
+        if let path = Media.path(audioId: id) {
             if let data = Data(path: path) {
                 if let encrypted = Cryptor.encrypt(data: data) {
-                    try await MediaUpload.audio(msg.id, encrypted)
+                    try await MediaUpload.audio(id, encrypted)
                 } else { throw NSError(domain: "Media encryption error.", code: 101) }
             } else { throw NSError(domain: "Media file error.", code: 102) }
         } else { throw NSError(domain: "Missing media file.", code: 103) }

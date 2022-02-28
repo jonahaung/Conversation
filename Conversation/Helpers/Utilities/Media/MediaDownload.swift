@@ -9,43 +9,45 @@
 import UIKit
 import FirebaseStorage
 import FirebaseStorageCombineSwift
+import FirebaseStorageSwift
 
 class MediaDownload: NSObject {
     
     class func user(_ name: String, _ pictureAt: TimeInterval) async throws -> UIImage? {
         if (pictureAt != 0) {
-            return try await UIImage(path: start("user", name, "jpg", false))
+            return try await UIImage(path: start("user", name, "jpeg", false))
         } else {
             throw NSError(domain: "Missing picture.", code: 100)
         }
     }
     
     class func photo(_ id: String) async throws -> String {
-        return try await start("media", id, "jpg", true)
+        return try await start("media", id, "jpeg", false)
     }
     
     class func video(_ id: String) async throws -> String {
-        return try await start("media", id, "mp4", true)
+        return try await start("media", id, "mp4", false)
     }
     
     class func audio(_ id: String) async throws -> String {
-        return try await  start("media", id, "m4a", true)
+        return try await  start("media", id, "m4a", false)
     }
     
     
     private class func start(_ dir: String, _ id: String, _ ext: String, _ manual: Bool) async throws -> String {
         
-        let file = "\(id).\(ext)"
-        let path = Dir.document(dir, and: file)
+        let fileName = "\(id).\(ext)"
+        let path = Dir.document(dir, and: fileName)
         
-        let fileManual = file + ".manual"
+        let fileManual = fileName + ".manual"
         let pathManual = Dir.document(dir, and: fileManual)
         
-        let fileLoading = file + ".loading"
+        let fileLoading = fileName + ".loading"
         let pathLoading = Dir.document(dir, and: fileLoading)
         
         if (File.exist(path)) {
-            return path
+            try? FileManager.default.removeItem(atPath: path)
+//            return path
         }
         
         if (manual) {
@@ -76,14 +78,13 @@ class MediaDownload: NSObject {
             throw error
         }
         
-        let key = "\(id).\(ext)"
-        let storage = Storage.storage().reference(withPath: dir).child(key)
-        let _ = try await storage.writeAsync(toFile: URL(fileURLWithPath: path))
-        guard let data = Data(path: path) else {
-            throw NSError(domain: "Not valid data", code: 103)
-        }
-        print(data)
-        data.write(path: path, options: .atomic)
+        let storage = Storage.storage().reference(withPath: "\(dir)/\(fileName)")
+        
+        let filePath = try await storage.writeAsync(toFile: URL(fileURLWithPath: path, isDirectory: true))
+        
+//        guard let data = Data(path: path) else {
+//            throw NSError(domain: "Not valid data", code: 103)
+//        }
         return path
     }
 }

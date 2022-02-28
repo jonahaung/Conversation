@@ -16,11 +16,6 @@ extension CCon {
         cCon.id = id
         cCon.date = Date()
         cCon.name = Lorem.fullName
-        do {
-            try context.save()
-        }catch {
-            print(error)
-        }
     }
     
     class func cCon(for id: String) -> CCon? {
@@ -44,27 +39,12 @@ extension CCon {
     class func cons() -> [CCon] {
         let context = Persistence.shared.context
         let request: NSFetchRequest<CCon> = CCon.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         do {
             return try context.fetch(request)
         }catch {
             print(error.localizedDescription)
             return []
-        }
-    }
-}
-
-extension CCon {
-    
-    var msgsCount: Int {
-        CMsg.count(for: id ?? "")
-    }
-    
-    var lastMsg: Msg {
-        if let cMsg = CMsg.lastMsg(for: self) {
-            return Msg(cMsg: cMsg)
-        } else {
-            return Msg(conId: UUID().uuidString, textData: .init(text: String()), rType: .Send, progress: .Read)
         }
     }
 }

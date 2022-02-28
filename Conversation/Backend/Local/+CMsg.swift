@@ -58,6 +58,7 @@ extension CMsg {
     
     class func msgs(for conId: String, limit: Int, offset: Int) -> [CMsg] {
         let context = Persistence.shared.context
+        context.refreshAllObjects()
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
         request.predicate = NSPredicate(format: "conId == %@", conId)
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
@@ -70,11 +71,23 @@ extension CMsg {
             return []
         }
     }
-    
-    class func lastMsg(for cCon: CCon) -> CMsg? {
+    class func msgs(for conId: String) -> [CMsg] {
         let context = Persistence.shared.context
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
-        request.predicate = NSPredicate(format: "conId == %@", cCon.id!)
+        request.predicate = NSPredicate(format: "conId == %@", conId)
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        do {
+            return try context.fetch(request)
+        }catch {
+            print(error.localizedDescription)
+            return []
+        }
+    }
+    
+    class func lastMsg(for conId: String) -> CMsg? {
+        let context = Persistence.shared.context
+        let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
+        request.predicate = NSPredicate(format: "conId == %@", conId)
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         request.fetchLimit = 1
         do {

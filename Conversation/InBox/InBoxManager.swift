@@ -10,28 +10,12 @@ import SwiftUI
 
 class InBoxManager: ObservableObject {
     
-    @Published var cCons = CCon.cons()
+    @Published var cons = [Con]()
+    private var hasLoaded = false
     
-    private var isFirstTime = true
-    
-    func update() {
-        withAnimation(.interactiveSpring()) {
-            cCons = CCon.cons()
-        }
-    }
-    
-    func refresh() {
-        cCons.forEach {
-            $0.objectWillChange.send()
-        }
-    }
-    
-    func onAppear() {
-        if isFirstTime {
-            isFirstTime = false
-        } else {
-            refresh()
-            Persistence.shared.save()
+    func fetch() {
+        withAnimation {
+            self.cons = CCon.cons().map(Con.init)
         }
     }
 }

@@ -11,8 +11,8 @@ import Foundation
 class Media: NSObject {
     
     //-------------------------------------------------------------------------------------------------------------------------------------------
-    class func path(userId: String) -> String?    { return path("user", userId, "jpg")    }
-    class func path(photoId: String) -> String?    { return path("media", photoId, "jpg")    }
+    class func path(userId: String) -> String?    { return path("user", userId, "jpeg")    }
+    class func path(photoId: String) -> String?    { return path("media", photoId, "jpeg")    }
     class func path(videoId: String) -> String?    { return path("media", videoId, "mp4")    }
     class func path(audioId: String) -> String?    { return path("media", audioId, "m4a")    }
     
@@ -26,7 +26,7 @@ class Media: NSObject {
     }
     
     //-------------------------------------------------------------------------------------------------------------------------------------------
-    class func xpath(photoId: String) -> String    { return xpath("media", photoId, "jpg") }
+    class func xpath(photoId: String) -> String    { return xpath("media", photoId, "jpeg") }
     class func xpath(videoId: String) -> String    { return xpath("media", videoId, "mp4") }
     class func xpath(audioId: String) -> String    { return xpath("media", audioId, "m4a") }
     
@@ -42,7 +42,7 @@ class Media: NSObject {
 extension Media {
     
     //-------------------------------------------------------------------------------------------------------------------------------------------
-    class func clearManual(photoId: String) { clearManual("media", photoId, "jpg") }
+    class func clearManual(photoId: String) { clearManual("media", photoId, "jpeg") }
     class func clearManual(videoId: String) { clearManual("media", videoId, "mp4") }
     class func clearManual(audioId: String) { clearManual("media", audioId, "m4a") }
     
@@ -66,8 +66,8 @@ extension Media {
 extension Media {
     
     //-------------------------------------------------------------------------------------------------------------------------------------------
-    class func save(userId: String, data: Data)        { save(data, "user", userId, "jpg", manual: false, encrypt: true)    }
-    class func save(photoId: String, data: Data)    { save(data, "media", photoId, "jpg", manual: true, encrypt: true)    }
+    class func save(userId: String, data: Data)        { save(data, "user", userId, "jpeg", manual: false, encrypt: true)    }
+    class func save(photoId: String, data: Data)    { save(data, "media", photoId, "jpeg", manual: true, encrypt: true)    }
     class func save(videoId: String, data: Data)    { save(data, "media", videoId, "mp4", manual: true, encrypt: false)    }
     class func save(audioId: String, data: Data)    { save(data, "media", audioId, "m4a", manual: true, encrypt: false)    }
     

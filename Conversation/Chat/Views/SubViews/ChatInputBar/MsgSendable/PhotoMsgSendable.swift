@@ -12,19 +12,15 @@ protocol PhotoMsgSendable: MsgSendable {
 }
 
 extension PhotoMsgSendable {
-    
     func sendPhoto(image: UIImage) async {
-        let msg = Msg(conId: cCon.id!, msgType: .Image, rType: .Send, progress: .Sending)
+        let msg = Msg(conId: con.id, msgType: .Image, rType: .Send, progress: .Sending)
         msg.imageData = .init()
-        msg.mediaImage = image
         msg.imageRatio = image.size.width/image.size.height
         if let data = image.jpegData(compressionQuality: 0.8) {
             Media.save(photoId: msg.id, data: data)
             MediaQueue.create(msg)
-            
+            await resetView()
+            await outgoingSocket.add(msg: msg)
         }
-        await outgoingSocket.add(msg: msg)
-        await resetView()
     }
-    
 }

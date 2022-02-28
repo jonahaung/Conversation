@@ -16,10 +16,10 @@ extension ChatCell {
                 case .Text:
                     TextBubble(data: msg.textData ?? .init(text: "no text"))
                         .foregroundColor(
-                            cCon.textColor(for: msg)
+                            con.textColor(for: msg)
                         )
                         .background(
-                            cCon.bubbleColor(for: msg)
+                            con.bubbleColor(for: msg)
                                 .clipShape(
                                     BubbleShape(corners: style.bubbleCorner)
                                 )
@@ -43,10 +43,10 @@ extension ChatCell {
         }
         
         return Group {
-            if cCon.isBubbleDraggable {
+            if con.isBubbleDraggable {
                 bubble()
                     .offset(x: dragOffsetX)
-                    .gesture(bubbleDragGesture)
+                    .gesture(bubbleTapGesture.exclusively(before: bubbleDragGesture))
             } else {
                 bubble()
                     .gesture(bubbleTapGesture)
@@ -59,42 +59,44 @@ extension ChatCell {
         TapGesture(count: 1).onEnded { _ in
             withAnimation(.interactiveSpring()) {
                 datasource.selectedId = msg.id == datasource.selectedId ? nil : msg.id
+                generateFeedback()
             }
         }
     }
     
     private var bubbleDragGesture: some Gesture {
         
-        DragGesture(minimumDistance: 5, coordinateSpace: .local)
+        DragGesture()
             .onChanged { value in
-                guard value.translation.height < 10 else {
+                guard value.translation.height < 100 else {
+                    updateOffset(0)
                     return
                 }
                 let offsetX = value.translation.width
+                
                 if msg.rType == .Send {
                     if offsetX > 0 {
                         dragOffsetX = 0
                         return
                     }
-                    dragOffsetX = offsetX
+                    updateOffset(offsetX)
                 } else {
                     if offsetX < 0 {
                         dragOffsetX = 0
                         return
                     }
-                    dragOffsetX = offsetX
+                    updateOffset(offsetX)
                 }
+                
             }
             .onEnded { value in
-                guard dragOffsetX != 0 else { return }
-                Task {
-                    await ToneManager.shared.playSound(tone: .Tock)
-                }
-                withAnimation(.interactiveSpring()) {
-                    dragOffsetX = 0
-                }
+                updateOffset(0)
             }
-            .exclusively(before: bubbleTapGesture)
-        
+    }
+    
+    private func updateOffset(_ value: CGFloat) {
+        withAnimation(.interactiveSpring()) {
+            dragOffsetX = value
+        }
     }
 }

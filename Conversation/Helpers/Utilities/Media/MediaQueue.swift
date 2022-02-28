@@ -9,6 +9,42 @@ import Foundation
 import CoreData
 
 extension MediaQueue {
+    class func fetchAll() -> [MediaQueue]? {
+        let context = Persistence.shared.context
+        let request = NSFetchRequest<MediaQueue>.init(entityName: MediaQueue.entity().name!)
+        do {
+            let results = try context.fetch(request)
+            return results
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    class func deleteAll() {
+        let context = Persistence.shared.context
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: MediaQueue.fetchRequest())
+        deleteRequest.resultType = .resultTypeObjectIDs
+
+        // Perform the batch delete
+        let batchDelete = try? context.execute(deleteRequest)
+            as? NSBatchDeleteResult
+
+        guard let deleteResult = batchDelete?.result
+            as? [NSManagedObjectID]
+            else { return }
+
+        let deletedObjects: [AnyHashable: Any] = [
+            NSDeletedObjectsKey: deleteResult
+        ]
+
+        // Merge the delete changes into the managed
+        // object context
+        NSManagedObjectContext.mergeChanges(
+            fromRemoteContextSave: deletedObjects,
+            into: [context]
+        )
+    }
     
     class func fetch(id: String) -> MediaQueue? {
         let context = Persistence.shared.context
@@ -37,11 +73,11 @@ extension MediaQueue {
             return nil
         }
     }
+    
     class func create(id: String) -> MediaQueue {
         let context = Persistence.shared.context
         let mediaQueue = MediaQueue(context: context)
         mediaQueue.id = id
-        
         Persistence.shared.save()
         return mediaQueue
     }

@@ -11,7 +11,7 @@ struct ChatCell: View {
     
     @EnvironmentObject internal var msg: Msg
     @EnvironmentObject internal var style: MsgStyle
-    @EnvironmentObject internal var cCon: CCon
+    @EnvironmentObject internal var con: Con
     @EnvironmentObject internal var chatLayout: ChatLayout
     @EnvironmentObject internal var datasource: ChatDatasource
     
@@ -19,6 +19,7 @@ struct ChatCell: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
             }
@@ -55,6 +56,12 @@ struct ChatCell: View {
                 } else {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 }
+            }
+        }
+        .padding(.horizontal, ChatKit.cellHorizontalPadding)
+        .onAppear{
+            if dragOffsetX != 0 {
+                dragOffsetX = 0
             }
         }
         .id(msg.id)

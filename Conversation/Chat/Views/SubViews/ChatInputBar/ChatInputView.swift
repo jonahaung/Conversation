@@ -9,23 +9,20 @@ import SwiftUI
 
 struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendable {
     
-    static let id = "ChatInputView"
+    static let id = 1
     
     @EnvironmentObject private var chatLayout: ChatLayout
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var outgoingSocket: OutgoingSocket
-    @EnvironmentObject internal var cCon: CCon
+    @EnvironmentObject internal var con: Con
     
     var body: some View {
         VStack(spacing: 0) {
-            accessoryBar
-            VStack(spacing: 0) {
-                Divider()
-                pickerView()
-            }
-            .background(.regularMaterial)
-            .saveBounds(viewId: ChatInputView.id)
+            Divider()
+            pickerView()
         }
+        .saveBounds(viewId: ChatInputView.id, coordinateSpace: .named("ChatView"))
+        .background(.ultraThinMaterial)
     }
     
     private func pickerView() -> some View {
@@ -61,15 +58,6 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 } onSend: {
                     
                 }
-            }
-        }
-    }
-    
-    private var accessoryBar: some View {
-        HStack {
-            if inputManager.isTyping {
-                TypingView()
-                Spacer()
             }
         }
     }

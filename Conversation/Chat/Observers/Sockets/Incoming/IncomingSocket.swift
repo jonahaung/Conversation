@@ -9,9 +9,7 @@ import UIKit
 
 final class IncomingSocket: ObservableObject {
     
-    static let shared: IncomingSocket = {
-        return $0
-    }(IncomingSocket())
+    static let shared: IncomingSocket = IncomingSocket()
     
     private var conId: String = ""
     
@@ -34,7 +32,6 @@ final class IncomingSocket: ObservableObject {
         if AppUserDefault.shared.autoGenerateMockMessages {
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(handleTimer), userInfo: nil, repeats: true)
         }
-
         return self
     }
     

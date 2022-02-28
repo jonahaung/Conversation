@@ -10,7 +10,7 @@ import SwiftUI
 struct ImageBubble: View {
     
     @EnvironmentObject internal var msg: Msg
-    
+  
     
     var body: some View {
         Group {
@@ -22,22 +22,19 @@ struct ImageBubble: View {
             } else {
                 ZStack {
                     ProgressView()
+                }.task {
+                    do {
+                        let path = try await MediaDownload.photo(msg.id)
+                       
+                        print(path)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }
         .frame(width: ChatKit.mediaMaxWidth, height: ChatKit.mediaMaxWidth * 1/msg.imageRatio)
-        .task {
-            do {
-                let path = try await MediaDownload.photo(msg.id)
-                if let data = Data(path: path) {
-                    if let image = UIImage(data: data) {
-                        print(image)
-                    }
-                }
-            } catch {
-                print(error)
-            }
-        }
+        
     }
     
     private func resize(_ image: UIImage, to width: CGFloat) -> UIImage {

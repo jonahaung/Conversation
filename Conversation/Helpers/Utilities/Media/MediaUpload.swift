@@ -13,12 +13,12 @@ class MediaUpload: NSObject {
     
     class func user(_ name: String, _ data: Data) async throws {
         
-        try await start("user", name, "jpg", data)
+        try await start("user", name, "jpeg", data)
     }
     
     class func photo(_ name: String, _ data: Data) async throws {
         
-        try await start("media", name, "jpg", data)
+        try await start("media", name, "jpeg", data)
     }
     
     class func video(_ name: String, _ data: Data) async throws {
@@ -31,10 +31,10 @@ class MediaUpload: NSObject {
         try await start("media", name, "m4a", data)
     }
     
-    private class func start(_ dir: String, _ name: String, _ ext: String, _ data: Data) async throws {
-        
-        let key = "\(name).\(ext)"
-        let storage = Storage.storage().reference(withPath: dir).child(key)
-        _ = try await storage.putDataAsync(data)
+    private class func start(_ dir: String, _ id: String, _ ext: String, _ data: Data) async throws {
+        let key = "\(id).\(ext)"
+        let storage = Storage.storage().reference().child(dir).child(key)
+        let put = try await storage.putDataAsync(data)
+        print(put)
     }
 }

@@ -9,17 +9,17 @@ import SwiftUI
 
 extension ChatView {
     
-    func disConnectSockets() {
+    func disconnectSockets() {
         incomingSocket.disconnect()
         outgoingSocket.disconnect()
     }
     
     func connectSockets() {
-        incomingSocket.connect(with: cCon.id!)
+        incomingSocket.connect(with: con.id)
             .onNewMsg { msg in
                 DispatchQueue.main.async {
                     datasource.add(msg: msg)
-                    if chatLayout.isCloseToBottom() {
+                    if datasource.hasMoreNext == false {
                         chatLayout.scrollToBottom(animated: true)
                     }
                 }
@@ -30,11 +30,11 @@ extension ChatView {
                 }
             }
         
-        outgoingSocket.connect(with: cCon.id!)
+        outgoingSocket.connect(with: con.id)
             .onAddMsg{ msg in
                 DispatchQueue.main.async {
                     datasource.add(msg: msg)
-                    if !chatLayout.isCloseToTop() {
+                    if datasource.hasMoreNext == false {
                         chatLayout.scrollToBottom(animated: true)
                     }
                     outgoingSocket.send(msg: msg)

@@ -14,7 +14,7 @@ struct InBoxView: View {
     var body: some View {
         List {
             Section {
-                ForEach(manager.cCons) {
+                ForEach(manager.cons) {
                     InBoxCell()
                         .environmentObject($0)
                 }
@@ -23,9 +23,12 @@ struct InBoxView: View {
         }
         .listStyle(.plain)
         .refreshable{
-            manager.refresh()
+            manager.fetch()
         }
-        .onAppear(perform: manager.onAppear)
+        .task {
+            manager.fetch()
+            MediaUploader.setup()
+        }
         .navigationTitle("Inbox")
         .navigationBarItems(leading: navLeading, trailing: navTrailing)
     }
@@ -40,7 +43,7 @@ extension InBoxView {
     private var navTrailing: some View {
         Button {
             CCon.create(id: UUID().uuidString)
-            manager.update()
+            manager.fetch()
         } label: {
             Image(systemName: "plus")
         }
@@ -48,8 +51,11 @@ extension InBoxView {
     
     func delete(at offsets: IndexSet) {
         if let first = offsets.first {
-            CCon.delete(cCon: manager.cCons[first])
-            manager.cCons.remove(atOffsets: offsets)
+            let con =  manager.cons[first]
+            if let cCon = CCon.cCon(for: con.id) {
+                CCon.delete(cCon: cCon)
+                manager.fetch()
+            }
         }
     }
 }

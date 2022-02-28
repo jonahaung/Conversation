@@ -44,7 +44,6 @@ final class OutgoingSocket: ObservableObject {
     func add(msg: Msg) async -> Self {
         CMsg.create(msg: msg)
         onAddMsg?(msg)
-        await ToneManager.shared.playSound(tone: .Tock)
         return self
     }
     

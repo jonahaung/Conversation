@@ -10,54 +10,59 @@ import SwiftUI
 
 class ChatDatasource: ObservableObject, ChatLayoutDelegate {
     
-    @Published var msgs = [Msg]()
-    private var cachedStyles = [String: MsgStyle]()
-    
+    private var cachedMsgStyles = [String: MsgStyle]()
     @Published var selectedId: String?
-    internal var hasMoreData = true
+    internal var con: Con
     
-    private var pageSize = AppUserDefault.shared.pagnitionSize
-    private let cCon: CCon
-    
-    
-    init(cCon: CCon) {
-        self.cCon = cCon
-        let storedMsgsCount = CMsg.count(for: cCon.id!)
-        let offset = max(0, storedMsgsCount - pageSize)
-        msgs = CMsg.msgs(for: cCon.id!, limit: pageSize, offset: offset).map(Msg.init)
+    private var slidingWindow: SlidingDataSource<Msg>!
+    private let preferredMaxWindowSize = 100
+    private let pageSize = AppUserDefault.shared.pagnitionSize
+    var msgs: [Msg] {
+        return self.slidingWindow.itemsInWindow
     }
     
-    func getMoreMsg() async -> [Msg]? {
-        guard hasMoreData else { return nil }
-        
-        let storedMsgsCount = CMsg.count(for: cCon.id!)
-        let msgsCount = msgs.count
-        
-        if storedMsgsCount == msgsCount {
-            hasMoreData = false
-            return nil
-        }
-        
-        let fetchOffset = storedMsgsCount - msgsCount - pageSize
-        
-        var pageSize = self.pageSize
-        if fetchOffset < 0 {
-            pageSize = pageSize + fetchOffset
-        }
-        let newMsgs = CMsg.msgs(for: cCon.id!, limit: pageSize, offset: max(0, fetchOffset)).map(Msg.init)
-        try? await Task.sleep(nanoseconds: 500_000_000)
-        return newMsgs + msgs
+    
+    init(con: Con) {
+        self.con = con
+        let messages = CMsg.msgs(for: con.id).map(Msg.init)
+        self.slidingWindow = SlidingDataSource(items: messages, pageSize: pageSize)
     }
     
+
     func add(msg: Msg) {
-        msgs.append(msg)
+        slidingWindow.insertItem(msg, position: .bottom)
+        objectWillChange.send()
+        generateFeedback()
     }
     
     func delete(msg: Msg) {
-        if let index = msgs.firstIndex(of: msg) {
-            msgs.remove(at: index)
-            CMsg.delete(id: msg.id)
-        }
+        CMsg.delete(id: msg.id)
+        slidingWindow.remove(msg: msg)
+    }
+    
+    var hasMoreNext: Bool {
+        return self.slidingWindow.hasMore()
+    }
+    
+    var hasMorePrevious: Bool {
+        return self.slidingWindow.hasPrevious()
+    }
+
+    func loadNext() {
+        self.slidingWindow.loadNext()
+        self.slidingWindow.adjustWindow(focusPosition: 1, maxWindowSize: self.preferredMaxWindowSize)
+//        objectWillChange.send()
+    }
+    
+    func loadPrevious() {
+        self.slidingWindow.loadPrevious()
+        self.slidingWindow.adjustWindow(focusPosition: 0, maxWindowSize: self.preferredMaxWindowSize)
+//        self.objectWillChange.send()
+    }
+    
+    func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double, completion:(_ didAdjust: Bool) -> Void) {
+        let didAdjust = self.slidingWindow.adjustWindow(focusPosition: focusPosition, maxWindowSize: preferredMaxCount ?? self.preferredMaxWindowSize)
+        completion(didAdjust)
     }
     
     deinit {
@@ -86,7 +91,7 @@ extension ChatDatasource {
         
         let canCacheStyle = index != 0 && selectedId == nil && index != msgs.count-1
         
-        if canCacheStyle, let style = cachedStyles[msg.id] {
+        if canCacheStyle, let style = cachedMsgStyles[msg.id] {
             return style
         }
         
@@ -142,7 +147,7 @@ extension ChatDatasource {
                 
                 if !sameSender || !sameType || msg.id == selectedId || nextMsg.id == selectedId  || nextMsg.date.getDifference(from: msg.date, unit: .second) > 30 {
                     corners.formUnion(.bottomLeft)
-                    showAvatar = cCon.showAvatar
+                    showAvatar = con.showAvatar
                 }
             }else {
                 corners.formUnion(.bottomLeft)
@@ -151,7 +156,7 @@ extension ChatDatasource {
         let msgStyle = MsgStyle(bubbleCorner: corners, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater)
         
         if canCacheStyle {
-            cachedStyles[msg.id] = msgStyle
+            cachedMsgStyles[msg.id] = msgStyle
         }
         return msgStyle
     }

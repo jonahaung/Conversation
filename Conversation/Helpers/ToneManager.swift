@@ -75,6 +75,7 @@ enum Vibration {
 
 actor ToneManager {
 
+    
     static let shared = ToneManager()
     var isPlaying = false
     func playSound(tone: AlertTones) {
@@ -89,3 +90,5 @@ actor ToneManager {
         vibration.vibrate()
     }
 }
+
+

@@ -10,7 +10,7 @@ import SwiftUI
 struct AvatarView: View {
     
     @State private var image: UIImage?
-    @StateObject private var imageLoader = ImageLoaderCache.shared.loaderFor(path: "https://avatars.githubusercontent.com/u/20325472?v=4", imageSize: .medium)
+    @StateObject private var imageLoader = ImageLoaderCache.shared.loaderFor(path: "https://avatars.githubusercontent.com/u/20325472?v=4", imageSize: .small)
     var body: some View {
         Group {
             if let image = imageLoader.image {
@@ -18,9 +18,6 @@ struct AvatarView: View {
                     .resizable()
                     .scaledToFit()
                     .clipShape(Circle())
-                    
-            }else {
-                ProgressView()
             }
         }
     }

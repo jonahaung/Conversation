@@ -27,7 +27,6 @@ class Msg: ObservableObject, Identifiable {
     var voiceData: MsgType.VoiceData?
     
     var imageRatio: Double
-    var mediaImage: UIImage?
     var bubbleSize: CGSize?
     
     init(conId: String, msgType: MsgType, rType: RecieptType, progress: MsgProgress) {

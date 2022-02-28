@@ -18,11 +18,7 @@ class LocationLoader: NSObject {
         
         guard let data = msg.locationData else { return }
 
-		var region: MKCoordinateRegion = MKCoordinateRegion()
-        region.center = .init(latitude: data.latitude, longitude: data.longitude)
-		region.span.latitudeDelta = CLLocationDegrees(0.005)
-		region.span.longitudeDelta = CLLocationDegrees(0.005)
-
+		let region: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude: data.latitude, longitude: data.longitude), latitudinalMeters: CLLocationDegrees(0.005), longitudinalMeters: CLLocationDegrees(0.005))
 		let options = MKMapSnapshotter.Options()
 		options.region = region
         options.size = data.imageSize
@@ -42,7 +38,7 @@ class LocationLoader: NSObject {
                         point.y += pin.centerOffset.y - (pin.bounds.size.height / 2)
                         pin.image?.draw(at: point)
                         let image = UIGraphicsGetImageFromCurrentImageContext()
-                        msg.mediaImage = image
+//                        msg.mediaImage = image
                         msg.objectWillChange.send()
                     }
                     UIGraphicsEndImageContext()
