@@ -43,15 +43,12 @@ struct ChatScrollView<Content: View>: View {
             Spacer()
             if coordinator.showScrollButton {
                 Button {
-                    Task {
-                        await coordinator.resetToBottom()
-                    }
-                    
+                    coordinator.resetToBottom()
                 } label: {
-                    Image(systemName: "chevron.down")
-                        .imageScale(.large)
-                        .padding(10)
-                        .background(Color(uiColor: .systemBackground).clipShape(Circle()).shadow(radius: 5))
+                    Image(systemName: "chevron.down.circle.fill")
+                        .resizable()
+                        .frame(width: 35, height: 35)
+                        .foregroundColor(.white)
                         .padding()
                 }
                 .transition(.scale)

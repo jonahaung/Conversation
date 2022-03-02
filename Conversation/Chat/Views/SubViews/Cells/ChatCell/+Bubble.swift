@@ -93,9 +93,7 @@ extension ChatCell {
     }
     
     private func updateOffset(_ value: CGFloat) {
-        withAnimation(.interactiveSpring()) {
-            dragOffsetX = value
-        }
+        dragOffsetX = value
     }
 }
 

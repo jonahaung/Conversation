@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-class MsgStyle: ObservableObject {
+struct MsgStyle {
 
     var bubbleShape: BubbleShape?
-    var showAvatar = false
-    var showTimeSeparater = false
-    var showTopPadding = false
-    var isTopItem = false
-    var isBottomItem = false
-    var isSelected = false
+    var showAvatar: Bool
+    var showTimeSeparater: Bool
+    var showTopPadding: Bool
+    var isSelected: Bool
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol TextMsgSendable: MsgSendable {
+@MainActor protocol TextMsgSendable: MsgSendable {
     
     func sendText() async
 }

@@ -25,14 +25,14 @@ struct ChatView: View {
             ChatScrollView {
                 LazyVStack(spacing: coordinator.con.cellSpacing) {
                     ForEach(Array(coordinator.msgs.enumerated()), id: \.offset) { index, msg in
-                        ChatCell()
+                        ChatCell(style: coordinator.msgStyle(for: msg, at: index))
                             .environmentObject(msg)
-                            .environmentObject(coordinator.msgStyle(for: msg, at: index))
                     }
                     Color.clear
                         .frame(height: 1)
                         .id(0)
                 }
+                .overlay(reloadingView, alignment: .top)
             }
             .introspectScrollView {
                 coordinator.connect(scrollView: $0)
@@ -55,5 +55,13 @@ struct ChatView: View {
         .environmentObject(inputManager)
         .environmentObject(outgoingSocket)
         .environmentObject(coordinator)
+    }
+    
+    private var reloadingView: some View {
+        Group {
+            if coordinator.hasMorePrevious {
+                ProgressView()
+            }
+        }
     }
 }

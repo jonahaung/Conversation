@@ -14,7 +14,7 @@ struct InputTextView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> GrowingTextView {
         let textView = GrowingTextView()
-        textView.delegate = inputManager
+        textView.delegate = context.coordinator
         return textView
     }
     
@@ -23,4 +23,28 @@ struct InputTextView: UIViewRepresentable {
         uiView.text = inputManager.text
     }
     
+    func makeCoordinator() -> TextViewCoordinator {
+        TextViewCoordinator(self)
+    }
+    
+    class TextViewCoordinator: NSObject, GrowingTextViewDelegate {
+        
+        private let parent: InputTextView
+        
+        init(_ parent: InputTextView) {
+            self.parent = parent
+        }
+        
+        func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
+            parent.inputManager.text = growingTextView.text
+        }
+        
+        func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
+            parent.inputManager.textViewHeight = height
+        }
+        
+        func growingTextView(_ growingTextView: GrowingTextView, didUpdateMinHeight height: CGFloat) {
+            print(height)
+        }
+    }
 }

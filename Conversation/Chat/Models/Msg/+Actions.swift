@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Msg {
     
-    func applyAction(action: Msg.MsgActions) {
+    @MainActor func applyAction(action: Msg.MsgActions) {
         switch action {
         case .MsgProgress(let value):
             self.progress = value

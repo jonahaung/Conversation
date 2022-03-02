@@ -17,7 +17,9 @@ extension ChatView {
     func connectSockets() {
         incomingSocket.connect(with: coordinator.con.id)
             .onNewMsg { msg in
-                coordinator.add(msg: msg)
+                Task {
+                    await coordinator.add(msg: msg)
+                }
             }
             .onTypingStatus { isTyping in
                 DispatchQueue.main.async {
@@ -27,7 +29,9 @@ extension ChatView {
         
         outgoingSocket.connect(with: coordinator.con.id)
             .onAddMsg{ msg in
-                coordinator.add(msg: msg)
+                Task {
+                    await coordinator.add(msg: msg)
+                }
                 outgoingSocket.send(msg: msg)
             }
             .onSentMsg { msg in

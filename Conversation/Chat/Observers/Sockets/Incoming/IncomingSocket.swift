@@ -7,6 +7,9 @@
 
 import UIKit
 
+
+typealias NewMsgBlock = (Msg) -> Void
+
 final class IncomingSocket: ObservableObject {
     
     private var conId: String = ""
@@ -16,9 +19,10 @@ final class IncomingSocket: ObservableObject {
         $0.maxConcurrentOperationCount = 1
         return $0
     }(OperationQueue())
+    
     private var timer: Timer?
     
-    private var onNewMsgBlock: ((Msg) -> Void)?
+    private var onNewMsgBlock: NewMsgBlock?
     private var onTypingStatusBlock: ((Bool) -> Void)?
     
     

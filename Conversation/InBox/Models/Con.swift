@@ -114,4 +114,8 @@ extension Con {
     func textColor(for msg: Msg) -> Color? {
         return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
     }
+    
+    func bubbleColor(for msg: Msg) -> Color {
+        return msg.rType == .Send ? themeColor.color : bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
+    }
 }

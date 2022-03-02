@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol PhotoMsgSendable: MsgSendable {
+@MainActor protocol PhotoMsgSendable: MsgSendable {
     func sendPhoto(image: UIImage) async
 }
 

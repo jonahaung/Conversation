@@ -20,7 +20,7 @@ struct MsgDateView: View {
     static let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.doesRelativeDateFormatting = true
+        formatter.doesRelativeDateFormatting = false
         formatter.timeStyle = .short
             return formatter
         }()

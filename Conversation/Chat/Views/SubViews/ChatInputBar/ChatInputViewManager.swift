@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class ChatInputViewManager: NSObject, ObservableObject {
+@MainActor class ChatInputViewManager: ObservableObject {
     
     var text = String() {
         willSet {
@@ -27,24 +27,5 @@ class ChatInputViewManager: NSObject, ObservableObject {
     
     deinit {
         Log("")
-    }
-}
-
-extension ChatInputViewManager: GrowingTextViewDelegate {
-    func growingTextViewDidChange(_ growingTextView: GrowingTextView) {
-        self.text = growingTextView.text
-    }
-    
-    func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat) {
-        self.textViewHeight = height
-//        if growingTextView.frame.height > 0 && growingTextView.hasText {
-//            Task {
-//                await parent.coordinator.adjustContentOffset(inputViewSizeDidChange: difference/2)
-//            }
-//        }
-    }
-    
-    func growingTextView(_ growingTextView: GrowingTextView, didUpdateMinHeight height: CGFloat) {
-        print(height)
     }
 }

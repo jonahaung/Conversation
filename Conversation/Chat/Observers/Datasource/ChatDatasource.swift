@@ -12,7 +12,7 @@ import SwiftUI
 import CoreData
 
 class ChatDatasource {
-
+    
     private var cachedMsgStyles = [String: MsgStyle]()
     
     private var slidingWindow: SlidingDataSource<Msg>
@@ -41,7 +41,7 @@ class ChatDatasource {
         return self.slidingWindow.hasPrevious()
     }
     
-    func add(msg: Msg) {
+    func add(msg: Msg) async {
         slidingWindow.insertItem(msg, position: .bottom)
         generateFeedback()
     }
@@ -50,24 +50,29 @@ class ChatDatasource {
         CMsg.delete(id: msg.id)
         slidingWindow.remove(msg: msg)
     }
-
-    func loadNext() {
+    
+    func loadNext() async {
         self.slidingWindow.loadNext()
         self.slidingWindow.adjustWindow(focusPosition: 1, maxWindowSize: self.preferredMaxWindowSize)
     }
     
-    func loadPrevious() {
+    func loadPrevious() async {
         self.slidingWindow.loadPrevious()
         self.slidingWindow.adjustWindow(focusPosition: 0, maxWindowSize: self.preferredMaxWindowSize)
     }
     func resetToBottom() async {
-        while hasMoreNext {
-            await loadNext()
+        await withTaskGroup(of: Void.self) { group in
+            while hasMoreNext {
+                group.addTask {
+                    await self.loadNext()
+                }
+                
+            }
         }
     }
-    func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double, completion:(_ didAdjust: Bool) -> Void) {
-        let didAdjust = self.slidingWindow.adjustWindow(focusPosition: focusPosition, maxWindowSize: preferredMaxCount ?? self.preferredMaxWindowSize)
-        completion(didAdjust)
+    
+    func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double) async -> Bool {
+        return self.slidingWindow.adjustWindow(focusPosition: focusPosition, maxWindowSize: preferredMaxCount ?? self.preferredMaxWindowSize)
     }
     
     deinit {
@@ -98,9 +103,6 @@ extension ChatDatasource {
         let isTopItem = index == 0
         let isBottomItem = index == msgs.count - 1
         
-        let isTopMostItem = isTopItem && hasMorePrevious
-        let isBottomMostItem = isBottomItem && hasMoreNext
-        
         let thisIsSelectedId = this.id == selectedId
         
         let canSearchInCache = !isTopItem && !isBottomItem && !thisIsSelectedId
@@ -117,7 +119,7 @@ extension ChatDatasource {
         var showTimeSeparater = false
         var showTopPadding = false
         
-
+        
         if isSender {
             
             rectCornors.formUnion(.topLeft)
@@ -127,12 +129,12 @@ extension ChatDatasource {
                 
                 showTimeSeparater = self.canShowTimeSeparater(lhs.date, this.date)
                 
-             
+                
                 if
                     (this.rType != lhs.rType ||
-                    this.msgType != lhs.msgType ||
+                     this.msgType != lhs.msgType ||
                      thisIsSelectedId ||
-                    showTimeSeparater) {
+                     showTimeSeparater) {
                     
                     rectCornors.formUnion(.topRight)
                     
@@ -143,10 +145,10 @@ extension ChatDatasource {
             }
             
             if let rhs = nextMsg(for: this, at: index, from: msgs) {
-    
+                
                 if
                     (this.rType != rhs.rType ||
-                    this.msgType != rhs.msgType ||
+                     this.msgType != rhs.msgType ||
                      thisIsSelectedId ||
                      self.canShowTimeSeparater(this.date, rhs.date)) {
                     rectCornors.formUnion(.bottomRight)
@@ -165,13 +167,13 @@ extension ChatDatasource {
                 
                 if
                     (this.rType != lhs.rType ||
-                    this.msgType != lhs.msgType ||
+                     this.msgType != lhs.msgType ||
                      thisIsSelectedId ||
-                    showTimeSeparater) {
+                     showTimeSeparater) {
                     
                     rectCornors.formUnion(.topLeft)
                     
-                    showTopPadding = !showTimeSeparater && this.rType != lhs.rType 
+                    showTopPadding = !showTimeSeparater && this.rType != lhs.rType
                 }
             } else {
                 rectCornors.formUnion(.topLeft)
@@ -180,9 +182,9 @@ extension ChatDatasource {
             if let rhs = nextMsg(for: this, at: index, from: msgs) {
                 if
                     (this.rType != rhs.rType ||
-                    this.msgType != rhs.msgType ||
-                    thisIsSelectedId ||
-                    self.canShowTimeSeparater(rhs.date, this.date)) {
+                     this.msgType != rhs.msgType ||
+                     thisIsSelectedId ||
+                     self.canShowTimeSeparater(rhs.date, this.date)) {
                     rectCornors.formUnion(.bottomLeft)
                     showAvatar = true
                 }
@@ -193,14 +195,7 @@ extension ChatDatasource {
         
         let bubbleShape = this.msgType == .Text ? BubbleShape(corners: rectCornors) : nil
         
-        let style = MsgStyle()
-        style.bubbleShape = bubbleShape
-        style.showAvatar = showAvatar
-        style.showTimeSeparater = showTimeSeparater
-        style.showTopPadding = showTopPadding
-        style.isTopItem = isTopMostItem
-        style.isBottomItem = isBottomMostItem
-        style.isSelected = thisIsSelectedId
+        let style = MsgStyle(bubbleShape: bubbleShape, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater, showTopPadding: showTopPadding, isSelected: thisIsSelectedId)
         
         if canSearchInCache {
             cachedMsgStyles[this.id] = style

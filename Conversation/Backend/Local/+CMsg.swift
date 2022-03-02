@@ -74,9 +74,8 @@ extension CMsg {
     }
     class func msgs(for conId: String) -> [CMsg] {
         let context = Persistence.shared.context
-        context.refreshAllObjects()
+        
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
-        request.returnsObjectsAsFaults = true
         request.predicate = NSPredicate(format: "conId == %@", conId)
         request.fetchBatchSize = 100
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-protocol MsgSendable {
+@MainActor protocol MsgSendable {
     var inputManager: ChatInputViewManager { get }
     var outgoingSocket: OutgoingSocket { get }
     var coordinator: Coordinator { get }

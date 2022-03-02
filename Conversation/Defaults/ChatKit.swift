@@ -10,7 +10,7 @@ import SwiftUI
 
 enum ChatKit {
 
-    static let bubbleRadius = CGFloat(17)
+    static let bubbleRadius = CGFloat(18)
     
     static let cellAlignmentSpacing = CGFloat(30)
     static let cellMsgStatusSize = CGFloat(15)

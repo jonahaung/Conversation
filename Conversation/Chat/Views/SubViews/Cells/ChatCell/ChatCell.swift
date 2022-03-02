@@ -10,7 +10,7 @@ import SwiftUI
 struct ChatCell: View {
     
     @EnvironmentObject internal var msg: Msg
-    @EnvironmentObject internal var style: MsgStyle
+    let style: MsgStyle
     @EnvironmentObject internal var coordinator: Coordinator
     
     @State internal var dragOffsetX = CGFloat.zero
@@ -18,11 +18,7 @@ struct ChatCell: View {
     var body: some View {
         VStack(spacing: 0) {
             
-            if style.isTopItem {
-                ProgressView()
-                    .frame(height: 30)
-            }
-            
+
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
             }
@@ -63,11 +59,6 @@ struct ChatCell: View {
                 } else {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 }
-            }
-            
-            if style.isBottomItem {
-                ProgressView()
-                    .frame(height: 30)
             }
         }
         .padding(.horizontal, ChatKit.cellHorizontalPadding)
