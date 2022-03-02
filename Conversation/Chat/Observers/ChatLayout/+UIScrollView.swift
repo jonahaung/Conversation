@@ -11,17 +11,16 @@ extension UIScrollView {
     
     func isCloseToBottom() -> Bool {
         guard self.contentSize.height > 0 else { return true }
-        return (self.visibleRect().maxY / self.contentSize.height) > (1 - 0.05)
+        return (self.visibleRect().maxY / self.contentSize.height) > (1 - 0.001)
     }
     
     func isCloseToTop() -> Bool {
         guard self.contentSize.height > 0 else { return true }
-        return (self.visibleRect().minY / self.contentSize.height) < 0.05
+        return (self.visibleRect().minY / self.contentSize.height) < 0.001
     }
     
     func isScrolledAtBottom() -> Bool {
-        let visible = visibleRect()
-        return abs(visible.maxY - self.contentSize.height) < UIScreen.main.bounds.height/2
+        return contentSize.height - frame.size.height == contentOffset.y
     }
     
     func visibleRect() -> CGRect {
@@ -32,8 +31,6 @@ extension UIScrollView {
     }
     
     func scrollToBottom(animated: Bool) {
-        guard isScrolledAtBottom() else { return }
-        self.stop()
         let offsetY = self.contentSize.height
         if animated {
             UIView.animate(withDuration: 0.2) {

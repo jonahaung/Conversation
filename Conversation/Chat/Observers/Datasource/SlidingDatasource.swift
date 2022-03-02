@@ -103,6 +103,7 @@ public class SlidingDataSource<Element: Equatable> {
         self.windowCount += min(self.pageSize, itemCountAfterWindow)
     }
 
+
     @discardableResult
     public func adjustWindow(focusPosition: Double, maxWindowSize: Int) -> Bool {
         assert(0 <= focusPosition && focusPosition <= 1, "")
@@ -122,5 +123,9 @@ public class SlidingDataSource<Element: Equatable> {
         guard let index = self.items.firstIndex(where: predicate) else { return false }
         self.items[index] = item
         return true
+    }
+    
+    deinit {
+        Log("")
     }
 }

@@ -8,14 +8,12 @@
 import SwiftUI
 
 class MsgStyle: ObservableObject {
-    
-    let showAvatar: Bool
-    let showTimeSeparater: Bool
-    let bubbleCorner: UIRectCorner
-    
-    init(bubbleCorner: UIRectCorner, showAvatar: Bool, showTimeSeparater: Bool) {
-        self.showAvatar = showAvatar
-        self.showTimeSeparater = showTimeSeparater
-        self.bubbleCorner = bubbleCorner
-    }
+
+    var bubbleShape: BubbleShape?
+    var showAvatar = false
+    var showTimeSeparater = false
+    var showTopPadding = false
+    var isTopItem = false
+    var isBottomItem = false
+    var isSelected = false
 }

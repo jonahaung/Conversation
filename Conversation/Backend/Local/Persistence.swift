@@ -14,7 +14,7 @@ class Persistence {
         _ = shared
     }
     
-    private let container: NSPersistentCloudKitContainer
+    let container: NSPersistentCloudKitContainer
     
     lazy var context: NSManagedObjectContext = { [unowned container] in
         return container.newBackgroundContext()

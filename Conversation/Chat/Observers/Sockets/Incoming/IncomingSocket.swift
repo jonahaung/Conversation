@@ -9,8 +9,6 @@ import UIKit
 
 final class IncomingSocket: ObservableObject {
     
-    static let shared: IncomingSocket = IncomingSocket()
-    
     private var conId: String = ""
     
     private lazy var queue: OperationQueue = {

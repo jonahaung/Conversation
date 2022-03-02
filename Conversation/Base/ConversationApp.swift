@@ -19,9 +19,6 @@ struct ConversationApp: App {
                 InBoxView()
             }
             .navigationViewStyle(.stack)
-            .environmentObject(CurrentUser.shared)
-            .environmentObject(IncomingSocket.shared)
-            .environmentObject(AppUserDefault.shared)
         }
     }
 }
@@ -34,12 +31,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
-//    static var orientationLock = UIInterfaceOrientationMask.portrait
-//
-//    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-//        return AppDelegate.orientationLock
-//    }
-//    
     func applicationWillTerminate(_ application: UIApplication) {
         Persistence.shared.save()
     }

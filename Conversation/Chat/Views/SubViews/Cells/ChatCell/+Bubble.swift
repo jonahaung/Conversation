@@ -19,11 +19,9 @@ extension ChatCell {
                             coordinator.con.textColor(for: msg)
                         )
                         .background(
-                            coordinator.con.bubbleColor(for: msg)
-                                .clipShape(
-                                    BubbleShape(corners: style.bubbleCorner)
-                                )
+                            Image(uiImage: coordinator.con.bubbleImage(for: msg)).resizable()
                         )
+                        .clipShape(style.bubbleShape ?? BubbleShape(corners: .allCorners))
                 case .Image:
                     ImageBubble()
                 case .Location:
@@ -97,6 +95,15 @@ extension ChatCell {
     private func updateOffset(_ value: CGFloat) {
         withAnimation(.interactiveSpring()) {
             dragOffsetX = value
+        }
+    }
+}
+
+extension UIColor {
+    func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            self.setFill()
+            rendererContext.fill(CGRect(origin: .zero, size: size))
         }
     }
 }

@@ -12,7 +12,7 @@ struct ChatView: View {
     
     @StateObject internal var inputManager = ChatInputViewManager()
     @StateObject internal var outgoingSocket = OutgoingSocket()
-    @EnvironmentObject internal var incomingSocket: IncomingSocket
+    @StateObject internal var incomingSocket = IncomingSocket()
     @StateObject internal var coordinator: Coordinator
     
     init(con: Con) {

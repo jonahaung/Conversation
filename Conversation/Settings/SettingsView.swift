@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @EnvironmentObject private var appUserDefault: AppUserDefault
+    @StateObject private var appUserDefault = AppUserDefault.shared
     
     var body: some View {
         Form {

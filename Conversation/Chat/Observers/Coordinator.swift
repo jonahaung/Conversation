@@ -11,10 +11,9 @@ import SwiftUI
 class Coordinator: ObservableObject {
     
     @Published var con: Con
-    @MainActor internal var scrollItem: ScrollItem?
+    var scrollItem: ScrollItem?
     @Published var selectedId: String?
     var showScrollButton = false
-    internal var isAutoLoadingMessages = false
     @MainActor var inputBarRect: CGRect = .zero {
         willSet {
             adjustContentOffset(newValue: newValue, oldValue: inputBarRect)
@@ -27,7 +26,7 @@ class Coordinator: ObservableObject {
     
     init(con: Con) {
         self.con = con
-        datasource = .init(con: con)
+        datasource = .init(conId: con.id)
     }
     
     
@@ -38,9 +37,9 @@ extension Coordinator: ChatLayoutDelegate {
 
     @MainActor func add(msg: Msg) {
         datasource.add(msg: msg)
-        updateUI()
         if !hasMoreNext {
-            scrollToBottom(animated: true)
+            updateUI()
+            layout.scrollToBottom(animated: true)
         }
     }
     
@@ -64,33 +63,57 @@ extension Coordinator: ChatLayoutDelegate {
         datasource.hasMorePrevious
     }
     
-    func loadNext() async {
-        await datasource.loadNext()
+    func loadNext() {
+        let scrollId = msgs.last?.id ?? ""
+        datasource.loadNext()
+        scrollItem = .init(id: scrollId, anchor: .bottom)
+        Task {
+            await updateUI()
+        }
     }
     
-    func loadPrevious() async {
-        await datasource.loadPrevious()
+    func loadPrevious() {
+        let scrollId = msgs.first?.id ?? ""
+        datasource.loadPrevious()
+        scrollItem = .init(id: scrollId, anchor: .top)
+        Task {
+            await updateUI()
+        }
     }
     
+    @MainActor func resetToBottom() async {
+        if hasMoreNext {
+            await datasource.resetToBottom()
+        }
+        scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
+    }
 }
 // ChatLayout
 extension Coordinator {
     
-    func connect(scrollView: UIScrollView) {
-        layout.connect(scrollView: scrollView)
+    @MainActor func connect(scrollView: UIScrollView) {
+        if layout.connect(scrollView: scrollView) {
+
+        }
     }
-    @MainActor func scrollToBottom(animated: Bool) {
-        layout.scrollToBottom(animated: animated)
-    }
+
     @MainActor func scrollTo(item: ScrollItem) {
         scrollItem = item
         updateUI()
     }
-    @MainActor func adjustContentOffset(inputViewSizeDidChange difference: CGFloat) {
-        layout.adjustContentOffset(inputViewSizeDidChange: difference)
-    }
+    
     @MainActor func adjustContentOffset(newValue: CGRect, oldValue: CGRect) {
-        layout.adjustContentOffset(newValue: newValue, oldValue: oldValue)
+        let isHeightChanged = newValue.height != oldValue.height
+        let isPositionChanged = newValue.maxY != oldValue.maxY
+       
+        if isPositionChanged {
+            layout.adjustContentOffset(newValue: newValue, oldValue: oldValue)
+        } else if isHeightChanged {
+            let heightDifference = newValue.height - oldValue.height
+            if heightDifference > 0 {
+                layout.adjustContentOffset(inputViewSizeDidChange: heightDifference)
+            }
+        }
     }
 }
 
@@ -99,12 +122,14 @@ extension Coordinator {
     
     @MainActor func updateUI() {
         objectWillChange.send()
+        print("update")
     }
     
     @MainActor func task() {
-        if layout.delegate ==  nil {
+        if layout.delegate == nil {
             scrollTo(item: .init(id: 0, anchor: .bottom))
             layout.delegate = self
         }
     }
 }
+

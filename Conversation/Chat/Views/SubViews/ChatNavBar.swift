@@ -10,7 +10,6 @@ import SwiftUI
 struct ChatNavBar: View {
     
     @Environment(\.presentationMode) private var presentationMode
-    @EnvironmentObject private var currentUser: CurrentUser
     @EnvironmentObject private var coordinator: Coordinator
     
     var body: some View {
@@ -32,7 +31,7 @@ struct ChatNavBar: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(coordinator.con.name)
                             .font(.system(size: UIFont.systemFontSize, weight: .bold))
-                        Text(currentUser.activeDate, formatter: MsgDateView.dateFormatter)
+                        Text(Date(), formatter: MsgDateView.dateFormatter)
                             .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
                             .foregroundColor(.secondary)
                     }

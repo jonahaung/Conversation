@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class Con: ObservableObject {
+class Con {
     
     let id: String
    
@@ -16,51 +16,51 @@ class Con: ObservableObject {
     var name: String {
         willSet {
             self.cCon()?.name = newValue
-            objectWillChange.send()
         }
     }
     
     var bgImage: BgImage {
-        willSet {
-            self.cCon()?.bgImage = newValue.rawValue
-            objectWillChange.send()
+        didSet {
+            guard bgImage != oldValue else { return }
+            self.cCon()?.bgImage = bgImage.rawValue
+            updateBubbleImages()
         }
     }
     
     var themeColor: ThemeColor{
-        willSet {
-            self.cCon()?.themeColor = newValue.rawValue
-            objectWillChange.send()
+        didSet {
+            guard themeColor != oldValue else { return }
+            self.cCon()?.themeColor = themeColor.rawValue
+            updateBubbleImages()
         }
     }
     
     var cellSpacing: CGFloat {
         willSet {
             self.cCon()?.cellSpacing = Int16(newValue)
-            objectWillChange.send()
         }
     }
     
     var isBubbleDraggable: Bool {
         willSet {
             self.cCon()?.isBubbleDraggable = newValue
-            objectWillChange.send()
         }
     }
     
     var showAvatar: Bool {
         willSet {
             self.cCon()?.showAvatar = newValue
-            objectWillChange.send()
         }
     }
 
     var isPagingEnabled: Bool {
         willSet {
             self.cCon()?.isPagingEnabled = newValue
-            objectWillChange.send()
         }
     }
+    
+    var incomingBubbleImage: UIImage
+    var outgoingBubbleImage: UIImage
     
     init(cCon: CCon) {
         self.id = cCon.id!
@@ -72,8 +72,16 @@ class Con: ObservableObject {
         self.isBubbleDraggable = cCon.isBubbleDraggable
         self.showAvatar = cCon.showAvatar
         self.isPagingEnabled = cCon.isPagingEnabled
+        
+        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
+        incomingBubbleImage = UIColor(incomingColor).image()
+        outgoingBubbleImage = UIColor(themeColor.color).image()
     }
-    
+    private func updateBubbleImages() {
+        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
+        incomingBubbleImage = UIColor(incomingColor).image()
+        outgoingBubbleImage = UIColor(themeColor.color).image()
+    }
     func msgsCount() -> Int {
         CMsg.count(for: id)
     }
@@ -100,11 +108,9 @@ class Con: ObservableObject {
 extension Con: Identifiable { }
 
 extension Con {
-    func bubbleColor(for msg: Msg) -> Color {
-        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
-        return msg.rType == .Send ? .accentColor : incomingColor
+    func bubbleImage(for msg: Msg) -> UIImage {
+        return msg.rType == .Send ? outgoingBubbleImage : incomingBubbleImage
     }
-    
     func textColor(for msg: Msg) -> Color? {
         return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
     }

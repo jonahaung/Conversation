@@ -18,8 +18,17 @@ struct ChatCell: View {
     var body: some View {
         VStack(spacing: 0) {
             
+            if style.isTopItem {
+                ProgressView()
+                    .frame(height: 30)
+            }
+            
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
+            }
+            
+            if style.showTopPadding {
+                Spacer(minLength: 10)
             }
             
             HStack(alignment: .bottom, spacing: 2) {
@@ -37,15 +46,15 @@ struct ChatCell: View {
                 
                 VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                     
-                    if msg.id == coordinator.selectedId {
+                    if style.isSelected {
                         let text = msg.rType == .Send ? MsgDateView.dateFormatter.string(from: msg.date) : msg.sender.name
-                        HiddenLabelView(text: text)
+                        HiddenLabelView(text: text, padding: .top)
                     }
                     
                     bubbleView()
                     
-                    if msg.id == coordinator.selectedId {
-                        HiddenLabelView(text: msg.progress.description)
+                    if style.isSelected {
+                        HiddenLabelView(text: msg.progress.description, padding: .bottom)
                     }
                 }
                 
@@ -54,6 +63,11 @@ struct ChatCell: View {
                 } else {
                     Spacer(minLength: ChatKit.cellAlignmentSpacing)
                 }
+            }
+            
+            if style.isBottomItem {
+                ProgressView()
+                    .frame(height: 30)
             }
         }
         .padding(.horizontal, ChatKit.cellHorizontalPadding)

@@ -50,7 +50,6 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
                 }
                 .padding(7)
                 .transition(.scale)
-                
             default:
                 InputPicker {
                     Text(String(describing: inputManager.currentInputItem))

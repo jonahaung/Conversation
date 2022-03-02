@@ -9,8 +9,8 @@ import Foundation
 import CoreData
 
 extension CMsg {
-    
-    class func create(msg: Msg) {
+    @discardableResult
+    class func create(msg: Msg) -> CMsg {
         let context = Persistence.shared.context
         let cMsg = CMsg(context: context)
         cMsg.id = msg.id
@@ -26,6 +26,7 @@ extension CMsg {
         cMsg.senderName = msg.sender.name
         cMsg.senderURL = msg.sender.photoURL
         cMsg.imageRatio = msg.imageRatio
+        return cMsg
     }
     
     class func msg(for id: String) -> CMsg? {
@@ -73,8 +74,11 @@ extension CMsg {
     }
     class func msgs(for conId: String) -> [CMsg] {
         let context = Persistence.shared.context
+        context.refreshAllObjects()
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
+        request.returnsObjectsAsFaults = true
         request.predicate = NSPredicate(format: "conId == %@", conId)
+        request.fetchBatchSize = 100
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         do {
             return try context.fetch(request)
@@ -83,7 +87,21 @@ extension CMsg {
             return []
         }
     }
-    
+    class func msgsIds(for conId: String) -> [NSManagedObjectID] {
+        let context = Persistence.shared.context
+        context.reset()
+        let request = NSFetchRequest<NSManagedObjectID>(entityName: CMsg.entity().name!)
+        request.resultType = .managedObjectIDResultType
+        request.predicate = NSPredicate(format: "conId == %@", conId)
+        request.fetchBatchSize = 100
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        do {
+            return try context.fetch(request)
+        }catch {
+            print(error.localizedDescription)
+            return []
+        }
+    }
     class func lastMsg(for conId: String) -> CMsg? {
         let context = Persistence.shared.context
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()

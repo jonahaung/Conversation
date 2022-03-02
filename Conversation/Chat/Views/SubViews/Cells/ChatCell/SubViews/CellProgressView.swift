@@ -18,7 +18,7 @@ struct CellProgressView: View {
             }
         }
         .frame(width: ChatKit.cellLeftRightViewWidth)
-        .foregroundStyle(.tertiary)
+        .foregroundStyle(.quaternary)
         .imageScale(.small)
     }
 }

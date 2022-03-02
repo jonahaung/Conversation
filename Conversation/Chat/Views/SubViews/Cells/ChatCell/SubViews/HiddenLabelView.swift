@@ -10,12 +10,14 @@ import SwiftUI
 struct HiddenLabelView: View {
     
     let text: String
+    let padding: Edge.Set
     
     var body: some View {
         Text(text)
-            .font(.system(size: UIFont.smallSystemFontSize, weight: .semibold))
+            .font(.system(size: UIFont.smallSystemFontSize, weight: .medium))
             .foregroundStyle(.secondary)
-            .padding(.top)
+            .padding(padding)
             .padding(.horizontal)
+            .transition(.scale)
     }
 }

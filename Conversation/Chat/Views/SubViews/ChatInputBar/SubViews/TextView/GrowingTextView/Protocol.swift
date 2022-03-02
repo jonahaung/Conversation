@@ -11,7 +11,6 @@ import UIKit
 @objc public protocol GrowingTextViewDelegate: NSObjectProtocol {
     @objc optional func growingTextViewShouldBeginEditing(_ growingTextView: GrowingTextView) -> Bool
     @objc optional func growingTextViewShouldEndEditing(_ growingTextView: GrowingTextView) -> Bool
-
     @objc optional func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView)
     @objc optional func growingTextViewDidEndEditing(_ growingTextView: GrowingTextView)
 
@@ -21,8 +20,8 @@ import UIKit
 
     @objc optional func growingTextView(_ growingTextView: GrowingTextView, willChangeHeight height: CGFloat, difference: CGFloat)
     @objc optional func growingTextView(_ growingTextView: GrowingTextView, didChangeHeight height: CGFloat, difference: CGFloat)
+    @objc optional func growingTextView(_ growingTextView: GrowingTextView, didUpdateMinHeight height: CGFloat)
 
-    @objc optional func growingTextViewShouldReturn(_ growingTextView: GrowingTextView) -> Bool
 }
 
 internal struct DelegateSelectors {
@@ -35,5 +34,5 @@ internal struct DelegateSelectors {
     static let didChangeSelection = #selector(GrowingTextViewDelegate.growingTextViewDidChangeSelection(_:))
     static let willChangeHeight = #selector(GrowingTextViewDelegate.growingTextView(_:willChangeHeight:difference:))
     static let didChangeHeight = #selector(GrowingTextViewDelegate.growingTextView(_:didChangeHeight:difference:))
-    static let shouldReturn = #selector(GrowingTextViewDelegate.growingTextViewShouldReturn(_:))
+    
 }

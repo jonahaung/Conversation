@@ -25,18 +25,11 @@ struct ChatScrollView<Content: View>: View {
             ScrollView {
                 content()
             }
-            
             .overlay(accessoryBar, alignment: .bottom)
             .onChange(of: coordinator.scrollItem) { newValue in
                 if let newValue = newValue {
                     coordinator.scrollItem = nil
-                    if newValue.animate {
-                        withAnimation {
-                            scrollViewProxy.scrollTo(newValue.id, anchor: newValue.anchor)
-                        }
-                    }else {
-                        scrollViewProxy.scrollTo(newValue.id, anchor: newValue.anchor)
-                    }
+                    scrollViewProxy.scroll(to: newValue)
                 }
             }
         }
@@ -50,7 +43,10 @@ struct ChatScrollView<Content: View>: View {
             Spacer()
             if coordinator.showScrollButton {
                 Button {
-                    coordinator.scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
+                    Task {
+                        await coordinator.resetToBottom()
+                    }
+                    
                 } label: {
                     Image(systemName: "chevron.down")
                         .imageScale(.large)
@@ -60,6 +56,19 @@ struct ChatScrollView<Content: View>: View {
                 }
                 .transition(.scale)
             }
+        }
+    }
+}
+
+extension ScrollViewProxy {
+    
+    func scroll(to item: ScrollItem) {
+        if item.animate {
+            withAnimation {
+                scrollTo(item.id, anchor: item.anchor)
+            }
+        } else {
+            scrollTo(item.id, anchor: item.anchor)
         }
     }
 }

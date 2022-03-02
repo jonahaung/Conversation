@@ -8,24 +8,29 @@
 import Foundation
 import SwiftUI
 
-class ChatDatasource: ObservableObject {
-    
+
+import CoreData
+
+class ChatDatasource {
+
     private var cachedMsgStyles = [String: MsgStyle]()
     
-    internal var con: Con
+    private var slidingWindow: SlidingDataSource<Msg>
     
-    private var slidingWindow: SlidingDataSource<Msg>!
-    private let preferredMaxWindowSize = 100
     private let pageSize = AppUserDefault.shared.pagnitionSize
+    private var preferredMaxWindowSize: Int { pageSize * 2 }
+    
     var msgs: [Msg] {
         return self.slidingWindow.itemsInWindow
     }
+    private let conId: String
     
     
-    init(con: Con) {
-        self.con = con
-        let messages = CMsg.msgs(for: con.id).map(Msg.init)
-        self.slidingWindow = SlidingDataSource(items: messages, pageSize: pageSize)
+    init(conId: String) {
+        self.conId = conId
+        let items = CMsg.msgs(for: conId)
+        var iterator = items.makeIterator()
+        slidingWindow = SlidingDataSource(count: items.count, pageSize: pageSize) { Msg(cMsg: iterator.next() ?? CMsg.create(msg: .init(conId: conId, emojiData: .init(emojiID: "bicycle", size: .init(size: 100)), rType: .Send, progress: .SendingFailed)) )}
     }
     
     var hasMoreNext: Bool {
@@ -38,7 +43,6 @@ class ChatDatasource: ObservableObject {
     
     func add(msg: Msg) {
         slidingWindow.insertItem(msg, position: .bottom)
-        objectWillChange.send()
         generateFeedback()
     }
     
@@ -47,16 +51,20 @@ class ChatDatasource: ObservableObject {
         slidingWindow.remove(msg: msg)
     }
 
-    func loadNext() async {
+    func loadNext() {
         self.slidingWindow.loadNext()
         self.slidingWindow.adjustWindow(focusPosition: 1, maxWindowSize: self.preferredMaxWindowSize)
     }
     
-    func loadPrevious() async {
+    func loadPrevious() {
         self.slidingWindow.loadPrevious()
         self.slidingWindow.adjustWindow(focusPosition: 0, maxWindowSize: self.preferredMaxWindowSize)
     }
-    
+    func resetToBottom() async {
+        while hasMoreNext {
+            await loadNext()
+        }
+    }
     func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double, completion:(_ didAdjust: Bool) -> Void) {
         let didAdjust = self.slidingWindow.adjustWindow(focusPosition: focusPosition, maxWindowSize: preferredMaxCount ?? self.preferredMaxWindowSize)
         completion(didAdjust)
@@ -69,92 +77,134 @@ class ChatDatasource: ObservableObject {
 
 extension ChatDatasource {
     
-    private func isFromCurrentUser(msg: Msg) -> Bool {
-        return msg.rType == .Send
-    }
-    
-    private func prevMsg(for msg: Msg, at i: Int) -> Msg? {
+    private func prevMsg(for msg: Msg, at i: Int, from collection: [Msg]) -> Msg? {
         guard i > 0 else { return nil }
-        return msgs[i - 1]
+        return collection[i - 1]
     }
     
-    private func nextMsg(for msg: Msg, at i: Int) -> Msg? {
+    private func nextMsg(for msg: Msg, at i: Int, from collection: [Msg]) -> Msg? {
         guard i < msgs.count-1 else { return nil }
-        return msgs[i + 1]
+        return collection[i + 1]
     }
     
+    private func canShowTimeSeparater(_ date: Date, _ previousDate: Date) -> Bool {
+        date.getDifference(from: previousDate, unit: .second) > 30
+    }
     
-    internal func msgStyle(for msg: Msg, at index: Int, selectedId: String?) -> MsgStyle {
+    internal func msgStyle(for this: Msg, at index: Int, selectedId: String?) -> MsgStyle {
         
-        let canCacheStyle = index != 0 && selectedId == nil && index != msgs.count-1
+        let msgs = self.msgs
         
-        if canCacheStyle, let style = cachedMsgStyles[msg.id] {
-            return style
+        let isTopItem = index == 0
+        let isBottomItem = index == msgs.count - 1
+        
+        let isTopMostItem = isTopItem && hasMorePrevious
+        let isBottomMostItem = isBottomItem && hasMoreNext
+        
+        let thisIsSelectedId = this.id == selectedId
+        
+        let canSearchInCache = !isTopItem && !isBottomItem && !thisIsSelectedId
+        
+        
+        if canSearchInCache, let oldValue = cachedMsgStyles[this.id] {
+            return oldValue
         }
         
-        var corners: UIRectCorner = []
+        let isSender = this.rType == .Send
+        
+        var rectCornors: UIRectCorner = []
         var showAvatar = false
         var showTimeSeparater = false
+        var showTopPadding = false
         
-        if isFromCurrentUser(msg: msg) {
-            corners.formUnion(.topLeft)
-            corners.formUnion(.bottomLeft)
+
+        if isSender {
             
-            if let pre = prevMsg(for: msg, at: index) {
-                showTimeSeparater = msg.date.getDifference(from: pre.date, unit: .second) > 30
-                let sameSender = msg.rType == pre.rType
-                let sameType = msg.msgType == pre.msgType
+            rectCornors.formUnion(.topLeft)
+            rectCornors.formUnion(.bottomLeft)
+            
+            if let lhs = prevMsg(for: this, at: index, from: msgs) {
                 
-                if !sameSender || !sameType || msg.id == selectedId || pre.id == selectedId || showTimeSeparater {
-                    corners.formUnion(.topRight)
+                showTimeSeparater = self.canShowTimeSeparater(lhs.date, this.date)
+                
+             
+                if
+                    (this.rType != lhs.rType ||
+                    this.msgType != lhs.msgType ||
+                     thisIsSelectedId ||
+                    showTimeSeparater) {
+                    
+                    rectCornors.formUnion(.topRight)
+                    
+                    showTopPadding = !showTimeSeparater && this.rType != lhs.rType
                 }
             } else {
-                corners.formUnion(.topRight)
+                rectCornors.formUnion(.topRight)
             }
-            if let next = nextMsg(for: msg, at: index) {
-                let sameSender = msg.rType == next.rType
-                let sameType = msg.msgType == next.msgType
-                
-                if !sameSender || !sameType || msg.id == selectedId || next.id == selectedId  || next.date.getDifference(from: msg.date, unit: .second) > 30 {
-                    corners.formUnion(.bottomRight)
+            
+            if let rhs = nextMsg(for: this, at: index, from: msgs) {
+    
+                if
+                    (this.rType != rhs.rType ||
+                    this.msgType != rhs.msgType ||
+                     thisIsSelectedId ||
+                     self.canShowTimeSeparater(this.date, rhs.date)) {
+                    rectCornors.formUnion(.bottomRight)
                 }
             }else {
-                corners.formUnion(.bottomRight)
+                rectCornors.formUnion(.bottomRight)
             }
         } else {
-            corners.formUnion(.topRight)
-            corners.formUnion(.bottomRight)
             
-            if let preMsg = prevMsg(for: msg, at: index) {
-                showTimeSeparater = msg.date.getDifference(from: preMsg.date, unit: .second) > 30
+            rectCornors.formUnion(.topRight)
+            rectCornors.formUnion(.bottomRight)
+            
+            if let lhs = prevMsg(for: this, at: index, from: msgs) {
                 
-                let sameSender = msg.rType == preMsg.rType
-                let sameType = msg.msgType == preMsg.msgType
+                showTimeSeparater = self.canShowTimeSeparater(this.date, lhs.date)
                 
-                if !sameSender || !sameType || msg.id == selectedId || preMsg.id == selectedId || showTimeSeparater {
-                    corners.formUnion(.topLeft)
+                if
+                    (this.rType != lhs.rType ||
+                    this.msgType != lhs.msgType ||
+                     thisIsSelectedId ||
+                    showTimeSeparater) {
+                    
+                    rectCornors.formUnion(.topLeft)
+                    
+                    showTopPadding = !showTimeSeparater && this.rType != lhs.rType 
                 }
             } else {
-                corners.formUnion(.topLeft)
+                rectCornors.formUnion(.topLeft)
             }
             
-            if let nextMsg = nextMsg(for: msg, at: index) {
-                let sameSender = msg.rType == nextMsg.rType
-                let sameType = msg.msgType == nextMsg.msgType
-                
-                if !sameSender || !sameType || msg.id == selectedId || nextMsg.id == selectedId  || nextMsg.date.getDifference(from: msg.date, unit: .second) > 30 {
-                    corners.formUnion(.bottomLeft)
-                    showAvatar = con.showAvatar
+            if let rhs = nextMsg(for: this, at: index, from: msgs) {
+                if
+                    (this.rType != rhs.rType ||
+                    this.msgType != rhs.msgType ||
+                    thisIsSelectedId ||
+                    self.canShowTimeSeparater(rhs.date, this.date)) {
+                    rectCornors.formUnion(.bottomLeft)
+                    showAvatar = true
                 }
             }else {
-                corners.formUnion(.bottomLeft)
+                rectCornors.formUnion(.bottomLeft)
             }
         }
-        let msgStyle = MsgStyle(bubbleCorner: corners, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater)
         
-        if canCacheStyle {
-            cachedMsgStyles[msg.id] = msgStyle
+        let bubbleShape = this.msgType == .Text ? BubbleShape(corners: rectCornors) : nil
+        
+        let style = MsgStyle()
+        style.bubbleShape = bubbleShape
+        style.showAvatar = showAvatar
+        style.showTimeSeparater = showTimeSeparater
+        style.showTopPadding = showTopPadding
+        style.isTopItem = isTopMostItem
+        style.isBottomItem = isBottomMostItem
+        style.isSelected = thisIsSelectedId
+        
+        if canSearchInCache {
+            cachedMsgStyles[this.id] = style
         }
-        return msgStyle
+        return style
     }
 }

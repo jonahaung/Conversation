@@ -15,8 +15,7 @@ struct InBoxView: View {
         List {
             Section {
                 ForEach(manager.cons) {
-                    InBoxCell()
-                        .environmentObject($0)
+                    InBoxCell(con: $0)
                 }
                 .onDelete(perform: delete(at:))
             }

@@ -9,32 +9,33 @@ import SwiftUI
 import UIKit
 
 protocol ChatLayoutDelegate: AnyObject {
-    var msgs: [Msg] { get }
     var con: Con { get }
     var hasMoreNext: Bool { get }
     var hasMorePrevious: Bool { get }
     var showScrollButton: Bool { get set }
-    var isAutoLoadingMessages: Bool { get set }
-    
-    @MainActor var scrollItem: ScrollItem? { get set }
-    @Sendable func loadNext() async
-    @Sendable func loadPrevious() async
-    @MainActor func updateUI()
+
+    @Sendable func loadNext()
+    @Sendable func loadPrevious()
 }
+
 
 class ChatLayout: NSObject {
     
     private weak var scrollView: UIScrollView?
     weak var delegate: ChatLayoutDelegate?
+    var isPreviousValid = false
     
-    func connect(scrollView: UIScrollView) {
+    func connect(scrollView: UIScrollView) -> Bool {
         if self.scrollView == nil {
-            scrollView.keyboardDismissMode = .interactive
+            scrollView.keyboardDismissMode = .none
             scrollView.contentInsetAdjustmentBehavior = .never
             scrollView.isPagingEnabled = delegate?.con.isPagingEnabled == true
+            scrollView.automaticallyAdjustsScrollIndicatorInsets = false
             scrollView.delegate = self
             self.scrollView = scrollView
+            return true
         }
+        return false
     }
     
     deinit{
@@ -46,13 +47,13 @@ class ChatLayout: NSObject {
 
 extension ChatLayout: UIScrollViewDelegate {
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        autoLoadMoreIfNeeded(scrollView)
-        delegate?.showScrollButton = scrollView.isScrolledAtBottom() == false
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+
+        UIApplication.shared.endEditing()
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        delegate?.showScrollButton = scrollView.isScrolledAtBottom() == false
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        autoLoadMoreIfNeeded(scrollView)
     }
     
     func scrollToBottom(animated: Bool) {
@@ -64,37 +65,16 @@ extension ChatLayout: UIScrollViewDelegate {
 // Auto Loading
 
 extension ChatLayout {
+    
     private func autoLoadMoreIfNeeded(_ scrollView: UIScrollView) {
         
         guard let delegate = delegate else { return }
-        guard delegate.isAutoLoadingMessages == false else { return }
-        if scrollView.isCloseToTop() {
-            if delegate.hasMorePrevious {
-                guard scrollView.contentOffset.y == 0 else { return }
-                
-                delegate.isAutoLoadingMessages = true
-                let scrollId = delegate.msgs.first?.id ?? ""
-                
-                Task {
-                    await delegate.loadPrevious()
-                    await delegate.scrollItem = .init(id: scrollId, anchor: .top)
-                    await delegate.updateUI()
-                    delegate.isAutoLoadingMessages = false
-                }
-            }
-        }else if scrollView.isCloseToBottom() {
-            if delegate.hasMoreNext {
-                guard scrollView.isScrolledAtBottom() == true else { return }
-                
-                delegate.isAutoLoadingMessages = true
-                let scrollId = delegate.msgs.last?.id ?? ""
-                Task {
-                    await delegate.loadNext()
-                    await delegate.scrollItem = .init(id: scrollId, anchor: .bottom)
-                    await delegate.updateUI()
-                    delegate.isAutoLoadingMessages = false
-                }
-            }
+        if delegate.hasMorePrevious && scrollView.contentOffset.y == 0 {
+            delegate.loadPrevious()
+        } else if scrollView.contentSize.height <= scrollView.contentOffset.y + scrollView.frame.size.height && delegate.hasMoreNext == true {
+            delegate.loadNext()
+        } else {
+            delegate.showScrollButton = scrollView.isCloseToBottom() == false
         }
     }
 }
@@ -115,11 +95,17 @@ extension ChatLayout {
     }
     
     func adjustContentOffset(inputViewSizeDidChange difference: CGFloat) {
-        guard difference > 0 else { return }
+        
         if let scrollView = self.scrollView {
             var offset = scrollView.contentOffset
             offset.y += difference
             scrollView.contentOffset = offset
         }
+    }
+}
+
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

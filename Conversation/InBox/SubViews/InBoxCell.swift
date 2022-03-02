@@ -11,7 +11,7 @@ import SwiftUI
 
 struct InBoxCell: View {
     
-    @EnvironmentObject private var con: Con
+    var con: Con
     @State private var lastMsg: Msg?
     
     var body: some View {

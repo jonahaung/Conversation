@@ -16,18 +16,8 @@ open class GrowingTextView: UIView {
     open var internalTextView: UITextView {
         return textView
     }
-    open var maxHeight: CGFloat? = 200 {
-        willSet {
-            if let newValue = newValue {
-                assert(newValue >= 0, "MaxHeight of growingTextView must be no less than 0.")
-            }
-        }
-    }
-    open var minHeight: CGFloat = 0 {
-        willSet {
-            assert(newValue >= 0, "MinHeight of growingTextView must be no less than 0.")
-        }
-    }
+    open var maxHeight: CGFloat? = 200
+    open var minHeight: CGFloat = 0
     
     open var contentInset: UIEdgeInsets {
         guard let maxHeight = maxHeight else {
@@ -68,20 +58,19 @@ open class GrowingTextView: UIView {
         }
     }
     
-    /// A Boolean value indicating whether the text view currently contains any text.
     open var hasText: Bool {
         return textView.hasText
     }
 
-    var textView: GrowingInternalTextView = {
+    private let textView: GrowingInternalTextView = {
         $0.font = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
         $0.textContainer.lineFragmentPadding = 1 // 1 pixel for caret
         $0.showsHorizontalScrollIndicator = false
         $0.contentInset = .zero
         $0.contentMode = .redraw
-        $0.backgroundColor = .secondarySystemGroupedBackground
+//        $0.backgroundColor = .secondarySystemGroupedBackground
         return $0
-    }(GrowingInternalTextView(frame: .zero))
+    }(GrowingInternalTextView())
 
     // MARK: - Initialization
     public override init(frame: CGRect) {
@@ -107,7 +96,7 @@ extension GrowingTextView {
 
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
         var size = size
-        if text.count == 0 {
+        if text.isEmpty {
             size.height = minHeight
         }
         return size
@@ -145,9 +134,7 @@ extension GrowingTextView {
         let difference = updatedHeightInfo.difference
 
         if difference != 0 {
-
             updateGrowingTextView(newHeight: newHeight, difference: difference)
-
             if let delegate = delegate, delegate.responds(to: DelegateSelectors.didChangeHeight) {
                 delegate.growingTextView!(self, didChangeHeight: newHeight, difference: difference)
             }
@@ -161,8 +148,8 @@ extension GrowingTextView {
 // MARK: - Helper
 extension GrowingTextView {
     fileprivate func commonInit() {
-        backgroundColor = .secondarySystemGroupedBackground
-        layer.cornerRadius = ChatKit.bubbleRadius
+        backgroundColor = .systemBackground
+        layer.cornerRadius = 15
         textView.frame = CGRect(origin: .zero, size: frame.size)
         textView.delegate = self
         addSubview(textView)
@@ -184,7 +171,7 @@ extension GrowingTextView {
         if let delegate = delegate, delegate.responds(to: DelegateSelectors.willChangeHeight) {
             delegate.growingTextView!(self, willChangeHeight: newHeight, difference: difference)
         }
-        frame.size.height = newHeight
+//        frame.size.height = newHeight
         updateTextViewFrame()
     }
 
@@ -218,6 +205,7 @@ extension GrowingTextView {
         let textViewCopy: GrowingInternalTextView = textView.copy() as! GrowingInternalTextView
         textViewCopy.text = "-"
         minHeight = ceil(textViewCopy.sizeThatFits(textViewCopy.frame.size).height + contentInset.top + contentInset.bottom)
+        delegate?.growingTextView?(self, didUpdateMinHeight: minHeight)
     }
 
     fileprivate func updateScrollPosition() {
@@ -232,7 +220,7 @@ extension GrowingTextView {
             print("Invalid caretY: \(caretY)")
             return
         }
-        textView.setContentOffset(CGPoint(x: 0, y: caretY), animated: false)
+        textView.setContentOffset(CGPoint(x: 0, y: caretY), animated: true)
     }
 }
 
@@ -263,9 +251,12 @@ extension GrowingTextView: UITextViewDelegate {
             delegate.growingTextViewDidEndEditing!(self)
         }
     }
-
     public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if !hasText && text == "" {
+            return false
+        }
+        if !hasText && text == "\n" {
+            textView.endEditing(true)
             return false
         }
         if let delegate = delegate, delegate.responds(to: DelegateSelectors.shouldChangeText) {
