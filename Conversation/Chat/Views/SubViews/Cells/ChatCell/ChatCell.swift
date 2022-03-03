@@ -13,18 +13,14 @@ struct ChatCell: View {
     let style: MsgStyle
     @EnvironmentObject internal var coordinator: Coordinator
     
-    @State internal var dragOffsetX = CGFloat.zero
-    
     var body: some View {
         VStack(spacing: 0) {
-            
-
             if style.showTimeSeparater {
                 TimeSeparaterCell(date: msg.date)
             }
             
             if style.showTopPadding {
-                Spacer(minLength: 10)
+                Color.clear.frame(height: 15)
             }
             
             HStack(alignment: .bottom, spacing: 2) {
@@ -62,11 +58,6 @@ struct ChatCell: View {
             }
         }
         .padding(.horizontal, ChatKit.cellHorizontalPadding)
-        .onAppear{
-            if dragOffsetX != 0 {
-                dragOffsetX = 0
-            }
-        }
         .id(msg.id)
     }
 }

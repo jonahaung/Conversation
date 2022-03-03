@@ -23,7 +23,7 @@ class Con {
         didSet {
             guard bgImage != oldValue else { return }
             self.cCon()?.bgImage = bgImage.rawValue
-            updateBubbleImages()
+    
         }
     }
     
@@ -31,7 +31,6 @@ class Con {
         didSet {
             guard themeColor != oldValue else { return }
             self.cCon()?.themeColor = themeColor.rawValue
-            updateBubbleImages()
         }
     }
     
@@ -59,8 +58,8 @@ class Con {
         }
     }
     
-    var incomingBubbleImage: UIImage
-    var outgoingBubbleImage: UIImage
+//    var incomingBubbleImage: UIImage
+//    var outgoingBubbleImage: UIImage
     
     init(cCon: CCon) {
         self.id = cCon.id!
@@ -72,16 +71,9 @@ class Con {
         self.isBubbleDraggable = cCon.isBubbleDraggable
         self.showAvatar = cCon.showAvatar
         self.isPagingEnabled = cCon.isPagingEnabled
-        
-        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
-        incomingBubbleImage = UIColor(incomingColor).image()
-        outgoingBubbleImage = UIColor(themeColor.color).image()
+    
     }
-    private func updateBubbleImages() {
-        let incomingColor = bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
-        incomingBubbleImage = UIColor(incomingColor).image()
-        outgoingBubbleImage = UIColor(themeColor.color).image()
-    }
+    
     func msgsCount() -> Int {
         CMsg.count(for: id)
     }
@@ -108,13 +100,6 @@ class Con {
 extension Con: Identifiable { }
 
 extension Con {
-    func bubbleImage(for msg: Msg) -> UIImage {
-        return msg.rType == .Send ? outgoingBubbleImage : incomingBubbleImage
-    }
-    func textColor(for msg: Msg) -> Color? {
-        return msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming
-    }
-    
     func bubbleColor(for msg: Msg) -> Color {
         return msg.rType == .Send ? themeColor.color : bgImage == .None ? ChatKit.textBubbleColorIncomingPlain : ChatKit.textBubbleColorIncoming
     }

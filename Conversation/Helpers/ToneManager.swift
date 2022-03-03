@@ -30,7 +30,7 @@ enum Vibration {
     case oldSchool
     case rigid
     case soft
-    func vibrate() {
+    @MainActor func vibrate() {
         
         switch self {
         case .error:
@@ -75,18 +75,13 @@ enum Vibration {
 
 actor ToneManager {
 
-    
     static let shared = ToneManager()
-    var isPlaying = false
-    func playSound(tone: AlertTones) {
-        guard self.isPlaying == false else { return}
-        self.isPlaying = true
-        AudioServicesPlaySystemSoundWithCompletion(tone.rawValue) {
-            self.isPlaying = false
-        }
+
+    @MainActor func playSound(tone: AlertTones) {
+        AudioServicesPlaySystemSound(tone.rawValue)
     }
 
-    func vibrate(vibration: Vibration) {
+    @MainActor func vibrate(vibration: Vibration) {
         vibration.vibrate()
     }
 }

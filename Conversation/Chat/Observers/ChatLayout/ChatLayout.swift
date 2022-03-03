@@ -11,10 +11,8 @@ import UIKit
 protocol ChatLayoutDelegate: AnyObject {
     var con: Con { get }
     
-    var showScrollButton: Bool { get set }
-
-    @MainActor func loadNext() async
-    @MainActor func loadPrevious() async
+    func loadNext() async
+    func loadPrevious() async
 }
 
 
@@ -22,6 +20,12 @@ class ChatLayout: NSObject {
     
     private weak var scrollView: UIScrollView?
     weak var delegate: ChatLayoutDelegate?
+    
+    var inputBarRect: CGRect = .zero {
+        willSet {
+            adjustContentOffset(newValue: newValue, oldValue: inputBarRect)
+        }
+    }
     
     func connect(scrollView: UIScrollView) -> Bool {
         if self.scrollView == nil {
@@ -45,6 +49,8 @@ class ChatLayout: NSObject {
 
 extension ChatLayout: UIScrollViewDelegate {
     
+    var shouldScrollToBottom: Bool { scrollView?.isCloseToBottom() == false }
+    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         UIApplication.shared.endEditing()
         autoLoadMoreIfNeeded(scrollView)
@@ -52,15 +58,10 @@ extension ChatLayout: UIScrollViewDelegate {
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         autoLoadMoreIfNeeded(scrollView)
-        delegate?.showScrollButton = !scrollView.isCloseToBottom()
     }
-    
+    @MainActor
     func scrollToBottom(animated: Bool) {
         scrollView?.scrollToBottom(animated: animated)
-    }
-    
-    @MainActor func scrollViewStorpScrolling() {
-        scrollView?.stop()
     }
 }
 
@@ -72,7 +73,7 @@ extension ChatLayout {
     private func autoLoadMoreIfNeeded(_ scrollView: UIScrollView) {
         
         guard let delegate = delegate else { return }
-        if scrollView.contentOffset.y < 1 {
+        if scrollView.contentOffset.y <= 0 {
             Task {
                 await delegate.loadPrevious()
             }
@@ -80,8 +81,6 @@ extension ChatLayout {
             Task {
                 await delegate.loadNext()
             }
-        } else {
-            delegate.showScrollButton = scrollView.isCloseToBottom() == false
         }
     }
 }
@@ -91,18 +90,31 @@ extension ChatLayout {
 extension ChatLayout {
     
     func adjustContentOffset(newValue: CGRect, oldValue: CGRect) {
-        guard newValue.maxY != oldValue.maxY else { return }
-        guard let scrollView = scrollView else { return }
         
-        let keyboardHeight = oldValue.maxY - newValue.maxY
-        guard keyboardHeight > 200 else { return }
-        var contentOffset = scrollView.contentOffset
-        contentOffset.y += keyboardHeight
-        scrollView.setContentOffset(contentOffset, animated: true)
+        let isHeightChanged = newValue.height != oldValue.height
+        let isPositionChanged = newValue.maxY != oldValue.maxY
+       
+        if isPositionChanged {
+            guard newValue.maxY != oldValue.maxY else { return }
+            guard let scrollView = scrollView else { return }
+            
+            let keyboardHeight = oldValue.maxY - newValue.maxY
+            guard keyboardHeight > 200 else { return }
+            var contentOffset = scrollView.contentOffset
+            contentOffset.y += keyboardHeight
+            scrollView.setContentOffset(contentOffset, animated: true)
+        } else if isHeightChanged {
+            let heightDifference = newValue.height - oldValue.height
+            if heightDifference > 0 {
+                adjustContentOffset(inputViewSizeDidChange: heightDifference)
+            }
+            
+        }
     }
     
     func adjustContentOffset(inputViewSizeDidChange difference: CGFloat) {
         if let scrollView = self.scrollView {
+            scrollView.stop()
             var offset = scrollView.contentOffset
             offset.y += difference
             scrollView.contentOffset = offset

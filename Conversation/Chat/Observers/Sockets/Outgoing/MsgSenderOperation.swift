@@ -20,5 +20,9 @@ final class MsgSenderOperation: Operation {
         guard msg.progress == .Sending else { return }
         if isCancelled { return }
         Thread.sleep(forTimeInterval: 2)
+        Task {
+            await msg.applyAction(action: .MsgProgress(value: .Sent))
+            await ToneManager.shared.playSound(tone: .sendMessage)
+        }
     }
 }

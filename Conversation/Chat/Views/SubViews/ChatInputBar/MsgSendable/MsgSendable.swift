@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-@MainActor protocol MsgSendable {
+protocol MsgSendable {
     var inputManager: ChatInputViewManager { get }
     var outgoingSocket: OutgoingSocket { get }
     var coordinator: Coordinator { get }
@@ -17,7 +17,7 @@ import SwiftUI
 }
 extension MsgSendable {
     
-    func resetView() async {
+    func resetView() {
         withAnimation(.interactiveSpring()) {
             inputManager.currentInputItem = .Text
         }

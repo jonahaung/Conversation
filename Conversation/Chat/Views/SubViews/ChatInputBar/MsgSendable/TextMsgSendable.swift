@@ -19,11 +19,13 @@ extension TextMsgSendable {
             let text = inputManager.text
             inputManager.text = String()
             let msg = Msg(conId: coordinator.con.id, textData: .init(text: text), rType: .Send, progress: .Sending)
-            await outgoingSocket.add(msg: msg)
+            await coordinator.add(msg: msg)
+            outgoingSocket.add(msg: msg)
         }else {
             let random = CGFloat.random(in: 30..<150)
             let msg = Msg(conId: coordinator.con.id, emojiData: .init(emojiID: "hand.thumbsup.fill", size: .init(size: random)), rType: .Send, progress: .Sending)
-            await outgoingSocket.add(msg: msg)
+            await coordinator.add(msg: msg)
+            outgoingSocket.add(msg: msg)
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@MainActor class ChatInputViewManager: ObservableObject {
+class ChatInputViewManager: ObservableObject {
     
     var text = String() {
         willSet {
@@ -21,8 +21,11 @@ import SwiftUI
     @Published var isTyping = false
     @Published var currentInputItem = InputMenuBar.Item.Text
     
-    func setTyping(typing: Bool) {
+    @MainActor func setTyping(typing: Bool) {
         self.isTyping = typing
+        if typing {
+            ToneManager.shared.playSound(tone: .Typing)
+        }
     }
     
     deinit {

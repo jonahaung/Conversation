@@ -9,5 +9,6 @@ import SwiftUI
 
 extension Msg.MsgType {
     struct ImageData {
+        var image: UIImage?
     }
 }

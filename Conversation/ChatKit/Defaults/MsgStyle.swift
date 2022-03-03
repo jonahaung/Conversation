@@ -2,10 +2,10 @@
 //  MsgStyle.swift
 //  Conversation
 //
-//  Created by Aung Ko Min on 9/2/22.
+//  Created by Aung Ko Min on 3/3/22.
 //
 
-import SwiftUI
+import Foundation
 
 struct MsgStyle {
 

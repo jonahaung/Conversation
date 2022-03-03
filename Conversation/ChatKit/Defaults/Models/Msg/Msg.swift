@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import CoreLocation
+import Combine
 
 class Msg: ObservableObject, Identifiable {
     
@@ -19,7 +21,8 @@ class Msg: ObservableObject, Identifiable {
     
     var sender: MsgSender
     var textData: MsgType.TextData?
-    var imageData: MsgType.ImageData?
+    
+    @Published var imageData: MsgType.ImageData?
     var videoData: MsgType.ViedeoData?
     var locationData: MsgType.LocationData?
     var emojiData: MsgType.EmojiData?
@@ -29,6 +32,40 @@ class Msg: ObservableObject, Identifiable {
     var imageRatio: Double
     var bubbleSize: CGSize?
     
+    // RCMsg
+    var userId = ""
+    var userFullname = ""
+    var userInitials = ""
+    var userPictureAt: TimeInterval = 0
+
+    var videoDuration = 0
+    var audioDuration = 0
+
+    var latitude: CLLocationDegrees = 0
+    var longitude: CLLocationDegrees = 0
+
+    var isDataQueued = false
+    var isMediaQueued = false
+    var isMediaFailed = false
+    var isMediaOrigin = false
+
+    var createdAt: TimeInterval = 0
+
+    var incoming = false
+    var outgoing = false
+
+    var videoPath: String?
+    var audioPath: String?
+    
+    var stickerImage: UIImage?
+    var videoThumbnail: UIImage?
+    var locationThumbnail: UIImage?
+
+    var audioStatus = AudioStatus.Stopped
+    @Published var mediaStatus = MediaStatus.Unknown
+
+    var audioCurrent: TimeInterval = 0
+
     init(conId: String, msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
         self.id = UUID().uuidString
         self.conId = conId

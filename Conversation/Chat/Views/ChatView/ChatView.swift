@@ -12,9 +12,7 @@ struct ChatView: View {
     
     @StateObject internal var inputManager = ChatInputViewManager()
     @StateObject internal var outgoingSocket = OutgoingSocket()
-    @StateObject internal var incomingSocket = IncomingSocket()
     @StateObject internal var coordinator: Coordinator
-    
     init(con: Con) {
         _coordinator = .init(wrappedValue: .init(con: con))
     }
@@ -35,26 +33,35 @@ struct ChatView: View {
                 .overlay(reloadingView, alignment: .top)
             }
             .introspectScrollView {
-                coordinator.connect(scrollView: $0)
+                if coordinator.layout.connect(scrollView: $0) {
+                    
+                }
             }
+            
             ChatInputView()
+                .environmentObject(outgoingSocket)
         }
         .coordinateSpace(name: "ChatView")
+        .frame(maxWidth: .infinity)
         .background(coordinator.con.bgImage.image)
-        .retrieveBounds(viewId: ChatInputView.id, $coordinator.inputBarRect)
+        .retrieveBounds(viewId: ChatInputView.id, $coordinator.layout.inputBarRect)
         .accentColor(coordinator.con.themeColor.color)
         .task {
+            let conId = coordinator.con.id
             coordinator.task()
-        }
-        .onAppear{
-            connectSockets()
-        }
-        .onDisappear{
-            disconnectSockets()
+            await IncomingSocket.shard.connect(with: conId)
         }
         .environmentObject(inputManager)
-        .environmentObject(outgoingSocket)
         .environmentObject(coordinator)
+        .onReceive(NotificationCenter.default.publisher(for: .MsgNoti)) { noti in
+            Task {
+                guard let noti = noti.object as? MsgNoti else { return }
+                if let msg = noti.msg {
+                    await coordinator.add(msg: msg)
+                }
+                if let typing = noti.isTyping { inputManager.setTyping(typing: typing) }
+            }
+        }
     }
     
     private var reloadingView: some View {

@@ -20,7 +20,8 @@ extension PhotoMsgSendable {
             Media.save(photoId: msg.id, data: data)
             MediaQueue.create(msg)
             await resetView()
-            await outgoingSocket.add(msg: msg)
+            await coordinator.add(msg: msg)
+            outgoingSocket.add(msg: msg)
         }
     }
 }

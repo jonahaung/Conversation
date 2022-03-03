@@ -11,8 +11,9 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
     
     static let id = 1
     
+    
+    @EnvironmentObject var outgoingSocket: OutgoingSocket
     @EnvironmentObject internal var inputManager: ChatInputViewManager
-    @EnvironmentObject internal var outgoingSocket: OutgoingSocket
     @EnvironmentObject internal var coordinator: Coordinator
     
     var body: some View {
@@ -20,8 +21,8 @@ struct ChatInputView: View, TextMsgSendable, LocationMsgSendable, PhotoMsgSendab
             Divider()
             pickerView()
         }
-        .saveBounds(viewId: ChatInputView.id, coordinateSpace: .named("ChatView"))
         .background(.ultraThinMaterial)
+        .saveBounds(viewId: ChatInputView.id, coordinateSpace: .named("ChatView"))
     }
     
     private func pickerView() -> some View {

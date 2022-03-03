@@ -15,13 +15,8 @@ extension ChatCell {
                 switch msg.msgType {
                 case .Text:
                     TextBubble(data: msg.textData ?? .init(text: "no text"))
-                        .foregroundColor(
-                            coordinator.con.textColor(for: msg)
-                        )
-                        .background(
-                            Image(uiImage: coordinator.con.bubbleImage(for: msg)).resizable()
-                        )
-                        .clipShape(style.bubbleShape ?? BubbleShape(corners: .allCorners))
+                        .foregroundColor(msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming)
+                        .background(style.bubbleShape!.fill(msg.rType == .Send ? .accentColor : ChatKit.textBubbleColorIncoming))
                 case .Image:
                     ImageBubble()
                 case .Location:
@@ -38,62 +33,25 @@ extension ChatCell {
                 }
             }
             .contextMenu{ MsgContextMenu().environmentObject(msg) }
+            .onTapGesture {
+                Task {
+                    await ToneManager.shared.vibrate(vibration: .rigid)
+                }
+                withAnimation(.interactiveSpring()) {
+                    coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
+                }
+            }
         }
         
         return Group {
             if coordinator.con.isBubbleDraggable {
                 bubble()
-                    .offset(x: dragOffsetX)
-                    .gesture(bubbleTapGesture.exclusively(before: bubbleDragGesture))
+                    .modifier(DraggableModifier(direction: .horizontal))
             } else {
                 bubble()
-                    .gesture(bubbleTapGesture)
             }
         }
-    }
-    
-    
-    private var bubbleTapGesture: some Gesture {
-        TapGesture(count: 1).onEnded { _ in
-            withAnimation(.interactiveSpring()) {
-                coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
-                generateFeedback()
-            }
-        }
-    }
-    
-    private var bubbleDragGesture: some Gesture {
         
-        DragGesture()
-            .onChanged { value in
-                guard value.translation.height < 100 else {
-                    updateOffset(0)
-                    return
-                }
-                let offsetX = value.translation.width
-                
-                if msg.rType == .Send {
-                    if offsetX > 0 {
-                        dragOffsetX = 0
-                        return
-                    }
-                    updateOffset(offsetX)
-                } else {
-                    if offsetX < 0 {
-                        dragOffsetX = 0
-                        return
-                    }
-                    updateOffset(offsetX)
-                }
-                
-            }
-            .onEnded { value in
-                updateOffset(0)
-            }
-    }
-    
-    private func updateOffset(_ value: CGFloat) {
-        dragOffsetX = value
     }
 }
 

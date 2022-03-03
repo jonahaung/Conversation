@@ -46,5 +46,9 @@ struct InputTextView: UIViewRepresentable {
         func growingTextView(_ growingTextView: GrowingTextView, didUpdateMinHeight height: CGFloat) {
             print(height)
         }
+        
+        func growingTextViewDidBeginEditing(_ growingTextView: GrowingTextView) {
+            
+        }
     }
 }

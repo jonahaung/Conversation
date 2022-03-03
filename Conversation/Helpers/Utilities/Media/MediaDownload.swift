@@ -36,33 +36,34 @@ class MediaDownload: NSObject {
     
     private class func start(_ dir: String, _ id: String, _ ext: String, _ manual: Bool) async throws -> String {
         
-        let fileName = "\(id).\(ext)"
-        let path = Dir.document(dir, and: fileName)
-        
-        let fileManual = fileName + ".manual"
+        let file = "\(id).\(ext)"
+        let path = Dir.document(dir, and: file)
+
+        let fileManual = file + ".manual"
         let pathManual = Dir.document(dir, and: fileManual)
-        
-        let fileLoading = fileName + ".loading"
+
+        let fileLoading = file + ".loading"
         let pathLoading = Dir.document(dir, and: fileLoading)
-        
+
+        // Check if file is already downloaded
+        //---------------------------------------------------------------------------------------------------------------------------------------
         if (File.exist(path)) {
-            try? FileManager.default.removeItem(atPath: path)
-//            return path
+            return path
         }
-        
+
+        // Check if manual download is required
+        //---------------------------------------------------------------------------------------------------------------------------------------
         if (manual) {
             if (File.exist(pathManual)) {
                 throw NSError(domain: "Manual download required.", code: 101)
             }
-            do {
-                try "manual".write(toFile: pathManual, atomically: false, encoding: .utf8)
-            }catch {
-                throw error
-            }
+            try "manual".write(toFile: pathManual, atomically: false, encoding: .utf8)
         }
-        
+
+        // Check if file is currently downloading
+        //---------------------------------------------------------------------------------------------------------------------------------------
         let time = Int(Date().timeIntervalSince1970)
-        
+
         if (File.exist(pathLoading)) {
             if let temp = try? String(contentsOfFile: pathLoading, encoding: .utf8) {
                 if let check = Int(temp) {
@@ -72,19 +73,19 @@ class MediaDownload: NSObject {
                 }
             }
         }
-        do {
-            try "\(time)".write(toFile: pathLoading, atomically: false, encoding: .utf8)
-        } catch {
-            throw error
-        }
+        try "\(time)".write(toFile: pathLoading, atomically: false, encoding: .utf8)
+
         
-        let storage = Storage.storage().reference(withPath: "\(dir)/\(fileName)")
+        let key = "\(dir)/\(id).\(ext)"
         
-        let filePath = try await storage.writeAsync(toFile: URL(fileURLWithPath: path, isDirectory: true))
+        let reference = Storage.storage().reference(withPath: key)
+        let localURL = URL(string: "path/to/image")!
         
-//        guard let data = Data(path: path) else {
-//            throw NSError(domain: "Not valid data", code: 103)
-//        }
+        let url = try await reference.writeAsync(toFile: localURL)
+        
+        File.remove(pathLoading)
+        let data = Data(path: url.path)
+        data?.write(path: path, options: .atomic)
         return path
     }
 }

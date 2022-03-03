@@ -8,87 +8,79 @@
 import UIKit
 
 
-typealias NewMsgBlock = (Msg) -> Void
-
-final class IncomingSocket: ObservableObject {
+@Socket class IncomingSocket: ObservableObject {
     
-    private var conId: String = ""
+    static let shard = IncomingSocket()
     
-    private lazy var queue: OperationQueue = {
-        $0.name = "IncomingSocket"
-        $0.maxConcurrentOperationCount = 1
-        return $0
-    }(OperationQueue())
-    
-    private var timer: Timer?
-    
-    private var onNewMsgBlock: NewMsgBlock?
-    private var onTypingStatusBlock: ((Bool) -> Void)?
+    private init() {
+        
+    }
+    private var conId: String?
     
     
-    
-    @discardableResult
-    func connect(with conId: String) -> Self {
+    func connect(with conId: String) {
         disconnect()
         self.conId = conId
-        if AppUserDefault.shared.autoGenerateMockMessages {
-            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(handleTimer), userInfo: nil, repeats: true)
-        }
-        return self
     }
     
-    @discardableResult
-    func disconnect() -> Self {
-        timer?.invalidate()
-        timer = nil
-        queue.cancelAllOperations()
+
+    func disconnect() {
         conId = ""
-        onTypingStatusBlock = nil
-        onNewMsgBlock = nil
-        return self
+    }
+
+    
+    private func saveMessage(msg: Msg) {
+        CMsg.create(msg: msg)
     }
     
-    @discardableResult
-    func onNewMsg(block: @escaping (Msg) -> Void) -> Self {
-        onNewMsgBlock = block
-        return self
-    }
-    
-    @discardableResult
-    func onTypingStatus(block: @escaping (Bool) -> Void) -> Self {
-        onTypingStatusBlock = block
-        return self
-    }
-    
-    private func receive(msg: Msg) {
-        let operation = MsgReceiverOperation(msg)
-        operation.completionBlock = {  [weak self, weak msg, weak operation] in
-            guard let op = operation, !op.isCancelled, let self = self, let msg = msg else { return }
-            if op.isCancelled {
-                return
-            }
-            DispatchQueue.main.async {
-                msg.applyAction(action: .MsgProgress(value: .Read))
-                CMsg.create(msg: msg)
-                self.onNewMsgBlock?(msg)
-            }
+
+    func generateRandomMsg() {
+        guard let conId = conId else {
+            return
         }
-        queue.addOperation(operation)
-    }
-    
-    @objc
-    private func handleTimer() {
-        onTypingStatusBlock?(Bool.random())
-        let rType = [Msg.RecieptType.Send, .Receive].random() ?? .Send
-        let progress = rType == .Send ? Msg.MsgProgress.Sending : .SendingFailed
-        let msg = Msg(conId: conId, msgType: .Text, rType: rType, progress: progress)
+        guard AppUserDefault.shared.autoGenerateMockMessages else { return }
+        setTyping(isTyping: true)
+        Thread.sleep(forTimeInterval: TimeInterval(Int.random(in: 1...3)))
+        setTyping(isTyping: false)
+        Thread.sleep(forTimeInterval: TimeInterval(Int.random(in: 1...3)))
+        let msg = Msg(conId: conId, msgType: .Text, rType: .Receive, progress: .Read)
         
         let text = [Lorem.sentence, Lorem.shortTweet, Lorem.tweet, Lorem.fullName, Lorem.title].random() ?? Lorem.emailAddress
         msg.textData = .init(text: text)
-        receive(msg: msg)
+        saveMessage(msg: msg)
+        showMsg(msg: msg)
+        
     }
     
+    private func showMsg(msg: Msg) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .MsgNoti, object: MsgNoti(msg: msg))
+        }
+    }
+    private func setTyping(isTyping: Bool ) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .MsgNoti, object: MsgNoti(isTyping: isTyping))
+        }
+    }
     deinit {
         Log("")
     }
 }
+
+struct MsgNoti {
+    
+    var msg: Msg? = nil
+    var isTyping: Bool? = nil
+    
+    init(msg: Msg) {
+        self.msg = msg
+    }
+    init(isTyping: Bool) {
+        self.isTyping = isTyping
+    }
+}
+
+extension Notification.Name {
+    static let MsgNoti = Notification.Name("Notification.Conversation.MsgDidReceive")
+ }
+

@@ -18,7 +18,7 @@ class ChatDatasource {
     private var slidingWindow: SlidingDataSource<Msg>
     
     private let pageSize = AppUserDefault.shared.pagnitionSize
-    private var preferredMaxWindowSize: Int { pageSize * 2 }
+    private var preferredMaxWindowSize: Int { pageSize * 5 }
     
     var msgs: [Msg] {
         return self.slidingWindow.itemsInWindow
@@ -30,7 +30,7 @@ class ChatDatasource {
         self.conId = conId
         let items = CMsg.msgs(for: conId)
         var iterator = items.makeIterator()
-        slidingWindow = SlidingDataSource(count: items.count, pageSize: pageSize) { Msg(cMsg: iterator.next() ?? CMsg.create(msg: .init(conId: conId, emojiData: .init(emojiID: "bicycle", size: .init(size: 100)), rType: .Send, progress: .SendingFailed)) )}
+        slidingWindow = SlidingDataSource(count: items.count, pageSize: pageSize) { Msg(cMsg: iterator.next()!)}
     }
     
     var hasMoreNext: Bool {
@@ -40,7 +40,7 @@ class ChatDatasource {
     var hasMorePrevious: Bool {
         return self.slidingWindow.hasPrevious()
     }
-    
+
     func add(msg: Msg) async {
         slidingWindow.insertItem(msg, position: .bottom)
         generateFeedback()
