@@ -10,7 +10,6 @@ import UIKit
 
 protocol ChatLayoutDelegate: AnyObject {
     var con: Con { get }
-    
     func loadNext() async
     func loadPrevious() async
 }
@@ -23,16 +22,25 @@ class ChatLayout: NSObject {
     
     var inputBarRect: CGRect = .zero {
         willSet {
-            adjustContentOffset(newValue: newValue, oldValue: inputBarRect)
+            if canUpdateFixedHeight && fixedHeight == nil {
+                fixedHeight = newValue.height.rounded() + 3
+            } else {
+                adjustContentOffset(newValue: newValue, oldValue: inputBarRect)
+            }
         }
     }
+    var navBarRect: CGRect = .zero
+    var canUpdateFixedHeight = false
+    var fixedHeight: CGFloat?
+    private var isReloading = false
     
     func connect(scrollView: UIScrollView) -> Bool {
         if self.scrollView == nil {
             scrollView.keyboardDismissMode = .none
             scrollView.contentInsetAdjustmentBehavior = .never
             scrollView.isPagingEnabled = delegate?.con.isPagingEnabled == true
-            scrollView.automaticallyAdjustsScrollIndicatorInsets = false
+            scrollView.canCancelContentTouches = true
+            scrollView.delaysContentTouches = false
             scrollView.delegate = self
             self.scrollView = scrollView
             return true
@@ -49,7 +57,7 @@ class ChatLayout: NSObject {
 
 extension ChatLayout: UIScrollViewDelegate {
     
-    var shouldScrollToBottom: Bool { scrollView?.isCloseToBottom() == false }
+    var shouldScrollToBottom: Bool { scrollView?.isCloseToBottom() == true }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         UIApplication.shared.endEditing()
@@ -71,15 +79,19 @@ extension ChatLayout: UIScrollViewDelegate {
 extension ChatLayout {
     
     private func autoLoadMoreIfNeeded(_ scrollView: UIScrollView) {
-        
+        guard !isReloading else { return }
         guard let delegate = delegate else { return }
-        if scrollView.contentOffset.y <= 0 {
+        if scrollView.contentOffset.y <= navBarRect.height {
             Task {
+                isReloading = true
                 await delegate.loadPrevious()
+                isReloading = false
             }
-        } else if scrollView.contentSize.height <= scrollView.contentOffset.y + scrollView.frame.size.height {
+        } else if scrollView.contentSize.height + 30 <= scrollView.contentOffset.y + scrollView.frame.size.height{
             Task {
+                isReloading = true
                 await delegate.loadNext()
+                isReloading = false
             }
         }
     }

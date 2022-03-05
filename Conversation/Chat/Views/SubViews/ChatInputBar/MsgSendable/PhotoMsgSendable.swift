@@ -7,21 +7,22 @@
 
 import UIKit
 
-@MainActor protocol PhotoMsgSendable: MsgSendable {
-    func sendPhoto(image: UIImage) async
+protocol PhotoMsgSendable: MsgSendable {
+    func sendPhoto(image: UIImage)
 }
 
 extension PhotoMsgSendable {
-    func sendPhoto(image: UIImage) async {
-        let msg = Msg(conId: coordinator.con.id, msgType: .Image, rType: .Send, progress: .Sending)
-        msg.imageData = .init()
-        msg.imageRatio = image.size.width/image.size.height
+    
+    func sendPhoto(image: UIImage) {
+        resetView()
         if let data = image.jpegData(compressionQuality: 0.8) {
+            let msg = Msg(conId: coordinator.con.id, msgType: .Image, rType: .Send, progress: .Sending)
+            msg.imageData = .init()
+            msg.imageRatio = image.size.width/image.size.height
             Media.save(photoId: msg.id, data: data)
             MediaQueue.create(msg)
-            await resetView()
-            await coordinator.add(msg: msg)
-            outgoingSocket.add(msg: msg)
+            addToChatView(msg: msg)
+            send(msg: msg)
         }
     }
 }

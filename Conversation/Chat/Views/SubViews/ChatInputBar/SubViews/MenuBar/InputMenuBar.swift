@@ -20,7 +20,6 @@ struct InputMenuBar: View {
                     }
                 } label: {
                     Image(systemName: itemType.iconName)
-                        
                 }
             }
         }

@@ -15,10 +15,9 @@ struct CellProgressView: View {
         VStack {
             if let iconName = progress.iconName() {
                 Image(systemName: iconName)
+                    .foregroundStyle(.tertiary)
+                    .imageScale(.small)
             }
         }
-        .frame(width: ChatKit.cellLeftRightViewWidth)
-        .foregroundStyle(.quaternary)
-        .imageScale(.small)
     }
 }

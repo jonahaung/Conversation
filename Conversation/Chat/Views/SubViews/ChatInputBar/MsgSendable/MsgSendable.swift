@@ -8,18 +8,26 @@
 import Foundation
 import SwiftUI
 
+
 protocol MsgSendable {
-    var inputManager: ChatInputViewManager { get }
-    var outgoingSocket: OutgoingSocket { get }
-    var coordinator: Coordinator { get }
     
-    func resetView() async
+    var inputManager: ChatInputViewManager { get }
+    var coordinator: Coordinator { get }
+
+    func resetView()
+    func addToChatView(msg: Msg)
+    func send(msg: Msg)
 }
 extension MsgSendable {
     
     func resetView() {
-        withAnimation(.interactiveSpring()) {
-            inputManager.currentInputItem = .Text
-        }
+        inputManager.currentInputItem = .Text
+    }
+    func addToChatView(msg: Msg) {
+        coordinator.add(msg: msg)
+    }
+    
+    func send(msg: Msg) {
+        OutgoingSocket.shared.saveAndSend(msg: msg)
     }
 }

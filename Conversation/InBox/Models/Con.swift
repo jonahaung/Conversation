@@ -10,9 +10,7 @@ import SwiftUI
 class Con {
     
     let id: String
-   
     let date: Date
-    
     var name: String {
         willSet {
             self.cCon()?.name = newValue
@@ -58,9 +56,8 @@ class Con {
         }
     }
     
-//    var incomingBubbleImage: UIImage
-//    var outgoingBubbleImage: UIImage
-    
+    var lastReadMsgId: String?
+
     init(cCon: CCon) {
         self.id = cCon.id!
         self.name = cCon.name!
@@ -71,9 +68,9 @@ class Con {
         self.isBubbleDraggable = cCon.isBubbleDraggable
         self.showAvatar = cCon.showAvatar
         self.isPagingEnabled = cCon.isPagingEnabled
-    
+        self.lastReadMsgId = cCon.lastReadMsgId
     }
-    
+   
     func msgsCount() -> Int {
         CMsg.count(for: id)
     }

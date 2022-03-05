@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CoreLocation
-import Combine
 
 class Msg: ObservableObject, Identifiable {
     
@@ -22,7 +21,7 @@ class Msg: ObservableObject, Identifiable {
     var sender: MsgSender
     var textData: MsgType.TextData?
     
-    @Published var imageData: MsgType.ImageData?
+    var imageData: MsgType.ImageData?
     var videoData: MsgType.ViedeoData?
     var locationData: MsgType.LocationData?
     var emojiData: MsgType.EmojiData?
@@ -30,10 +29,8 @@ class Msg: ObservableObject, Identifiable {
     var voiceData: MsgType.VoiceData?
     
     var imageRatio: Double
-    var bubbleSize: CGSize?
     
     // RCMsg
-    var userId = ""
     var userFullname = ""
     var userInitials = ""
     var userPictureAt: TimeInterval = 0
@@ -41,8 +38,7 @@ class Msg: ObservableObject, Identifiable {
     var videoDuration = 0
     var audioDuration = 0
 
-    var latitude: CLLocationDegrees = 0
-    var longitude: CLLocationDegrees = 0
+    
 
     var isDataQueued = false
     var isMediaQueued = false
@@ -62,8 +58,7 @@ class Msg: ObservableObject, Identifiable {
     var locationThumbnail: UIImage?
 
     var audioStatus = AudioStatus.Stopped
-    @Published var mediaStatus = MediaStatus.Unknown
-
+    var mediaStatus = MediaStatus.Unknown
     var audioCurrent: TimeInterval = 0
 
     init(conId: String, msgType: MsgType, rType: RecieptType, progress: MsgProgress) {
@@ -77,10 +72,7 @@ class Msg: ObservableObject, Identifiable {
         self.imageRatio = 1
     }
     
-    convenience init(conId: String, textData: Msg.MsgType.TextData, rType: RecieptType, progress: MsgProgress) {
-        self.init(conId: conId, msgType: .Text, rType: rType, progress: progress)
-        self.textData = textData
-    }
+   
     convenience init(conId: String, imageData: Msg.MsgType.ImageData, rType: RecieptType, progress: MsgProgress) {
         self.init(conId: conId, msgType: .Image, rType: rType, progress: progress)
         self.imageData = imageData
@@ -89,10 +81,7 @@ class Msg: ObservableObject, Identifiable {
         self.init(conId: conId, msgType: .Video, rType: rType, progress: progress)
         self.videoData = videoData
     }
-    convenience init(conId: String, locationData: Msg.MsgType.LocationData, rType: RecieptType, progress: MsgProgress) {
-        self.init(conId: conId, msgType: .Location, rType: rType, progress: progress)
-        self.locationData = locationData
-    }
+    
     convenience init(conId: String, emojiData: Msg.MsgType.EmojiData, rType: RecieptType, progress: MsgProgress) {
         self.init(conId: conId, msgType: .Emoji, rType: rType, progress: progress)
         self.emojiData = emojiData
@@ -142,12 +131,51 @@ class Msg: ObservableObject, Identifiable {
         case .Voice:
             self.voiceData = .init()
         }
+        
+    }
+    
+    @MainActor func update() -> Bool {
+        guard let cMsg = CMsg.msg(for: id) else { return false }
+        let rType = Msg.RecieptType(rawValue: cMsg.rType)!
+        let msgType = Msg.MsgType(rawValue: cMsg.msgType)!
+        let sender = MsgSender(id: cMsg.senderID!, name: cMsg.senderName!, photoURL: cMsg.senderURL!)
+        let progress = Msg.MsgProgress(rawValue: cMsg.progress)!
+        
+        self.id = cMsg.id ?? UUID().uuidString
+        self.rType = rType
+        self.msgType = msgType
+        self.date = cMsg.date!
+        self.sender = sender
+        self.progress = progress
+        self.imageRatio = cMsg.imageRatio
+        
+        let txt = cMsg.data ?? ""
+        
+        switch msgType {
+        case .Text:
+            self.textData  = .init(text: txt)
+        case .Image:
+            self.imageData = .init()
+        case .Video:
+            self.videoData = .init(duration: 0)
+        case .Location:
+            self.locationData = .init(latitude: cMsg.lat, longitude: cMsg.long)
+        case .Emoji:
+            let random = CGFloat.random(in: 30..<150)
+            self.emojiData = .init(emojiID: txt, size: .init(width: random, height: random))
+        case .Attachment:
+            self.attachmentData = .init(urlString: txt)
+        case .Voice:
+            self.voiceData = .init()
+        }
+
+        return true
     }
 }
 
 extension Msg: Equatable {
     static func == (lhs: Msg, rhs: Msg) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id && lhs.progress == rhs.progress
     }
 }
 extension Msg: Hashable {

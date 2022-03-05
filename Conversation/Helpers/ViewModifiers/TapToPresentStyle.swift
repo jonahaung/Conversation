@@ -37,9 +37,7 @@ struct TapToPresentStyle<Destination: View>: ViewModifier {
 
 
 extension View {
-    
     func tapToPresent<Destination: View>(_ view: Destination, _ isFullScreen: Bool = false) -> some View {
         ModifiedContent(content: self, modifier: TapToPresentStyle(destination: view, isFullScreen: isFullScreen))
     }
-
 }

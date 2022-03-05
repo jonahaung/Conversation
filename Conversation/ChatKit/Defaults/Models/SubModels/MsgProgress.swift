@@ -20,7 +20,7 @@ extension Msg {
             case .Sent:
                 return "Sent"
             case .SendingFailed:
-                return "Sending Failed"
+                return "Failed"
             case .Received:
                 return "Received"
             case .Read:
@@ -30,15 +30,15 @@ extension Msg {
         func iconName() -> String? {
             switch self {
             case .Sending:
-                return "circle"
+                return "circle.badge.fill"
             case .Sent:
-                return "checkmark.circle.fill"
+                return "checkmark.circle"
             case .SendingFailed:
                 return "exclamationmark.circle"
             case .Received:
                 return nil
             case .Read:
-                return nil
+                return "checkmark.circle.fill"
             }
         }
         

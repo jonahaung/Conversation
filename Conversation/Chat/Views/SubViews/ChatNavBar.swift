@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatNavBar: View {
-    
+    static let id = "ChatNavBar"
     @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var coordinator: Coordinator
     
@@ -45,6 +45,7 @@ struct ChatNavBar: View {
             }
             Divider()
         }
-        .background(.ultraThinMaterial)
+        .saveBounds(viewId: ChatNavBar.id)
+        .background(.thinMaterial)
     }
 }

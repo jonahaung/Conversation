@@ -38,8 +38,9 @@ struct PhotoPicker: View {
             guard let pickedImage = pickedImage else {
                 return
             }
-            await onSendPhoto(pickedImage)
             self.pickedImage = nil
+            await onSendPhoto(pickedImage)
+            
         }
        
         

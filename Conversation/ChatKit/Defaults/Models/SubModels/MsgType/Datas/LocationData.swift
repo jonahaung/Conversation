@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import CoreLocation
 
 extension Msg.MsgType {
     struct LocationData {
-        let latitude: Double
-        let longitude: Double
-        var imageSize = CGSize(width: 300, height: 200)
+        var latitude: CLLocationDegrees = 0
+        var longitude: CLLocationDegrees = 0
+        var image: UIImage?
     }
 }

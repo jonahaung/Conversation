@@ -7,25 +7,31 @@
 
 import SwiftUI
 
-@MainActor protocol TextMsgSendable: MsgSendable {
-    
-    func sendText() async
+
+protocol TextMsgSendable: MsgSendable {
+    func sendText(text: String)
 }
 
 extension TextMsgSendable {
-    
-    func sendText() async {
-        if inputManager.hasText {
-            let text = inputManager.text
-            inputManager.text = String()
-            let msg = Msg(conId: coordinator.con.id, textData: .init(text: text), rType: .Send, progress: .Sending)
-            await coordinator.add(msg: msg)
-            outgoingSocket.add(msg: msg)
-        }else {
-            let random = CGFloat.random(in: 30..<150)
-            let msg = Msg(conId: coordinator.con.id, emojiData: .init(emojiID: "hand.thumbsup.fill", size: .init(size: random)), rType: .Send, progress: .Sending)
-            await coordinator.add(msg: msg)
-            outgoingSocket.add(msg: msg)
-        }
+
+    func sendText(text: String) {
+        let msg = Msg(conId: coordinator.con.id, msgType: .Text, rType: .Send, progress: .Sending)
+        msg.textData = .init(text: text)
+        addToChatView(msg: msg)
+        send(msg: msg)
+    }
+}
+
+protocol EmojiMsgSendable: MsgSendable {
+    func sendEmoji(name: String)
+}
+
+extension EmojiMsgSendable {
+    func sendEmoji(name: String = "hand.thumbsup.fill") {
+        let msg = Msg(conId: coordinator.con.id, msgType: .Emoji, rType: .Send, progress: .Sending)
+        let random = CGFloat.random(in: 30..<150)
+        msg.emojiData = .init(emojiID: name, size: .init(size: random))
+        addToChatView(msg: msg)
+        send(msg: msg)
     }
 }

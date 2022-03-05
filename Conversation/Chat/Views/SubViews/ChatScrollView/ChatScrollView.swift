@@ -13,6 +13,7 @@ struct ScrollItem: Equatable {
     let anchor: UnitPoint
     var animate: Bool = false
 }
+
 struct ChatScrollView<Content: View>: View {
     
     let content: () -> Content
@@ -25,33 +26,11 @@ struct ChatScrollView<Content: View>: View {
             ScrollView {
                 content()
             }
-            .overlay(accessoryBar, alignment: .bottom)
             .onChange(of: coordinator.scrollItem) { newValue in
                 if let newValue = newValue {
                     coordinator.scrollItem = nil
                     scrollViewProxy.scroll(to: newValue)
                 }
-            }
-        }
-    }
-    
-    private var accessoryBar: some View {
-        HStack(alignment: .bottom) {
-            if inputManager.isTyping {
-                TypingView()
-            }
-            Spacer()
-            if coordinator.showScrollButton {
-                Button {
-                    coordinator.resetToBottom()
-                } label: {
-                    Image(systemName: "chevron.down.circle.fill")
-                        .resizable()
-                        .frame(width: 35, height: 35)
-                        .foregroundColor(.white)
-                        .padding()
-                }
-                .transition(.scale)
             }
         }
     }

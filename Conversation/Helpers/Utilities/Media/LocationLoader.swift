@@ -15,17 +15,13 @@ import MapKit
 class LocationLoader: NSObject {
 
     class func loadMedia(_ msg: Msg) {
-        
         guard let data = msg.locationData else { return }
-
-		let region: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude: data.latitude, longitude: data.longitude), latitudinalMeters: CLLocationDegrees(0.005), longitudinalMeters: CLLocationDegrees(0.005))
+        let region: MKCoordinateRegion = MKCoordinateRegion(center: .init(latitude: data.latitude, longitude: data.longitude), latitudinalMeters: CLLocationDegrees(0.01), longitudinalMeters: CLLocationDegrees(0.01))
 		let options = MKMapSnapshotter.Options()
 		options.region = region
-        options.size = data.imageSize
+        options.size = ChatKit.locationBubbleSize
 		options.scale = UIScreen.main.scale
-
-		let snapshotter = MKMapSnapshotter(options: options)
-		snapshotter.start(with: DispatchQueue.global(qos: .default), completionHandler: { [weak msg] snapshot, error in
+        MKMapSnapshotter(options: options).start(with: DispatchQueue.global(qos: .default), completionHandler: { [weak msg] snapshot, error in
             guard let msg = msg else  { return }
 			if let snapshot = snapshot {
 				DispatchQueue.main.async {
@@ -38,8 +34,8 @@ class LocationLoader: NSObject {
                         point.y += pin.centerOffset.y - (pin.bounds.size.height / 2)
                         pin.image?.draw(at: point)
                         let image = UIGraphicsGetImageFromCurrentImageContext()
-//                        msg.mediaImage = image
-                        msg.objectWillChange.send()
+                        msg.locationData?.image = image
+                        msg.updateUI()
                     }
                     UIGraphicsEndImageContext()
 				}

@@ -14,14 +14,17 @@ struct LocationBubble: View {
     
     var body: some View {
         Group {
-            ProgressView()
-//            if let data = msg.locationData, let image = msg.mediaImage {
-//                Image(uiImage: image)
-//                    .cornerRadius(ChatKit.bubbleRadius)
-//                    .tapToPresent(LocationViewer(coordinate: CLLocationCoordinate2D(latitude: data.latitude, longitude: data.longitude)))
-//            }else {
-//                ProgressView()
-//            }
-        }
+            if let data = msg.locationData, let image = data.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .cornerRadius(ChatKit.bubbleRadius)
+                    .tapToPresent(LocationViewer(coordinate: CLLocationCoordinate2D(latitude: data.latitude, longitude: data.longitude)))
+            }else {
+                ProgressView()
+                    .task {
+                        LocationLoader.loadMedia(msg)
+                    }
+            }
+        }.frame(size: ChatKit.locationBubbleSize)
     }
 }

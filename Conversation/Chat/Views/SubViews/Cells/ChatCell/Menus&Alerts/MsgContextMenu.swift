@@ -21,9 +21,7 @@ struct MsgContextMenu: View {
         }
         
         Button(action: {
-            Task {
-                await coordinator.delete(msg: msg)
-            }
+            coordinator.datasource.delete(msg: msg)
         }) {
             Label("Delete", systemImage: "trash.fill")
         }

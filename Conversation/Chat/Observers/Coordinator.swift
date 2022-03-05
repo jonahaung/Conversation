@@ -13,9 +13,9 @@ class Coordinator: ObservableObject {
     @Published var con: Con
     var scrollItem: ScrollItem?
     @Published var selectedId: String?
-    var showScrollButton: Bool { datasource.hasMoreNext }
+    
 
-    private let datasource: ChatDatasource
+    let datasource: ChatDatasource
     var layout = ChatLayout()
    
     init(con: Con) {
@@ -32,15 +32,22 @@ class Coordinator: ObservableObject {
 // ChatDatasource
 extension Coordinator: ChatLayoutDelegate {
 
-    func add(msg: Msg) async {
-        await datasource.add(msg: msg)
-        await updateUI()
-        await layout.scrollToBottom(animated: true)
+    var showScrollButton: Bool { datasource.hasMoreNext }
+    var shouldScrollToButtonForNewMsg: Bool {
+        datasource.hasMoreNext == false && layout.shouldScrollToBottom
     }
     
-    func delete(msg: Msg) async {
-        datasource.delete(msg: msg)
+    func add(msg: Msg) {
+        DispatchQueue.main.async {
+            self.datasource.add(msg: msg)
+            self.updateUI()
+            if self.shouldScrollToButtonForNewMsg {
+                self.layout.scrollToBottom(animated: true)
+            }
+        }
     }
+    
+    
     
     func msgStyle(for msg: Msg, at index: Int) -> MsgStyle {
         datasource.msgStyle(for: msg, at: index, selectedId: selectedId)
@@ -50,21 +57,19 @@ extension Coordinator: ChatLayoutDelegate {
         datasource.msgs
     }
 
-    var hasMorePrevious: Bool {
-        datasource.hasMorePrevious
-    }
-    
+    @MainActor
     func loadNext() async {
         if datasource.hasMoreNext, let scrollId = msgs.last?.id {
             await datasource.loadNext()
-            await scrollTo(item: .init(id: scrollId, anchor: .bottom))
+            scrollTo(item: .init(id: scrollId, anchor: .bottom))
+            
         }
     }
-    
+    @MainActor
     func loadPrevious() async {
         if datasource.hasMorePrevious, let scrollId = msgs.first?.id {
             await datasource.loadPrevious()
-            await scrollTo(item: .init(id: scrollId, anchor: .top))
+            scrollTo(item: .init(id: scrollId, anchor: .top))
         }
     }
     

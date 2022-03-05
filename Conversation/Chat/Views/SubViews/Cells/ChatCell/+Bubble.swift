@@ -10,20 +10,22 @@ import SwiftUI
 extension ChatCell {
     
     internal func bubbleView() -> some View {
+        
+        let bubbleColor = msg.rType == .Send ? .accentColor : ChatKit.textBubbleColorIncoming
+        let textColor = msg.rType == .Send ? ChatKit.textTextColorOutgoing : nil
+        let textData = msg.textData ?? .init(text: "no text")
+        
         func bubble() -> some View {
             Group {
                 switch msg.msgType {
                 case .Text:
-                    TextBubble(data: msg.textData ?? .init(text: "no text"))
-                        .foregroundColor(msg.rType == .Send ? ChatKit.textTextColorOutgoing : ChatKit.textTextColorIncoming)
-                        .background(style.bubbleShape!.fill(msg.rType == .Send ? .accentColor : ChatKit.textBubbleColorIncoming))
+                    TextBubble(data: textData)
+                        .foregroundColor(textColor)
+                        .background(style.bubbleShape!.fill(bubbleColor))
                 case .Image:
                     ImageBubble()
                 case .Location:
-                    if let data = msg.locationData {
-                        LocationBubble()
-                            .frame(size: data.imageSize)
-                    }
+                    LocationBubble()
                 case .Emoji:
                     if let data = msg.emojiData {
                         EmojiBubble(data: data)
@@ -41,6 +43,7 @@ extension ChatCell {
                     coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
                 }
             }
+            
         }
         
         return Group {
@@ -51,7 +54,6 @@ extension ChatCell {
                 bubble()
             }
         }
-        
     }
 }
 

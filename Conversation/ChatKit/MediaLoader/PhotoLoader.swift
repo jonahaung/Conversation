@@ -9,7 +9,7 @@ import UIKit
 
 class PhotoLoader {
     
-    class func start(_ msg: Msg) {
+    @MainActor class func start(_ msg: Msg) {
 
         if let path = Media.path(photoId: msg.id) {
             showMedia(msg, path: path)
@@ -39,7 +39,7 @@ class PhotoLoader {
         Task {
             do {
                 let path = try await MediaDownload.photo(msg.id)
-                showMedia(msg, path: path)
+                await showMedia(msg, path: path)
             }catch {
                 print(error)
             }
@@ -47,8 +47,9 @@ class PhotoLoader {
     }
 
     //-------------------------------------------------------------------------------------------------------------------------------------------
-    private class func showMedia(_ msg: Msg, path: String) {
+    @MainActor private class func showMedia(_ msg: Msg, path: String) {
         msg.imageData?.image = UIImage(path: path)
         msg.mediaStatus = MediaStatus.Succeed
+        msg.updateUI()
     }
 }

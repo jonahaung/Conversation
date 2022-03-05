@@ -7,27 +7,27 @@
 
 import SwiftUI
 
+
 class ChatInputViewManager: ObservableObject {
     
+    @MainActor
     var text = String() {
         willSet {
-            guard text.isEmpty || newValue.isEmpty else { return }
+            guard newValue != text && (newValue.isEmpty || text.isEmpty) else { return }
             objectWillChange.send()
         }
     }
+    
+    @MainActor
     var hasText: Bool { !text.isEmpty }
     
     @Published var textViewHeight = CGFloat.zero
+    
+    
     @Published var isTyping = false
+    
     @Published var currentInputItem = InputMenuBar.Item.Text
-    
-    @MainActor func setTyping(typing: Bool) {
-        self.isTyping = typing
-        if typing {
-            ToneManager.shared.playSound(tone: .Typing)
-        }
-    }
-    
+
     deinit {
         Log("")
     }

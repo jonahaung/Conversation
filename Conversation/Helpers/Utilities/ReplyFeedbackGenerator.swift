@@ -24,7 +24,3 @@ public struct ReplyFeedbackGenerator: ReplyFeedbackGeneratorProtocol {
         self.impactFeedbackGenerator.impactOccurred(intensity: 0.8)
     }
 }
-
-func generateFeedback() {
-    ReplyFeedbackGenerator.shared.generateFeedback()
-}

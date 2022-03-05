@@ -12,11 +12,12 @@ protocol LocationMsgSendable: MsgSendable {
     func sendLocation(coordinate: CLLocationCoordinate2D) async
 }
 
-extension TextMsgSendable {
+extension LocationMsgSendable {
     func sendLocation(coordinate: CLLocationCoordinate2D) async {
-        let msg = Msg(conId: coordinator.con.id, locationData: .init(latitude: coordinate.latitude, longitude: coordinate.longitude), rType: .Send, progress: .Sending)
-        await coordinator.add(msg: msg)
-        outgoingSocket.add(msg: msg)
-        await resetView()
+        let msg = Msg(conId: coordinator.con.id, msgType: .Location, rType: .Send, progress: .Sending)
+        msg.locationData = .init(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        resetView()
+        addToChatView(msg: msg)
+        send(msg: msg)
     }
 }

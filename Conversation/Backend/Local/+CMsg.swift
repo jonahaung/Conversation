@@ -20,8 +20,8 @@ extension CMsg {
         cMsg.progress = Int16(msg.progress.rawValue)
         cMsg.date = msg.date
         cMsg.data = msg.textData?.text ?? msg.attachmentData?.urlString ?? msg.emojiData?.emojiID
-        cMsg.lat = msg.locationData?.longitude ?? 0
-        cMsg.long = msg.locationData?.latitude ?? 0
+        cMsg.lat = msg.locationData?.latitude ?? 0
+        cMsg.long = msg.locationData?.longitude ?? 0
         cMsg.senderID = msg.sender.id
         cMsg.senderName = msg.sender.name
         cMsg.senderURL = msg.sender.photoURL
@@ -74,7 +74,6 @@ extension CMsg {
     }
     class func msgs(for conId: String) -> [CMsg] {
         let context = Persistence.shared.context
-        
         let request: NSFetchRequest<CMsg> = CMsg.fetchRequest()
         request.predicate = NSPredicate(format: "conId == %@", conId)
         request.fetchBatchSize = 100

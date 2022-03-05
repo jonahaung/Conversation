@@ -18,6 +18,7 @@ enum ChatKit {
     static let textBubbleColorIncoming = Color(uiColor: .secondarySystemGroupedBackground)
     static let textBubbleColorIncomingPlain = Color(uiColor: .systemGray6)
     static let cellLeftRightViewWidth = 15.00
+    static let locationBubbleSize = CGSize(width: 280, height: 200)
     
     static let mediaMaxWidth = CGFloat(250)
     static let textTextColorOutgoing = Color(uiColor: UIColor.systemBackground)

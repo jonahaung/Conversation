@@ -18,11 +18,18 @@ final class MsgSenderOperation: Operation {
     override func main() {
         if isCancelled { return }
         guard msg.progress == .Sending else { return }
-        if isCancelled { return }
+        
         Thread.sleep(forTimeInterval: 2)
+        if isCancelled { return }
         Task {
             await msg.applyAction(action: .MsgProgress(value: .Sent))
-            await ToneManager.shared.playSound(tone: .sendMessage)
+            Audio.playMessageOutgoing()
+            Thread.sleep(forTimeInterval: 2)
+            if isCancelled { return }
+            await IncomingSocket.shard.generateRandomMsg()
+            Thread.sleep(forTimeInterval: 2)
+            if isCancelled { return }
+            await IncomingSocket.shard.sendHasRead(id: msg.id)
         }
     }
 }

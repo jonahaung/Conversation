@@ -19,7 +19,6 @@ struct ConversationApp: App {
                 InBoxView()
             }
             .navigationViewStyle(.stack)
-            .environmentObject(IncomingSocket.shard)
         }
     }
 }

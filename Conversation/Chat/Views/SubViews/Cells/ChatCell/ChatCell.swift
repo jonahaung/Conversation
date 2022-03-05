@@ -13,6 +13,39 @@ struct ChatCell: View {
     let style: MsgStyle
     @EnvironmentObject internal var coordinator: Coordinator
     
+    fileprivate func leftView() -> some View {
+        Group {
+            if msg.rType == .Send {
+                Spacer(minLength: ChatKit.cellAlignmentSpacing)
+            } else {
+                VStack {
+                    if style.showAvatar && coordinator.con.showAvatar {
+                        AvatarView()
+                    }
+                }
+                .frame(width: ChatKit.cellLeftRightViewWidth)
+            }
+        }
+    }
+    
+    fileprivate func rightView() -> some View {
+        Group {
+            if msg.rType == .Send {
+                Group {
+                    if coordinator.con.lastReadMsgId == msg.id {
+                        AvatarView()
+                    }else {
+                        CellProgressView(progress: msg.progress)
+                    }
+                }
+                .frame(width: ChatKit.cellLeftRightViewWidth)
+            } else {
+                Spacer(minLength: ChatKit.cellAlignmentSpacing)
+            }
+        }
+        
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             if style.showTimeSeparater {
@@ -25,16 +58,7 @@ struct ChatCell: View {
             
             HStack(alignment: .bottom, spacing: 2) {
                 
-                if msg.rType == .Send {
-                    Spacer(minLength: ChatKit.cellAlignmentSpacing)
-                } else {
-                    VStack {
-                        if style.showAvatar {
-                            AvatarView()
-                        }
-                    }
-                    .frame(width: ChatKit.cellLeftRightViewWidth)
-                }
+                leftView()
                 
                 VStack(alignment: msg.rType.hAlignment, spacing: 2) {
                     
@@ -50,11 +74,7 @@ struct ChatCell: View {
                     }
                 }
                 
-                if msg.rType == .Send {
-                    CellProgressView(progress: msg.progress)
-                } else {
-                    Spacer(minLength: ChatKit.cellAlignmentSpacing)
-                }
+                rightView()
             }
         }
         .padding(.horizontal, ChatKit.cellHorizontalPadding)

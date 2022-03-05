@@ -14,11 +14,13 @@ extension Msg {
         case .MsgProgress(let value):
             self.progress = value
             if updateStore() {
-                objectWillChange.send()
+                updateUI()
             }
         }
     }
-    
+    @MainActor func updateUI() {
+        objectWillChange.send()
+    }
     func updateStore() -> Bool {
         guard let cMsg = CMsg.msg(for: id) else {
             return false
