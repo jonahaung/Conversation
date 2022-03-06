@@ -17,7 +17,7 @@ extension CMsg {
         cMsg.conId = msg.conId
         cMsg.rType = Int16(msg.rType.rawValue)
         cMsg.msgType = Int16(msg.msgType.rawValue)
-        cMsg.progress = Int16(msg.progress.rawValue)
+        cMsg.progress = Int16(msg.deliveryStatus.rawValue)
         cMsg.date = msg.date
         cMsg.data = msg.textData?.text ?? msg.attachmentData?.urlString ?? msg.emojiData?.emojiID
         cMsg.lat = msg.locationData?.latitude ?? 0
@@ -43,10 +43,11 @@ extension CMsg {
         }
     }
     
-    class func delete(id: String) {
+    class func delete(id: String) -> Bool {
         let context = Persistence.shared.context
-        guard let cMsg = self.msg(for: id) else { return }
+        guard let cMsg = self.msg(for: id) else { return false }
         context.delete(cMsg)
+        return true
     }
     
     class func count(for conId: String) -> Int {

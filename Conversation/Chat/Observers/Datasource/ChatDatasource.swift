@@ -6,27 +6,24 @@
 //
 
 import Foundation
-import SwiftUI
 
-
-import CoreData
-
-class ChatDatasource: NSObject, MsgStyleFactory {
+class ChatDatasource {
     
     internal var cachedMsgStyles = [String: MsgStyle]()
     
     private var slidingWindow: SlidingDataSource<Msg>
     
-    private let pageSize = AppUserDefault.shared.pagnitionSize
-    private var preferredMaxWindowSize: Int { pageSize * 3 }
+    private let pageSize: Int
+    private var preferredMaxWindowSize: Int
     
     var msgs: [Msg] {
-        return self.slidingWindow.itemsInWindow
+        slidingWindow.itemsInWindow
     }
-  
     
     init(conId: String) {
         let items = CMsg.msgs(for: conId)
+        pageSize = AppUserDefault.shared.pagnitionSize
+        preferredMaxWindowSize = pageSize * 3
         slidingWindow = SlidingDataSource(items: items.map(Msg.init), pageSize: pageSize)
     }
     
@@ -37,46 +34,43 @@ class ChatDatasource: NSObject, MsgStyleFactory {
     var hasMorePrevious: Bool {
         return self.slidingWindow.hasPrevious()
     }
-
+    
+    @MainActor
     func add(msg: Msg) {
         slidingWindow.insertItem(msg, position: .bottom)
     }
     
-    func delete(msg: Msg) {
-        CMsg.delete(id: msg.id)
-        slidingWindow.remove(msg: msg)
-    }
-    
-    @MainActor func update(id: String) {
-        if let msg = slidingWindow.item(for: id) {
-            if msg.update() {
-                msg.updateUI()
-                ToneManager.shared.playSound(tone: .Tock)
-            }
+    @MainActor
+    func remove(msg: Msg) {
+        if CMsg.delete(id: msg.id) {
+            slidingWindow.remove(where: { $0.id == msg.id })
         }
-        
     }
     
-    func loadNext() async {
+    @MainActor
+    func msg(for id: String) -> Msg? {
+        slidingWindow.item(for: id)
+    }
+    
+    @MainActor
+    func update(id: String) {
+        if let msg = slidingWindow.item(for: id), msg.update() {
+            msg.updateUI()
+        }
+    }
+    
+    @MainActor
+    func loadNext() {
         self.slidingWindow.loadNext()
         self.slidingWindow.adjustWindow(focusPosition: 1, maxWindowSize: self.preferredMaxWindowSize)
     }
-    
-    func loadPrevious() async {
+    @MainActor
+    func loadPrevious() {
         self.slidingWindow.loadPrevious()
         self.slidingWindow.adjustWindow(focusPosition: 0, maxWindowSize: self.preferredMaxWindowSize)
     }
-    func resetToBottom() async {
-        await withTaskGroup(of: Void.self) { group in
-            while hasMoreNext {
-                group.addTask {
-                    await self.loadNext()
-                }
-                
-            }
-        }
-    }
     
+    @MainActor
     func adjustNumberOfMessages(preferredMaxCount: Int?, focusPosition: Double) async -> Bool {
         return self.slidingWindow.adjustWindow(focusPosition: focusPosition, maxWindowSize: preferredMaxCount ?? self.preferredMaxWindowSize)
     }

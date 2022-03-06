@@ -92,7 +92,7 @@ extension MediaQueue {
             mediaQueue.update(isFailed: false)
         }
         if let cMsg = CMsg.msg(for: id) {
-            cMsg.progress = Msg.MsgProgress.SendingFailed.rawValue
+            cMsg.progress = Msg.DeliveryStatus.SendingFailed.rawValue
         }
     }
 }

@@ -37,7 +37,7 @@ struct InBoxCell: View {
                             Text(dateText + " ")
                                 .font(.footnote)
                             +
-                            Text(msg.progress.description)
+                            Text(msg.deliveryStatus.description)
                                 .font(.caption)
                                 .underline()
                         }
@@ -74,6 +74,6 @@ struct InBoxCell: View {
         if msg.rType == .Send {
             return .secondary
         }
-        return (msg.progress == .Read ? .secondary : .primary)
+        return (msg.deliveryStatus == .Read ? .secondary : .primary)
     }
 }

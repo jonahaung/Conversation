@@ -11,7 +11,7 @@ class CurrentUser: ObservableObject {
     
     static let shared = CurrentUser()
     
-    var user = MsgSender.init(id: "1", name: "Aung Ko Min", photoURL: "")
+    var user = Msg.Sender.init(id: "1", name: "Aung Ko Min", photoURL: "")
     
     var activeDate = Date()
     

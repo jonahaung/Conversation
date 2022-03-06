@@ -8,7 +8,6 @@
 import Foundation
 
 struct MsgStyle {
-
     var bubbleShape: BubbleShape?
     var showAvatar: Bool
     var showTimeSeparater: Bool

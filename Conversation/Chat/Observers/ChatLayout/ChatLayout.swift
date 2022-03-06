@@ -9,9 +9,9 @@ import SwiftUI
 import UIKit
 
 protocol ChatLayoutDelegate: AnyObject {
-    var con: Con { get }
-    func loadNext() async
-    func loadPrevious() async
+    
+    @MainActor func loadNext()
+    @MainActor func loadPrevious()
 }
 
 
@@ -20,27 +20,26 @@ class ChatLayout: NSObject {
     private weak var scrollView: UIScrollView?
     weak var delegate: ChatLayoutDelegate?
     
-    var inputBarRect: CGRect = .zero {
+    var isFirstResponder = false
+    
+    var topBarRect: CGRect = .zero
+    var bottomBarRect: CGRect = .zero {
         willSet {
             if canUpdateFixedHeight && fixedHeight == nil {
-                fixedHeight = newValue.height.rounded() + 3
+                fixedHeight = newValue.height
             } else {
-                adjustContentOffset(newValue: newValue, oldValue: inputBarRect)
+                adjustContentOffset(newValue: newValue, oldValue: bottomBarRect)
             }
         }
     }
-    var navBarRect: CGRect = .zero
     var canUpdateFixedHeight = false
     var fixedHeight: CGFloat?
-    private var isReloading = false
     
     func connect(scrollView: UIScrollView) -> Bool {
         if self.scrollView == nil {
             scrollView.keyboardDismissMode = .none
-            scrollView.contentInsetAdjustmentBehavior = .never
-            scrollView.isPagingEnabled = delegate?.con.isPagingEnabled == true
             scrollView.canCancelContentTouches = true
-            scrollView.delaysContentTouches = false
+            scrollView.contentInsetAdjustmentBehavior = .never
             scrollView.delegate = self
             self.scrollView = scrollView
             return true
@@ -57,16 +56,19 @@ class ChatLayout: NSObject {
 
 extension ChatLayout: UIScrollViewDelegate {
     
-    var shouldScrollToBottom: Bool { scrollView?.isCloseToBottom() == true }
+    var shouldScrollToBottom: Bool {
+        guard let scrollView = scrollView else { return false }
+        return scrollView.isCloseToBottom()
+    }
     
+
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        UIApplication.shared.endEditing()
-        autoLoadMoreIfNeeded(scrollView)
+        if isFirstResponder {
+            UIApplication.shared.endEditing()
+        }
+        autoLoadMoreIfNeeded(scrollView: scrollView)
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        autoLoadMoreIfNeeded(scrollView)
-    }
     @MainActor
     func scrollToBottom(animated: Bool) {
         scrollView?.scrollToBottom(animated: animated)
@@ -78,21 +80,12 @@ extension ChatLayout: UIScrollViewDelegate {
 
 extension ChatLayout {
     
-    private func autoLoadMoreIfNeeded(_ scrollView: UIScrollView) {
-        guard !isReloading else { return }
-        guard let delegate = delegate else { return }
-        if scrollView.contentOffset.y <= navBarRect.height {
-            Task {
-                isReloading = true
-                await delegate.loadPrevious()
-                isReloading = false
-            }
-        } else if scrollView.contentSize.height + 30 <= scrollView.contentOffset.y + scrollView.frame.size.height{
-            Task {
-                isReloading = true
-                await delegate.loadNext()
-                isReloading = false
-            }
+    @MainActor private func autoLoadMoreIfNeeded(scrollView: UIScrollView) {
+        guard let delegate = self.delegate else { return }
+        if scrollView.contentOffset.y <= 0 {
+            delegate.loadPrevious()
+        } else if scrollView.isDragging, scrollView.contentSize.height <= scrollView.contentOffset.y + scrollView.frame.size.height {
+            delegate.loadNext()
         }
     }
 }
@@ -126,7 +119,6 @@ extension ChatLayout {
     
     func adjustContentOffset(inputViewSizeDidChange difference: CGFloat) {
         if let scrollView = self.scrollView {
-            scrollView.stop()
             var offset = scrollView.contentOffset
             offset.y += difference
             scrollView.contentOffset = offset

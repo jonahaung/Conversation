@@ -17,7 +17,7 @@ final class MsgSenderOperation: Operation {
     
     override func main() {
         if isCancelled { return }
-        guard msg.progress == .Sending else { return }
+        guard msg.deliveryStatus == .Sending else { return }
         
         Thread.sleep(forTimeInterval: 2)
         if isCancelled { return }

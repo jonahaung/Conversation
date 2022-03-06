@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-    public func saveBounds(viewId: AnyHashable, coordinateSpace: CoordinateSpace = .local) -> some View {
+    public func saveBounds(viewId: AnyHashable, coordinateSpace: CoordinateSpace = .global) -> some View {
         background(GeometryReader { proxy in
             Color.clear.preference(key: SaveBoundsPrefKey.self, value: [SaveBoundsPrefData(viewId: viewId, bounds: proxy.frame(in: coordinateSpace))])
         })
@@ -16,9 +16,11 @@ extension View {
     
     public func retrieveBounds(viewId: AnyHashable, _ rect: Binding<CGRect>) -> some View {
         onPreferenceChange(SaveBoundsPrefKey.self) { preferences in
-            let p = preferences.first(where: { $0.viewId == viewId })
-            if let p = p {
-                rect.wrappedValue = p.bounds
+            DispatchQueue.main.async {
+                let p = preferences.first(where: { $0.viewId == viewId })
+                if let p = p {
+                    rect.wrappedValue = p.bounds
+                }
             }
         }
     }

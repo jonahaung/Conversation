@@ -50,7 +50,7 @@ import UIKit
 
         if let cCon = CCon.cCon(for: conId), let cMsg = CMsg.msg(for: id) {
             cCon.lastReadMsgId = id
-            cMsg.progress = Msg.MsgProgress.Read.rawValue
+            cMsg.progress = Msg.DeliveryStatus.Read.rawValue
             sendUpdate(id: id)
         }
     }

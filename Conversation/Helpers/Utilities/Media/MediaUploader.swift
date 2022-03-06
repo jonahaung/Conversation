@@ -57,13 +57,13 @@ extension MediaUploader {
             uploading = true
             do {
                 try await upload(msg)
-                cMsg.progress = Msg.MsgProgress.Sent.rawValue
+                cMsg.progress = Msg.DeliveryStatus.Sent.rawValue
                 msgQueue.update(isQueued: false)
                 print("uploaded")
                 uploading = false
             }catch {
                 print(error)
-                cMsg.progress = Msg.MsgProgress.SendingFailed.rawValue
+                cMsg.progress = Msg.DeliveryStatus.SendingFailed.rawValue
                 msgQueue.update(isFailed: true)
                 uploading = false
             }

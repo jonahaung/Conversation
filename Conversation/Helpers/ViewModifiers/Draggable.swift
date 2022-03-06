@@ -25,7 +25,7 @@ struct DraggableModifier : ViewModifier {
                    height: direction == .horizontal ? 0 : draggedOffset.height)
         )
         .gesture(
-            DragGesture()
+            DragGesture(minimumDistance: 10, coordinateSpace: .local)
             .onChanged { value in
                 if draggedOffset == .zero {
                     ToneManager.shared.vibrate(vibration: .medium)

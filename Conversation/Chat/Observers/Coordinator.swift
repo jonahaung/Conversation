@@ -15,28 +15,24 @@ class Coordinator: ObservableObject {
     @Published var selectedId: String?
     
 
-    let datasource: ChatDatasource
+    var datasource: ChatDatasource!
     var layout = ChatLayout()
    
     init(con: Con) {
         self.con = con
         datasource = .init(conId: con.id)
     }
-    
-    
+
     deinit {
         Log("Deinit")
-        
     }
 }
 // ChatDatasource
 extension Coordinator: ChatLayoutDelegate {
 
-    var showScrollButton: Bool { datasource.hasMoreNext }
-    var shouldScrollToButtonForNewMsg: Bool {
-        datasource.hasMoreNext == false && layout.shouldScrollToBottom
-    }
-    
+    var showScrollButton: Bool { datasource.hasMoreNext || !layout.shouldScrollToBottom }
+    var shouldScrollToButtonForNewMsg: Bool { datasource.hasMoreNext == false && layout.shouldScrollToBottom }
+
     func add(msg: Msg) {
         DispatchQueue.main.async {
             self.datasource.add(msg: msg)
@@ -47,37 +43,28 @@ extension Coordinator: ChatLayoutDelegate {
         }
     }
     
-    
-    
-    func msgStyle(for msg: Msg, at index: Int) -> MsgStyle {
-        datasource.msgStyle(for: msg, at: index, selectedId: selectedId)
-    }
-    
-    var msgs: [Msg] {
-        datasource.msgs
-    }
-
     @MainActor
-    func loadNext() async {
-        if datasource.hasMoreNext, let scrollId = msgs.last?.id {
-            await datasource.loadNext()
+    func loadNext() {
+        if datasource.hasMoreNext, let scrollId = datasource.msgs.last?.id {
+            datasource.loadNext()
+            updateUI()
             scrollTo(item: .init(id: scrollId, anchor: .bottom))
             
         }
     }
+    
     @MainActor
-    func loadPrevious() async {
-        if datasource.hasMorePrevious, let scrollId = msgs.first?.id {
-            await datasource.loadPrevious()
+    func loadPrevious() {
+        if datasource.hasMorePrevious, let scrollId = datasource.msgs.first?.id {
+            datasource.loadPrevious()
+            updateUI()
             scrollTo(item: .init(id: scrollId, anchor: .top))
         }
     }
     
-    func resetToBottom() {
-        Task {
-            await datasource.resetToBottom()
-            await scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
-        }
+    @MainActor func resetToBottom() {
+        datasource = ChatDatasource(conId: con.id)
+        scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
     }
 }
 // ChatLayout
@@ -100,6 +87,24 @@ extension Coordinator {
         if layout.delegate == nil {
             scrollTo(item: .init(id: 0, anchor: .bottom))
             layout.delegate = self
+            con.task()
+        }
+    }
+}
+
+
+extension Coordinator: MsgStyleFactory {
+    
+    var msgs: [Msg] {
+        datasource.msgs
+    }
+    
+    var cachedMsgStyles: [String : MsgStyle] {
+        get {
+            datasource.cachedMsgStyles
+        }
+        set {
+            datasource.cachedMsgStyles = newValue
         }
     }
 }

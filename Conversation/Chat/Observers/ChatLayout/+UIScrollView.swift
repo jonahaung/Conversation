@@ -11,12 +11,12 @@ extension UIScrollView {
     
     func isCloseToBottom() -> Bool {
         guard self.contentSize.height > 0 else { return true }
-        return (self.visibleRect().maxY / self.contentSize.height) > (1 - 0.001)
+        return (self.visibleRect().maxY / self.contentSize.height) > (1 - 0.01)
     }
     
     func isCloseToTop() -> Bool {
         guard self.contentSize.height > 0 else { return true }
-        return (self.visibleRect().minY / self.contentSize.height) < 0.001
+        return (self.visibleRect().minY / self.contentSize.height) < 0.01
     }
     
     func isScrolledAtBottom() -> Bool {

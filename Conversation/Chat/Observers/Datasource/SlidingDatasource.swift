@@ -17,7 +17,7 @@ public class SlidingDataSource<Element: Equatable & Identifiable> {
     private var windowOffset: Int
     private var windowCount: Int
     private var itemGenerator: (() -> Element)?
-    private var items = [Element]()
+    var items = [Element]()
     private var itemsOffset: Int
     
     public var itemsInWindow: [Element] {
@@ -48,10 +48,13 @@ public class SlidingDataSource<Element: Equatable & Identifiable> {
             self.insertItem(itemGenerator(), position: position)
         }
     }
+    
+
     func item(for id: AnyHashable) -> Element? {
         return self.items.filter{ $0.id as AnyHashable == id }.first
     }
-    public func insertItem(_ item: Element, position: InsertPosition) {
+    
+    func insertItem(_ item: Element, position: InsertPosition) {
         if position == .top {
             self.items.insert(item, at: 0)
             let shouldExpandWindow = self.itemsOffset == self.windowOffset
@@ -69,24 +72,17 @@ public class SlidingDataSource<Element: Equatable & Identifiable> {
         }
     }
     
-    public func remove(msg: Element) {
-        guard let index = self.items.firstIndex(of: msg) else { return }
-        let shouldShrinkWindow = self.itemsOffset + self.items.count == self.windowOffset + self.windowCount
-        if shouldShrinkWindow {
-            self.windowCount -= 1
-        }
-        self.items.remove(at: index)
-    }
     
-    public func hasPrevious() -> Bool {
+    
+    func hasPrevious() -> Bool {
         return self.windowOffset > 0
     }
     
-    public func hasMore() -> Bool {
+    func hasMore() -> Bool {
         return self.windowOffset + self.windowCount < self.itemsOffset + self.items.count
     }
     
-    public func loadPrevious() {
+    func loadPrevious() {
         let previousWindowOffset = self.windowOffset
         let previousWindowCount = self.windowCount
         let nextWindowOffset = max(0, self.windowOffset - self.pageSize)
@@ -99,7 +95,7 @@ public class SlidingDataSource<Element: Equatable & Identifiable> {
         self.windowCount = previousWindowCount + newItemsCount
     }
     
-    public func loadNext() {
+    func loadNext() {
         guard self.items.count > 0 else { return }
         let itemCountAfterWindow = self.itemsOffset + self.items.count - self.windowOffset - self.windowCount
         self.windowCount += min(self.pageSize, itemCountAfterWindow)
@@ -126,7 +122,16 @@ public class SlidingDataSource<Element: Equatable & Identifiable> {
         self.items[index] = item
         return true
     }
-    
+    @discardableResult
+    func remove(where predicate: (Element) -> Bool) -> Bool {
+        guard let index = self.items.firstIndex(where: predicate) else { return false }
+        let shouldShrinkWindow = self.itemsOffset + self.items.count == self.windowOffset + self.windowCount
+        if shouldShrinkWindow {
+            self.windowCount -= 1
+        }
+        self.items.remove(at: index)
+        return true
+    }
     deinit {
         Log("")
     }
