@@ -9,7 +9,7 @@ import Foundation
 
 class ChatDatasource {
     
-    internal var cachedMsgStyles = [String: MsgStyle]()
+    
     
     private var slidingWindow: SlidingDataSource<Msg>
     

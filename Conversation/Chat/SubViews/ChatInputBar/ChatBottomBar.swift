@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatInputView: View, TextMsgSendable, EmojiMsgSendable, LocationMsgSendable, PhotoMsgSendable {
+struct ChatBottomBar: View, LocationMsgSendable, PhotoMsgSendable {
     
     static let id = 1
 
@@ -20,7 +20,7 @@ struct ChatInputView: View, TextMsgSendable, EmojiMsgSendable, LocationMsgSendab
             VStack(spacing: 0) {
                 pickerView()
             }
-            .saveBounds(viewId: ChatInputView.id, coordinateSpace: .named("ChatView"))
+            .saveBounds(viewId: ChatBottomBar.id, coordinateSpace: .named("ChatView"))
             .background(.regularMaterial)
         }
     }
@@ -68,7 +68,7 @@ struct ChatInputView: View, TextMsgSendable, EmojiMsgSendable, LocationMsgSendab
                         .frame(width: 35, height: 35)
                         .padding()
                 }
-                .accentColor(Color(uiColor: .systemBackground))
+                .accentColor(Color(uiColor: .opaqueSeparator))
                 .transition(.scale)
             }
         }

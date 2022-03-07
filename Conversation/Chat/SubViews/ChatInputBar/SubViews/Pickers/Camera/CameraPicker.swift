@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CameraPicker: View {
     
-    let onSendPhoto: (UIImage) async -> Void
+    let onSendPhoto: (UIImage) -> Void
     @EnvironmentObject private var inputManager: ChatInputViewManager
     @State private var pickedImage: UIImage?
     
@@ -32,7 +32,7 @@ struct CameraPicker: View {
                 return
             }
 
-            await onSendPhoto(pickedImage)
+            onSendPhoto(pickedImage)
             self.pickedImage = nil
         }
     }

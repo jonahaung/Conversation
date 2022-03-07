@@ -8,7 +8,7 @@
 import UIKit
 
 
-@Socket class IncomingSocket {
+class IncomingSocket {
     
     static let shard = IncomingSocket()
     
@@ -33,6 +33,11 @@ import UIKit
         Log("Disconnected")
     }
     
+    func random() {
+        queue.addOperation {
+            self.generateRandomMsg()
+        }
+    }
     func generateRandomMsg() {
         guard let conId = conId else { return }
         guard AppUserDefault.shared.autoGenerateMockMessages else { return }
@@ -43,6 +48,7 @@ import UIKit
         let msg = createRandomMsg(conId: conId)
         showMsg(msg: msg)
     }
+    
     func sendHasRead(id: String) {
         guard let conId = conId else {
             return

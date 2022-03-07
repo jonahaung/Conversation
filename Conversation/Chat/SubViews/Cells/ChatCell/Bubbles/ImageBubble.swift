@@ -11,7 +11,7 @@ import SwiftUI
 struct ImageBubble: View {
     
     @EnvironmentObject internal var msg: Msg
-  
+    
     var body: some View {
         Group {
             if let image = msg.imageData?.image {
@@ -29,6 +29,6 @@ struct ImageBubble: View {
                 }
             }
         }
-        .frame(maxWidth: ChatKit.mediaMaxWidth, maxHeight: ChatKit.mediaMaxWidth * 1/msg.imageRatio)
+        .frame(width: ChatKit.mediaMaxWidth, height: ChatKit.mediaMaxWidth * 1/msg.imageRatio)
     }
 }

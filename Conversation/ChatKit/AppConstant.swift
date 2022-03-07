@@ -74,24 +74,3 @@ enum AudioStatus {
     static let Playing    = 2
     static let Paused    = 3
 }
-
-enum ShapeType: Shape {
-    
-    case circle
-    case ellipse
-    case capsule
-    case rounded
-    case rectangle
-    case MsgBubble(corners: UIRectCorner)
-    
-    func path(in rect: CGRect) -> Path {
-        switch self {
-            case .circle: return Circle().path(in: rect)
-            case .ellipse: return Ellipse().path(in: rect)
-            case .capsule: return Capsule().path(in: rect)
-            case .rounded: return RoundedRectangle(cornerRadius: 25.0).path(in: rect)
-            case .rectangle: return Rectangle().path(in: rect)
-            case .MsgBubble(let corners): return BubbleShape(corners: corners).path(in: rect)
-        }
-    }
-}

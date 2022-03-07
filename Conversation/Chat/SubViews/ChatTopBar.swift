@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatNavBar: View {
+struct ChatTopBar: View {
     static let id = 2
     @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var coordinator: Coordinator
@@ -15,6 +15,7 @@ struct ChatNavBar: View {
     var body: some View {
         HStack {
             Button {
+                coordinator.con.task()
                 presentationMode.wrappedValue.dismiss()
             } label: {
                 Image(systemName: "chevron.backward")
@@ -22,7 +23,7 @@ struct ChatNavBar: View {
                     .padding()
             }
             HStack {
-                AvatarView()
+                AvatarView(id: coordinator.con.id)
                     .frame(width: 35, height: 35)
                     .padding(2)
                     .background(Color.teal)
@@ -37,12 +38,20 @@ struct ChatNavBar: View {
             }
             
             Spacer()
-            
+            Button {
+                randonMsgs()
+            } label: {
+                Image(systemName: "circle.fill")
+            }
             Image(systemName: "ellipsis")
                 .padding()
                 .tapToPush(ConSettingsView().environmentObject(coordinator))
         }
         .background(.regularMaterial)
-        .saveBounds(viewId: ChatNavBar.id, coordinateSpace: .named("ChatView"))
+        .saveBounds(viewId: ChatTopBar.id, coordinateSpace: .named("ChatView"))
+    }
+    
+    private func randonMsgs() {
+        IncomingSocket.shard.random()
     }
 }

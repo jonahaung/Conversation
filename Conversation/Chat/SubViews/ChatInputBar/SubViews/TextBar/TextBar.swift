@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TextBar: View, MsgSendable, TextMsgSendable, EmojiMsgSendable {
+struct TextBar: View, TextMsgSendable, EmojiMsgSendable {
     
     @EnvironmentObject internal var inputManager: ChatInputViewManager
     @EnvironmentObject internal var coordinator: Coordinator

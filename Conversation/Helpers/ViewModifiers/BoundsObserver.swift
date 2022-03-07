@@ -33,6 +33,8 @@ extension View {
                         Color.clear.preference(key: SaveSizePrefKey.self, value: [SaveSizePrefData(viewId: viewId, size: proxy.size)])
                     }
                 )
+            } else {
+                self
             }
         }
     }
@@ -49,6 +51,8 @@ extension View {
                         rect.wrappedValue = p?.size
                     }
                 }
+            } else {
+                self
             }
         }
     }

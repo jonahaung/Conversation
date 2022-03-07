@@ -32,6 +32,8 @@ struct ConSettingsView: View {
             }
             
             Stepper("Cell Spacing  \(Int(coordinator.con.cellSpacing))", value: $coordinator.con.cellSpacing, in: 0...10)
+            Stepper("Bubble Cornor Radius  \(Int(coordinator.con.bubbleCornorRadius))", value: $coordinator.con.bubbleCornorRadius, in: 0...30)
+            
             Picker(selection: $coordinator.con.bgImage) {
                 ForEach(Con.BgImage.allCases, id: \.self) { bgImage in
                     bgImage.image

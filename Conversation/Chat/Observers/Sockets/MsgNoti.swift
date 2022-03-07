@@ -12,7 +12,7 @@ enum MsgNotiType {
     case Typing(isTyping: Bool)
     case Update(id: String)
 }
-@MainActor
+
 struct MsgNoti {
     let type: MsgNotiType
 }

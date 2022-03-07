@@ -27,14 +27,21 @@ class ChatLayout: NSObject {
         willSet {
             if canUpdateFixedHeight && fixedHeight == nil {
                 fixedHeight = newValue.height
-            } else {
-                adjustContentOffset(newValue: newValue, oldValue: bottomBarRect)
+            } else if newValue.height != bottomBarRect.height && isFirstResponder {
+                let heightDifference = newValue.height - bottomBarRect.height
+                if heightDifference > 0, let scrollView = self.scrollView {
+                    var offset = scrollView.contentOffset
+                    offset.y += heightDifference
+                    scrollView.contentOffset = offset
+                }
             }
         }
     }
     var canUpdateFixedHeight = false
     var fixedHeight: CGFloat?
+    var contentInsets = UIEdgeInsets.zero
     
+    @discardableResult
     func connect(scrollView: UIScrollView) -> Bool {
         if self.scrollView == nil {
             scrollView.keyboardDismissMode = .none
@@ -42,6 +49,7 @@ class ChatLayout: NSObject {
             scrollView.contentInsetAdjustmentBehavior = .never
             scrollView.delegate = self
             self.scrollView = scrollView
+            contentInsets = scrollView.contentInset
             return true
         }
         return false
@@ -69,6 +77,16 @@ extension ChatLayout: UIScrollViewDelegate {
         autoLoadMoreIfNeeded(scrollView: scrollView)
     }
     
+    func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
+        let difference = scrollView.adjustedContentInset.bottom - contentInsets.bottom
+        if difference > 0 {
+            var offset = scrollView.contentOffset
+            offset.y += difference
+            scrollView.setContentOffset(offset, animated: true)
+        }
+        self.contentInsets = scrollView.adjustedContentInset
+    }
+    
     @MainActor
     func scrollToBottom(animated: Bool) {
         scrollView?.scrollToBottom(animated: animated)
@@ -86,42 +104,6 @@ extension ChatLayout {
             delegate.loadPrevious()
         } else if scrollView.isDragging, scrollView.contentSize.height <= scrollView.contentOffset.y + scrollView.frame.size.height {
             delegate.loadNext()
-        }
-    }
-}
-
-// Content Offset Adjusting
-
-extension ChatLayout {
-    
-    func adjustContentOffset(newValue: CGRect, oldValue: CGRect) {
-        
-        let isHeightChanged = newValue.height != oldValue.height
-        let isPositionChanged = newValue.maxY != oldValue.maxY
-       
-        if isPositionChanged {
-            guard newValue.maxY != oldValue.maxY else { return }
-            guard let scrollView = scrollView else { return }
-            
-            let keyboardHeight = oldValue.maxY - newValue.maxY
-            guard keyboardHeight > 200 else { return }
-            var contentOffset = scrollView.contentOffset
-            contentOffset.y += keyboardHeight
-            scrollView.setContentOffset(contentOffset, animated: true)
-        } else if isHeightChanged {
-            let heightDifference = newValue.height - oldValue.height
-            if heightDifference > 0 {
-                adjustContentOffset(inputViewSizeDidChange: heightDifference)
-            }
-            
-        }
-    }
-    
-    func adjustContentOffset(inputViewSizeDidChange difference: CGFloat) {
-        if let scrollView = self.scrollView {
-            var offset = scrollView.contentOffset
-            offset.y += difference
-            scrollView.contentOffset = offset
         }
     }
 }

@@ -9,19 +9,19 @@ import SwiftUI
 
 struct InputMenuBar: View {
     
-    let onTap: (Item) async -> Void
+    let onTap: (Item) -> Void
 
     var body: some View {
         HStack {
+            Spacer()
             ForEach(Item.allCases, id: \.self) { itemType in
                 Button {
-                    Task {
-                        await onTap(itemType)
-                    }
+                    onTap(itemType)
                 } label: {
                     Image(systemName: itemType.iconName)
                 }
             }
+            Spacer()
         }
         .font(.system(size: 19, weight: .semibold))
         .padding(.vertical)

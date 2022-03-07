@@ -23,7 +23,11 @@ class Con: ObservableObject, Identifiable {
             self.cCon()?.bgImage = newValue.rawValue
         }
     }
-    
+    var bubbleCornorRadius: CGFloat {
+        willSet {
+            self.cCon()?.bubbleCornorRadius = Int16(newValue)
+        }
+    }
     var themeColor: ThemeColor{
         willSet {
             self.cCon()?.themeColor = newValue.rawValue
@@ -67,6 +71,7 @@ class Con: ObservableObject, Identifiable {
         self.showAvatar = cCon.showAvatar
         self.isPagingEnabled = cCon.isPagingEnabled
         self.lastReadMsgId = cCon.lastReadMsgId
+        self.bubbleCornorRadius = CGFloat(cCon.bubbleCornorRadius)
     }
    
     func msgsCount() -> Int {
@@ -82,12 +87,64 @@ class Con: ObservableObject, Identifiable {
     
     func task() {
         guard let cCon = self.cCon() else { return }
-        if let lastDate = lastMsg()?.date, cCon.date != lastDate {
+        
+        if let lastDate = lastMsg()?.date {
+            if !cCon.hasMsgs {
+                cCon.hasMsgs = true
+            }
             cCon.date = lastDate
         }
     }
-    private func cCon() -> CCon? {
+    
+    func cCon() -> CCon? {
         CCon.cCon(for: id)
+    }
+    
+    func refresh() -> Bool {
+        guard let cCon = self.cCon() else { return false }
+        var returnValue = false
+        if self.name != cCon.name {
+            self.name = cCon.name!
+            returnValue = true
+        }
+        let bgImage = BgImage(rawValue: cCon.bgImage) ?? .None
+        if self.bgImage != bgImage {
+            self.bgImage = bgImage
+            returnValue = true
+        }
+        
+        let themeColor = ThemeColor(rawValue: cCon.themeColor) ?? .Blue
+        if self.themeColor != themeColor {
+            self.themeColor = themeColor
+            returnValue = true
+        }
+        
+        let cellSpacing = CGFloat(cCon.cellSpacing)
+        if self.cellSpacing != cellSpacing {
+            self.cellSpacing = cellSpacing
+            returnValue = true
+        }
+        if self.isBubbleDraggable != cCon.isBubbleDraggable {
+            self.isBubbleDraggable = cCon.isBubbleDraggable
+            returnValue = true
+        }
+        if self.showAvatar != cCon.showAvatar {
+            self.showAvatar = cCon.showAvatar
+            returnValue = true
+        }
+        if self.isPagingEnabled != cCon.isPagingEnabled {
+            self.isPagingEnabled = cCon.isPagingEnabled
+            returnValue = true
+        }
+        if self.lastReadMsgId != cCon.lastReadMsgId {
+            self.lastReadMsgId = cCon.lastReadMsgId
+            returnValue = true
+        }
+        if !cCon.hasMsgs && self.msgsCount() > 0 {
+            cCon.hasMsgs = true
+        }
+        
+        return returnValue
     }
 }
 

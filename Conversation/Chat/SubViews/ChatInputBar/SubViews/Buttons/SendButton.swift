@@ -10,13 +10,11 @@ import SwiftUI
 struct SendButton: View {
     
     var hasText: Bool
-    let onTap: SomeAction
+    let onTap: () -> Void
     
     var body: some View {
         Button {
-            Task {
-                await onTap()
-            }
+            onTap()
         } label: {
             Image(systemName: hasText ? "chevron.up.circle.fill" : "hand.thumbsup.fill")
                 .resizable()

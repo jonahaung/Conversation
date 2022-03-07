@@ -12,10 +12,18 @@ class InBoxManager: ObservableObject {
     
     @Published var cons = [Con]()
     private var hasLoaded = false
+    init() {
+        self.cons = CCon.cons().map(Con.init)
+    }
     
-    func fetch() {
-        withAnimation {
-            self.cons = CCon.cons().map(Con.init)
+    func task() {
+        if hasLoaded {
+            
         }
+        hasLoaded = true
+    }
+    
+    func refresh() {
+        self.cons = CCon.cons().map(Con.init)
     }
 }

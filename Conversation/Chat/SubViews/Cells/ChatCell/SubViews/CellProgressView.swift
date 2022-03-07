@@ -12,7 +12,7 @@ struct CellProgressView: View {
     let progress: Msg.DeliveryStatus
     
     var body: some View {
-        VStack {
+        Group {
             if let iconName = progress.iconName() {
                 Image(systemName: iconName)
                     .foregroundStyle(.tertiary)

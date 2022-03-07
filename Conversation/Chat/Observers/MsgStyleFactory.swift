@@ -12,7 +12,7 @@ protocol MsgStyleFactory: AnyObject {
     
     var msgs: [Msg] { get }
     var con: Con { get }
-    var cachedMsgStyles: [String: MsgStyle] { get set }
+//    var cachedMsgStyles: [String: MsgStyle] { get set }
 
     func msgStyle(for this: Msg, at index: Int, selectedId: String?) -> MsgStyle
 }
@@ -37,17 +37,17 @@ extension MsgStyleFactory {
         
         let msgs = self.msgs
         
-        let isTopItem = index == 0
-        let isBottomItem = index == msgs.count - 1
-        
+//        let isTopItem = index == 0
+//        let isBottomItem = index == msgs.count - 1
+//
         let thisIsSelectedId = this.id == selectedId
         
-        let canSearchInCache = !isTopItem && !isBottomItem && !thisIsSelectedId
+//        let canSearchInCache = !isTopItem && !isBottomItem && !thisIsSelectedId
         
         
-        if canSearchInCache, let oldValue = cachedMsgStyles[this.id] {
-            return oldValue
-        }
+//        if canSearchInCache, let oldValue = cachedMsgStyles[this.id] {
+//            return oldValue
+//        }
         
         let isSender = this.rType == .Send
         
@@ -68,6 +68,7 @@ extension MsgStyleFactory {
                     (this.rType != lhs.rType ||
                      this.msgType != lhs.msgType ||
                      thisIsSelectedId ||
+                     lhs.id == selectedId ||
                      showTimeSeparater) {
                     
                     rectCornors.formUnion(.topRight)
@@ -84,12 +85,14 @@ extension MsgStyleFactory {
                     (this.rType != rhs.rType ||
                      this.msgType != rhs.msgType ||
                      thisIsSelectedId ||
+                     rhs.id == selectedId ||
                      self.canShowTimeSeparater(this.date, rhs.date)) {
                     rectCornors.formUnion(.bottomRight)
                 }
             }else {
                 rectCornors.formUnion(.bottomRight)
             }
+            showAvatar = this.id == con.lastReadMsgId
         } else {
             
             rectCornors.formUnion(.topRight)
@@ -103,6 +106,7 @@ extension MsgStyleFactory {
                     (this.rType != lhs.rType ||
                      this.msgType != lhs.msgType ||
                      thisIsSelectedId ||
+                     lhs.id == selectedId ||
                      showTimeSeparater) {
                     
                     rectCornors.formUnion(.topLeft)
@@ -118,22 +122,23 @@ extension MsgStyleFactory {
                     (this.rType != rhs.rType ||
                      this.msgType != rhs.msgType ||
                      thisIsSelectedId ||
+                     rhs.id == selectedId ||
                      self.canShowTimeSeparater(rhs.date, this.date)) {
                     rectCornors.formUnion(.bottomLeft)
-                    showAvatar = true
+                    showAvatar = con.showAvatar
                 }
             }else {
                 rectCornors.formUnion(.bottomLeft)
             }
         }
         
-        let bubbleShape = this.msgType == .Text ? BubbleShape(corners: rectCornors) : nil
+        let bubbleShape = this.msgType == .Text ? BubbleShape(corners: rectCornors, cornorRadius: con.bubbleCornorRadius) : nil
         
         let style = MsgStyle(bubbleShape: bubbleShape, showAvatar: showAvatar, showTimeSeparater: showTimeSeparater, showTopPadding: showTopPadding, isSelected: thisIsSelectedId)
         
-        if canSearchInCache {
-            cachedMsgStyles[this.id] = style
-        }
+//        if canSearchInCache {
+//            cachedMsgStyles[this.id] = style
+//        }
         return style
     }
 }

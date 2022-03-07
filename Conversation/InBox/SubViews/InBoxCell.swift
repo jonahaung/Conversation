@@ -16,10 +16,9 @@ struct InBoxCell: View {
     
     var body: some View {
         Group {
-            Image(systemName: "person.circle.fill")
-                .resizable()
+            
+            AvatarView(id: con.id)
                 .frame(width: 45, height: 45)
-                .foregroundColor(con.themeColor.color)
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {

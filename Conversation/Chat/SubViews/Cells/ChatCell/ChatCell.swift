@@ -19,8 +19,8 @@ struct ChatCell: View {
                 Spacer(minLength: ChatKit.cellAlignmentSpacing)
             } else {
                 VStack {
-                    if style.showAvatar && coordinator.con.showAvatar {
-                        AvatarView()
+                    if style.showAvatar {
+                        AvatarView(id: coordinator.con.id)
                     }
                 }
                 .frame(width: ChatKit.cellLeftRightViewWidth)
@@ -30,20 +30,20 @@ struct ChatCell: View {
     
     fileprivate func rightView() -> some View {
         Group {
-            if msg.rType == .Send {
-                Group {
-                    if coordinator.con.lastReadMsgId == msg.id {
-                        AvatarView()
+            if msg.rType == .Receive {
+                Spacer(minLength: ChatKit.cellAlignmentSpacing)
+                
+            } else {
+                VStack {
+                    if style.showAvatar {
+                        AvatarView(id: coordinator.con.id)
                     }else {
                         CellProgressView(progress: msg.deliveryStatus)
                     }
                 }
                 .frame(width: ChatKit.cellLeftRightViewWidth)
-            } else {
-                Spacer(minLength: ChatKit.cellAlignmentSpacing)
             }
         }
-        
     }
     
     var body: some View {
@@ -61,7 +61,16 @@ struct ChatCell: View {
                         let text = msg.rType == .Send ? MsgDateView.dateFormatter.string(from: msg.date) : msg.sender.name
                         HiddenLabelView(text: text, padding: .top)
                     }
-                    bubbleView()
+                    
+                    Group {
+                        if coordinator.con.isBubbleDraggable {
+                            bubbleView()
+                                .modifier(DraggableModifier(direction: .horizontal))
+                        } else {
+                            bubbleView()
+                        }
+                    }
+                    
                     if style.isSelected {
                         HiddenLabelView(text: msg.deliveryStatus.description, padding: .bottom)
                     }

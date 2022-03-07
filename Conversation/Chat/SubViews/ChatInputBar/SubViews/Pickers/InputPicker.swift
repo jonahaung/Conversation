@@ -10,7 +10,7 @@ import SwiftUI
 struct InputPicker<Content: View>: View {
     
     let content: () -> Content
-    let onSend: () async -> Void
+    let onSend: () -> Void
     @EnvironmentObject private var inputManager: ChatInputViewManager
     
     var body: some View {

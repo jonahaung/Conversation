@@ -13,9 +13,9 @@ class Coordinator: ObservableObject {
     @Published var con: Con
     var scrollItem: ScrollItem?
     @Published var selectedId: String?
-    
+    internal var cachedMsgStyles = [String: MsgStyle]()
 
-    var datasource: ChatDatasource!
+    var datasource: ChatDatasource
     var layout = ChatLayout()
    
     init(con: Con) {
@@ -63,7 +63,9 @@ extension Coordinator: ChatLayoutDelegate {
     }
     
     @MainActor func resetToBottom() {
-        datasource = ChatDatasource(conId: con.id)
+        if datasource.hasMoreNext {
+            datasource = ChatDatasource(conId: con.id)
+        }
         scrollTo(item: .init(id: 0, anchor: .bottom, animate: true))
     }
 }
@@ -87,7 +89,7 @@ extension Coordinator {
         if layout.delegate == nil {
             scrollTo(item: .init(id: 0, anchor: .bottom))
             layout.delegate = self
-            con.task()
+            
         }
     }
 }
@@ -98,13 +100,5 @@ extension Coordinator: MsgStyleFactory {
     var msgs: [Msg] {
         datasource.msgs
     }
-    
-    var cachedMsgStyles: [String : MsgStyle] {
-        get {
-            datasource.cachedMsgStyles
-        }
-        set {
-            datasource.cachedMsgStyles = newValue
-        }
-    }
+
 }

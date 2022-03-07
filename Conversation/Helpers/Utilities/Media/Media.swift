@@ -96,13 +96,13 @@ extension Media {
 extension Media {
     
     enum MediaKeep {
-        case Keep, Month, Week
+        static var Keep = MediaKeep.Unknown
+        case Unknown, Month, Week
     }
     //-------------------------------------------------------------------------------------------------------------------------------------------
     class func cleanupExpired() {
-        
         switch MediaKeep.Keep {
-        case .Keep:
+        case .Unknown:
             break
         case .Month:
             cleanupExpired(days: 7)

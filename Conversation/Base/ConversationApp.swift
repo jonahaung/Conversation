@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import Introspect
 
 @main
 struct ConversationApp: App {
@@ -17,8 +18,7 @@ struct ConversationApp: App {
         WindowGroup {
             NavigationView {
                 InBoxView()
-            }
-            .navigationViewStyle(.stack)
+            }.navigationViewStyle(.stack)
         }
     }
 }

@@ -9,13 +9,24 @@
 import CoreData
 
 extension CCon {
-    
-    class func create(id: String) {
+
+    class func fetchOrCreate(contact: CContact) -> CCon {
+        let conId = contact.conId
+        if let cCon = cCon(for: conId) {
+            return cCon
+        }
+        let cCon = create(id: conId)
+        cCon.name = contact.name
+        
+        return cCon
+    }
+    @discardableResult
+    class func create(id: String) -> CCon {
         let context = Persistence.shared.context
         let cCon = CCon(context: context)
         cCon.id = id
         cCon.date = Date()
-        cCon.name = Lorem.fullName
+        return cCon
     }
     
     class func cCon(for id: String) -> CCon? {
@@ -39,6 +50,7 @@ extension CCon {
     class func cons() -> [CCon] {
         let context = Persistence.shared.context
         let request: NSFetchRequest<CCon> = CCon.fetchRequest()
+        request.predicate = .init(format: "hasMsgs == %@", NSNumber(true))
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         do {
             return try context.fetch(request)
@@ -47,4 +59,5 @@ extension CCon {
             return []
         }
     }
+    
 }

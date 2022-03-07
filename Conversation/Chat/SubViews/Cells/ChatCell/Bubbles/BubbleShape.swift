@@ -10,9 +10,10 @@ import SwiftUI
 struct BubbleShape: Shape {
     
     let corners: UIRectCorner
+    let cornorRadius: CGFloat
     
     func path(in rect: CGRect) -> Path {
-        Path(UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: ChatKit.bubbleRadius, height: ChatKit.bubbleRadius)).cgPath)
+        Path(UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: cornorRadius, height: cornorRadius)).cgPath)
     }
 }
 

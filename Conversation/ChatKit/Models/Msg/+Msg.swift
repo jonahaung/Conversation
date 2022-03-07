@@ -15,7 +15,7 @@ extension Msg {
 }
 
 extension Msg {
-    struct Sender: Codable {
+    struct Sender {
         let id: String
         let name: String
         let photoURL: String
@@ -37,8 +37,8 @@ extension Msg {
         
         func iconName() -> String? {
             switch self {
-            case .Sending: return "circlebadge.fill"
-            case .Sent: return "checkmark.circle"
+            case .Sending: return "circlebadge"
+            case .Sent: return "checkmark.circle.fill"
             case .SendingFailed: return "exclamationmark.circle"
             default: return nil
             }
@@ -50,7 +50,7 @@ extension Msg {
     }
 }
 extension Msg {
-    enum RecieptType: Int16, Codable {
+    enum RecieptType: Int16 {
         case Send
         case Receive
         var hAlignment: HorizontalAlignment { self == .Send ? .trailing : .leading }

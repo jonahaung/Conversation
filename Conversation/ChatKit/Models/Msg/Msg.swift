@@ -31,7 +31,6 @@ class Msg: ObservableObject, Identifiable {
     var voiceData: MsgType.VoiceData?
     
     var imageRatio: Double = 1
-    
     // RCMsg
     
     var isDataQueued = false

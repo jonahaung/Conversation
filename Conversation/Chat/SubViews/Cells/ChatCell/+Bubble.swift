@@ -10,48 +10,29 @@ import SwiftUI
 extension ChatCell {
     
     internal func bubbleView() -> some View {
-        
-        let bubbleColor = coordinator.con.bubbleColor(for: msg)
-        let textColor = msg.rType == .Send ? ChatKit.textTextColorOutgoing : nil
-        let textData = msg.textData ?? .init(text: "no text")
-        
-        func bubble() -> some View {
-            Group {
-                switch msg.msgType {
-                case .Text:
-                    TextBubble(data: textData)
-                        .foregroundColor(textColor)
-                        .background(style.bubbleShape!.fill(bubbleColor))
-                case .Image:
-                    ImageBubble()
-                case .Location:
-                    LocationBubble()
-                case .Emoji:
-                    if let data = msg.emojiData {
-                        EmojiBubble(data: data)
-                    }
-                default:
-                    EmptyView()
+        Group {
+            switch msg.msgType {
+            case .Text:
+                TextBubble()
+                    .foregroundColor( msg.rType == .Send ? ChatKit.textTextColorOutgoing : nil)
+                    .background(style.bubbleShape!.fill(coordinator.con.bubbleColor(for: msg)))
+            case .Image:
+                ImageBubble()
+            case .Location:
+                LocationBubble()
+            case .Emoji:
+                if let data = msg.emojiData {
+                    EmojiBubble(data: data)
                 }
+            default:
+                EmptyView()
             }
-            .contextMenu{ MsgContextMenu().environmentObject(msg) }
-            .onTapGesture {
-                Task {
-                    await ToneManager.shared.vibrate(vibration: .rigid)
-                }
-                withAnimation(.interactiveSpring()) {
-                    coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
-                }
-            }
-            
         }
-        
-        return Group {
-            if coordinator.con.isBubbleDraggable {
-                bubble()
-                    .modifier(DraggableModifier(direction: .horizontal))
-            } else {
-                bubble()
+        .contextMenu{ MsgContextMenu().environmentObject(msg) }
+        .onTapGesture {
+            ToneManager.shared.vibrate(vibration: .rigid)
+            withAnimation(.interactiveSpring()) {
+                coordinator.selectedId = msg.id == coordinator.selectedId ? nil : msg.id
             }
         }
     }

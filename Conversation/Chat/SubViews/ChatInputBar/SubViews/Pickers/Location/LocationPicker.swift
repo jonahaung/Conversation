@@ -10,7 +10,7 @@ import MapKit
 
 struct LocationPicker: View {
     
-    let onSend: ((CLLocationCoordinate2D) async -> Void )
+    let onSend: ((CLLocationCoordinate2D) -> Void )
     
     @StateObject private var locationManager = Location()
 
@@ -28,7 +28,7 @@ struct LocationPicker: View {
                 locationManager.stop()
             }
         } onSend: {
-            await onSend(locationManager.location.coordinate)
+            onSend(locationManager.location.coordinate)
         }
     }
 }

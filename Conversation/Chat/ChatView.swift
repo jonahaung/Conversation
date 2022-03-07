@@ -16,6 +16,9 @@ struct ChatView: View {
     init(con: Con) {
         _coordinator = .init(wrappedValue: .init(con: con))
     }
+    init(contact: CContact) {
+        self.init(con: contact.con())
+    }
     
     var body: some View {
         ZStack {
@@ -39,55 +42,51 @@ struct ChatView: View {
                         }
                     }
                     .frame(height: coordinator.layout.fixedHeight ?? coordinator.layout.bottomBarRect.height)
-                    .id(0)
+                    .padding(.top, 3)
+                        .id(0)
                 }
                 .padding(.horizontal, ChatKit.cellHorizontalPadding)
             }
             .introspectScrollView {
-                if coordinator.layout.connect(scrollView: $0) {}
+                
+                coordinator.layout.connect(scrollView: $0)
             }
             
-            VStack(spacing: 0) {
-                ChatNavBar()
+            VStack {
+                ChatTopBar()
                 Spacer()
-                ChatInputView()
+                ChatBottomBar()
                     .environmentObject(inputManager)
             }
         }
         .background(coordinator.con.bgImage.image)
         .coordinateSpace(name: "ChatView")
         .accentColor(coordinator.con.themeColor.color)
-        .retrieveBounds(viewId: ChatInputView.id, $coordinator.layout.bottomBarRect)
-        .retrieveBounds(viewId: ChatNavBar.id, $coordinator.layout.topBarRect)
+        .retrieveBounds(viewId: ChatBottomBar.id, $coordinator.layout.bottomBarRect)
+        .retrieveBounds(viewId: ChatTopBar.id, $coordinator.layout.topBarRect)
         .environmentObject(coordinator)
         .onReceive(NotificationCenter.default.publisher(for: .MsgNoti)) { didReceiveNoti($0) }
         .task {
             coordinator.task()
+            
         }
         .onAppear {
-            Task {
-                await connectSocket()
-            }
+            connectSocket()
         }
         .onDisappear{
-            Task {
-                await disconnectSocket()
-            }
+            
+            disconnectSocket()
         }
+        
     }
 }
 
 extension ChatView {
-    private func connectSocket() async {
-        await IncomingSocket.shard.connect(with:  coordinator.con.id)
+    private func connectSocket() {
+        IncomingSocket.shard.connect(with:  coordinator.con.id)
     }
-    private func disconnectSocket() async {
-        do {
-            try Task.checkCancellation()
-            await IncomingSocket.shard.disconnect()
-        } catch {
-            print(error)
-        }
+    private func disconnectSocket() {
+        IncomingSocket.shard.disconnect()
     }
     
     private func didReceiveNoti(_ outputt: NotificationCenter.Publisher.Output) {
@@ -99,8 +98,9 @@ extension ChatView {
         case .Typing(let isTypeing):
             inputManager.isTyping = isTypeing
         case .Update(let id):
-            coordinator.con.lastReadMsgId = id
-            coordinator.updateUI()
+            if coordinator.con.refresh() {
+                coordinator.updateUI()
+            }
             coordinator.datasource.update(id: id)
         }
     }

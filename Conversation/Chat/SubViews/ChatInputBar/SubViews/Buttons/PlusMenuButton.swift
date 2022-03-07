@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlusMenuButton: View {
     
-    let onTap: SomeAction
+    let onTap: () async -> Void
     
     var body: some View {
         Button {
